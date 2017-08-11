@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.naxasurvay.MainActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <RelativeLayout android:id="@+id/survayFormTopLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#3dcded"
+        android:layout_margin="5dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/surveys_img"
+            android:scaleType="fitXY"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/survayForm">
+
+            <TextView android:layout_marginTop="90dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Survey Form"
+                android:textSize="25sp"
+                android:textColor="@color/black"/>
+
+        </FrameLayout>
+
+    </RelativeLayout>
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:background="@color/divider_grey"/>
+
+    <RelativeLayout android:id="@+id/savedFormTopLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#3dcded"
+        android:layout_margin="5dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/saved_forms"
+            android:scaleType="fitXY"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/savedForm">
+
+            <TextView android:layout_marginTop="90dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Saved Form"
+                android:textSize="25sp"
+                android:textColor="@color/black"/>
+
+        </FrameLayout>
+
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/divider_grey"/>
+
+
+    <RelativeLayout android:id="@+id/mapFormTopLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/white"
+        android:layout_margin="5dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/kathmandu_valley_map"
+            android:scaleType="fitCenter"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mapHousehold">
+
+            <TextView android:layout_marginTop="90dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Map Household"
+                android:textSize="25sp"
+                android:textColor="@color/black"/>
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

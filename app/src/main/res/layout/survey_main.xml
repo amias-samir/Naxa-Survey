@@ -1,0 +1,1523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/naxa_Survay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.naxasurvay.SurveyMain">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+    // xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="64dp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardBackgroundColor="#e7e2e2">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <!-- Survayeor info -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/survey_id_num"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:gravity="center"
+                                    android:text="Surveyor Identity Number :"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <EditText
+                                    android:id="@+id/id_number_surveyor"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toRightOf="@+id/survey_id_num"
+                                    android:inputType="text"
+                                    android:text="1"
+                                    android:textColor="#000" />
+                            </RelativeLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/name_of_survayor"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Name of Surveyor"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/date_of_survey"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Date of Survey"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <!-- Household detail -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/house_id_code"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:gravity="center"
+                                    android:text="Household Identity Code :"
+                                    android:textColor="#000"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <EditText
+                                    android:id="@+id/id_code"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toRightOf="@+id/house_id_code"
+                                    android:inputType="text"
+                                    android:text="1"
+                                    android:textColor="#000" />
+                            </RelativeLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/Municipality"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_municipality"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Municipality"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/Ward"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_ward"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Ward no"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/Address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_address"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Address"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="Household Typology"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <RadioGroup
+                                android:id="@+id/HouseHold_type"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="25dp"
+                                android:orientation="vertical">
+
+                                <RadioButton
+                                    android:id="@+id/single_f_d"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="Single Family Detached"
+                                    android:textStyle="bold" />
+
+                                <RadioButton
+                                    android:id="@+id/multy_f_h"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Multy-Family House"
+                                    android:textStyle="bold" />
+
+                                <RadioButton
+                                    android:id="@+id/apartment_block"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Apartment Block"
+                                    android:textStyle="bold" />
+
+                                <RadioButton
+                                    android:id="@+id/mix_use_block"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="Mixed-Use Block"
+                                    android:textStyle="bold" />
+
+                                <RadioButton
+                                    android:id="@+id/num_of_floor"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:checked="true"
+                                    android:text="Number Of Floors"
+                                    android:textStyle="bold" />
+
+                            </RadioGroup>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+                    <!-- Gps and Photo -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="10dp"
+                                android:padding="5dp">
+
+                                <Button
+                                    android:id="@+id/house_GpsStart"
+                                    android:layout_width="212dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:background="@drawable/form_button_pressed"
+                                    android:gravity="center"
+                                    android:text="Get gps location"
+                                    android:textColor="#ffffff" />
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="10dp"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/house_photo"
+                                    android:layout_width="200dp"
+                                    android:layout_height="50dp"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Photograph"
+                                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                                <ImageButton
+                                    android:id="@+id/house_photo_site"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_alignBottom="@+id/house_photo"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/ic_photo"
+                                    android:src="@drawable/button_pressed_transparent" />
+
+                                <ImageView
+                                    android:id="@+id/house_PhotographSiteimageViewPreview"
+                                    android:layout_width="200dp"
+                                    android:layout_height="200dp"
+                                    android:layout_below="@+id/house_photo"
+                                    android:layout_centerHorizontal="true"
+                                    android:visibility="gone" />
+
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <!-- Respondent -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Respondent"
+                                android:textStyle="bold" />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/Age"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Respondent_age"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Age"
+                                        android:inputType="text"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <TextView
+                                    android:id="@+id/txt_sex"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/Age"
+                                    android:layout_centerVertical="true"
+                                    android:text="Sex"
+                                    android:textColor="@color/accent"
+                                    android:textSize="20sp" />
+
+                                <RadioGroup
+                                    android:id="@+id/sex"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/Age"
+                                    android:layout_marginLeft="15dp"
+                                    android:layout_toRightOf="@+id/txt_sex"
+                                    android:orientation="horizontal">
+
+                                    <RadioButton
+                                        android:id="@+id/male"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:checked="true"
+                                        android:text="Male"
+                                        android:textStyle="bold" />
+
+                                    <RadioButton
+                                        android:id="@+id/female"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Female"
+                                        android:textStyle="bold" />
+
+                                    <RadioButton
+                                        android:id="@+id/Other"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Other"
+                                        android:textStyle="bold" />
+
+                                </RadioGroup>
+
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/email"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/txt_sex">
+
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Respondent_email"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Email"
+                                        android:inputType="text"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <!-- Total Family member -> Button -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/member_in_family"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Family Member In Houseold"
+                                android:textStyle="bold"
+                                 />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/husband"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Husband"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/button_dec_husband"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/husband_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/husband_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/button_inc_husband"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/button_inc_husband"
+                                    android:layout_width="40dp"
+
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/wife"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Wife"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/button_dec_wife"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/wife_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/wife_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/button_inc_wife"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/button_inc_wife"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Childrens"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Childrens"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/button_dec_childrens"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/children_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/children_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/button_inc_childrens"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/button_inc_childrens"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Relatives"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Relatives"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/button_dec_relatives"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/relatives_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/relatives_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/button_inc_relatives"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/button_inc_relatives"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/others"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Others"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/button_dec_others"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/others_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/others_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/button_inc_others"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/button_inc_others"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/Total_family_member"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_Total_family_member"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Total Members in Family"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <!-- Working Family member -> Button -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/Working_member_in_family"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Working Family Member In Houseold"
+                                android:textStyle="bold"
+                                />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Working_husband"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Husband"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/Working_button_dec_husband"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_husband_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/Working_husband_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_button_inc_husband"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/Working_button_inc_husband"
+                                    android:layout_width="40dp"
+
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Working_wife"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Wife"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/Working_button_dec_wife"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_wife_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/Working_wife_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_button_inc_wife"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/Working_button_inc_wife"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Working_Childrens"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Childrens"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/Working_button_dec_childrens"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_childrens_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/Working_childrens_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_button_inc_children"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/Working_button_inc_children"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Working_Relatives"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Relatives"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/Working_button_dec_relatives"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_relatives_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/Working_relatives_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_button_inc_relatives"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/Working_button_inc_relatives"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/Working_others"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="80dp"
+                                    android:text="Others"
+                                    android:textColor="#000"
+                                    android:textSize="20sp" />
+
+                                <Button
+                                    android:id="@+id/Working_button_dec_others"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_others_no"
+                                    android:text="-"
+                                    android:textSize="23dp" />
+
+                                <EditText
+                                    android:id="@+id/Working_others_no"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toLeftOf="@+id/Working_button_inc_others"
+                                    android:text="1"
+                                    android:textColor="#000" />
+
+                                <Button
+                                    android:id="@+id/Working_button_inc_others"
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:text="+"
+                                    android:textSize="23dp" />
+
+                            </RelativeLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/Workin_family_member"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_Workin_family_member"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Number of Working Members in Family"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+
+                    <!-- MultiSpinner for Source of income -->
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/Source_of_detailIncome_of_Husband"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textSize="18sp"
+                                android:text="Source of income of Family Members"
+                                android:textStyle="bold"
+                                />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="5dp"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/spinner_husband"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Husband"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="#000" />
+
+
+                                <com.thomashaertel.widget.MultiSpinner
+                                    android:id="@+id/spinnerMulti_Husband"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toRightOf="@+id/spinner_husband" />
+
+                                <EditText
+                                    android:id="@+id/selected_income_details_husband"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/spinnerMulti_Husband"
+                                    android:visibility="gone" />
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="5dp"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/spinner_wife"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Wife"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="#000" />
+
+
+                                <com.thomashaertel.widget.MultiSpinner
+                                    android:id="@+id/spinnerMulti_Wife"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toRightOf="@+id/spinner_wife" />
+
+                                <EditText
+                                    android:id="@+id/selected_income_details_wife"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/spinnerMulti_Wife"
+                                    android:visibility="gone" />
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="5dp"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/spinner_children"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Children(s)"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="#000" />
+
+
+                                <com.thomashaertel.widget.MultiSpinner
+                                    android:id="@+id/spinnerMulti_children"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toRightOf="@+id/spinner_children" />
+
+                                <EditText
+                                    android:id="@+id/selected_income_details_children"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/spinnerMulti_children"
+                                    android:visibility="gone" />
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="5dp"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/spinner_Relative"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Relatives"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="#000" />
+
+
+                                <com.thomashaertel.widget.MultiSpinner
+                                    android:id="@+id/spinnerMulti_Relative"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toRightOf="@+id/spinner_Relative" />
+
+                                <EditText
+                                    android:id="@+id/selected_income_details_relatives"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/spinnerMulti_Relative"
+                                    android:visibility="gone" />
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="5dp"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/spinner_Others"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Others"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="#000" />
+
+
+                                <com.thomashaertel.widget.MultiSpinner
+                                    android:id="@+id/spinnerMulti_Others"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toRightOf="@+id/spinner_Others" />
+
+                                <EditText
+                                    android:id="@+id/selected_income_details_others"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/spinnerMulti_Others"
+                                    android:visibility="gone" />
+
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <!-- Income of family -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:textSize="18sp"
+                                android:text="Average Monthly Income of Family Members"
+                                android:textStyle="bold"
+                                />
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/average_monthlyIncome_of_husband"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_average_monthlyIncome_of_husband"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Husband"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/average_monthlyIncome_of_wife"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_average_monthlyIncome_of_wife"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Wife"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/average_monthlyIncome_of_children"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_average_monthlyIncome_of_children"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Children"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/average_monthlyIncome_of_relatives"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_average_monthlyIncome_of_relatives"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Relatives"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+                            <android.support.design.widget.TextInputLayout
+                                android:id="@+id/average_monthlyIncome_of_others"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_average_monthlyIncome_of_others"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Others"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+                            </android.support.design.widget.TextInputLayout>
+
+
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+
+                    <!--Area of Land and Property 1-->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="Area of Land or Property "
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="1">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Land" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/land_in_Anna"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Anna"
+                                            android:inputType="text"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="1">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Property" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/property_in_Anna"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Anna"
+                                            android:inputType="text"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <!--Price of Land and Property -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="Price of Land or Property"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="2">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="1">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Land" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/total_land_price"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Total price"
+                                            android:inputType="text"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+                                </LinearLayout>
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:weightSum="2">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="1">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Property" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/total_property_price"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Total price"
+                                            android:inputType="text"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+                                </LinearLayout>
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+
+                    <!--save / send-->
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/cv_SaveSend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:padding="5dp">
+
+                            <Button
+                                android:id="@+id/Naxa_survay_save"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_alignParentTop="true"
+                                android:background="@drawable/form_button_pressed"
+                                android:text="Save"
+                                android:textColor="#ffffff" />
+
+                            <Button
+                                android:id="@+id/Naxa_survay_send"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@color/primary"
+
+                                android:text="Send"
+                                android:textColor="#FFFFFF" />
+
+                        </RelativeLayout>
+                    </android.support.v7.widget.CardView>
+
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>
