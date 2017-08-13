@@ -1091,10 +1091,7 @@ public class SurveyMain extends AppCompatActivity {
     }
 
     public void parseJson(String jsonToParse) throws JSONException {
-//        JSONObject jsonOb = new JSONObject(jsonToParse);
-//        Log.e("PregnentWomenActivity", "json : " + jsonOb.toString());
-//        String data = jsonOb.getString("formdata");
-//        Log.e("PregnentWomenActivity", "formdata : " + jsonOb.toString());
+
         JSONObject jsonObj = new JSONObject(jsonToParse);
         Log.e("householdsurvey", "json : " + jsonObj.toString());
 
@@ -1138,7 +1135,8 @@ public class SurveyMain extends AppCompatActivity {
 //        finalLong = Double.parseDouble(jsonObj.getString("lon"));
 //        LatLng d = new LatLng(finalLat, finalLong);
 //        listCf.add(d);
-//        encodedImage = jsonObj.getString("image");
+
+            encodedImage = jsonObj.getString("photo");
 
 
 //        Log.e("Children Under Two", "Parsed data " + child2_vdc_name + child2_ward_no + weight);
@@ -1334,7 +1332,7 @@ public class SurveyMain extends AppCompatActivity {
             text = POST(UrlClass.URL_DATA_SEND);
             Log.d(TAG, "RAW resposne" + text);
 
-            return text.toString();
+            return text;
         }
 
         @Override
@@ -1401,61 +1399,62 @@ public class SurveyMain extends AppCompatActivity {
 ////                        .setTitleText("")
 ////                        .setContentText("Data sent successfully!")
 ////                        .show();
-//                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
-//                        "" + imageName, "Sent", "0"};
+                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
+                        "" + imageName, "Sent", "0"};
 //
-////                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend,
-////                        "" , "Sent", "0"};
-//
-//                Database_SentForm dataBaseSent = new Database_SentForm(context);
-//                dataBaseSent.open();
-//                long id = dataBaseSent.insertIntoTable_Main(data);
-//                Log.e("dbID", "" + id);
-//                dataBaseSent.close();
+//                Log.d(TAG, "string data: " + data);
+////
 
-//                if (CheckValues.isFromSavedFrom) {
-//                    Log.e(TAG, "onPostExecute: FormID : " + formid);
-//                    Database_SaveForm dataBase_NotSent = new Database_SaveForm(context);
-//                    dataBase_NotSent.open();
-//                    dataBase_NotSent.dropRowNotSentForms(formid);
-////                    Log.e("dbID", "" + id);
-//                    dataBase_NotSent.close();
-//
-//                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-//                    int width = metrics.widthPixels;
-//                    int height = metrics.heightPixels;
-//
-////                    Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
-//
-//                    final Dialog showDialog = new Dialog(context);
-//                    showDialog.setContentView(R.layout.thank_you_popup);
-//                    final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
-//                    final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
-//
-//                    showDialog.setTitle("Successfully Sent");
-//                    showDialog.setCancelable(false);
-//                    showDialog.show();
-//                    showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-//
-//                    yes.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            showDialog.dismiss();
-//                            Intent intent = new Intent(SurveyMain.this, SurveyMain.class);
-//                            startActivity(intent);
-////                                finish();
-//                        }
-//                    });
-//
-//                    no.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            showDialog.dismiss();
-//                            Intent intent = new Intent(SurveyMain.this, MainActivity.class);
-//                            startActivity(intent);
-//                        }
-//                    });
-//                }
+
+                Database_SentForm dataBaseSent = new Database_SentForm(context);
+                dataBaseSent.open();
+                long id = dataBaseSent.insertIntoTable_Main(data);
+                Log.e("dbID", "" + id);
+                dataBaseSent.close();
+
+                if (CheckValues.isFromSavedFrom) {
+                    Log.e(TAG, "onPostExecute: FormID : " + formid);
+                    Database_SaveForm dataBase_NotSent = new Database_SaveForm(context);
+                    dataBase_NotSent.open();
+                    dataBase_NotSent.dropRowNotSentForms(formid);
+//                    Log.e("dbID", "" + id);
+                    dataBase_NotSent.close();
+
+                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                    int width = metrics.widthPixels;
+                    int height = metrics.heightPixels;
+
+//                    Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
+
+                    final Dialog showDialog = new Dialog(context);
+                    showDialog.setContentView(R.layout.thank_you_popup);
+                    final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
+                    final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
+
+                    showDialog.setTitle("Successfully Sent");
+                    showDialog.setCancelable(false);
+                    showDialog.show();
+                    showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    yes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showDialog.dismiss();
+                            Intent intent = new Intent(SurveyMain.this, SurveyMain.class);
+                            startActivity(intent);
+//                                finish();
+                        }
+                    });
+
+                    no.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showDialog.dismiss();
+                            Intent intent = new Intent(SurveyMain.this, MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
 //
 //                if (!CheckValues.isFromSavedFrom) {
 //                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -1493,7 +1492,6 @@ public class SurveyMain extends AppCompatActivity {
 //                        }
 //                    });
 //                }
-
 
             }
         }
