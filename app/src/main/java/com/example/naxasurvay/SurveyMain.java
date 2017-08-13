@@ -147,7 +147,7 @@ public class SurveyMain extends AppCompatActivity {
     @BindView(R.id.Respondent_email)
     AutoCompleteTextView Email;
 
-//    @BindView(R.id.Survay_Family_member)
+//    @BindView(R.id.Survay_Total_family_member)
 //    AutoCompleteTextView FamilyMemberNumber;
 
     @BindView(R.id.button_inc_husband)
@@ -221,22 +221,32 @@ public class SurveyMain extends AppCompatActivity {
     MultiSpinner spinnerHusband;
     @BindView(R.id.selected_income_details_husband)
     EditText HusbandIncomeDetail;
+    @BindView(R.id.selected_others_income_details_husband)
+    EditText HusbandOthersIncomeDetail;
     @BindView(R.id.spinnerMulti_Wife)
     MultiSpinner spinnerWife;
     @BindView(R.id.selected_income_details_wife)
     EditText WifeIncomeDetail;
+    @BindView(R.id.selected_others_income_details_wife)
+    EditText WifeOthersIncomeDetail;
     @BindView(R.id.spinnerMulti_children)
     MultiSpinner spinnerChildren;
     @BindView(R.id.selected_income_details_children)
     EditText ChildrenIncomeDetail;
+    @BindView(R.id.selected_others_income_details_children)
+    EditText ChildrenOthersIncomeDetail;
     @BindView(R.id.spinnerMulti_Relative)
     MultiSpinner spinnerRelatives;
     @BindView(R.id.selected_income_details_relatives)
     EditText RelativesIncomeDetail;
+    @BindView(R.id.selected_others_income_details_relatives)
+    EditText RelativesOthersIncomeDetail;
     @BindView(R.id.spinnerMulti_Others)
     MultiSpinner spinnerOthers;
     @BindView(R.id.selected_income_details_others)
     EditText OthersIncomeDetail;
+    @BindView(R.id.selected_others_income_details_others)
+    EditText OthersOthersIncomeDetail;
 
     @BindView(R.id.Survay_average_monthlyIncome_of_husband)
     AutoCompleteTextView AverageMonthlyIncomeOfHusband;
@@ -275,12 +285,15 @@ public class SurveyMain extends AppCompatActivity {
 
     String SurveyIdNumValue, NameOfSurveyorValue, DateOfSurveyValue, HouseHoldIdValue, MunicipalityValue, WardValue, AddressValue,
             HouseholdTypologyValue, AgeValue, SexValue, EmailValue, WorkingFamilyMemberNumberValue, NumOfHusbandValue, NumOfWifeValue,
-            NumOfChildrenValue, NumOfRelativesValue, NumOfothersValue, HusbandIncomeSource, WifeIncomeSource, ChindrenIncomeSource,
+            NumOfChildrenValue, NumOfRelativesValue, NumOfothersValue, HusbandIncomeSource, WifeIncomeSource, ChildrenIncomeSource,
             RelativesIncomeSource, OthersIncomeSource, AverageMonthlyIncomeOfHusbandValue, AverageMonthlyIncomeOfWifeValue,
             AverageMonthlyIncomeOfChildrenValue, AverageMonthlyIncomeOfRelativesValue, AverageMonthlyIncomeOfOthersValue,
             LandInAnnaValue, TotalLandPriceValue, PropertyInAnnaValue, TotalPropertyPriceValue;
 
     String dataSentStatus, dateString;
+    String HusbandIncomeOtherSource,WifeIncomeOtherSource,ChildrensIncomeOtherSource,RelativesIncomeOtherSource,OthersIncomeOtherSource,
+            WorkingNumOfHusbandValue, WorkingNumOfWifeValue, WorkingNumOfChildrenValue, WorkingNumOfRelativesValue,
+            WorkingNumOfothersValue, FamilyMemberNumberValue;
 
     GoogleApiClient client;
     LocationRequest mLocationRequest;
@@ -585,20 +598,30 @@ public class SurveyMain extends AppCompatActivity {
                 Log.d("", "onCreate: " + SexValue);
                 EmailValue = Email.getText().toString();
 
-//                FamilyMemberNumberValue = FamilyMemberNumber.getText().toString();
-                WorkingFamilyMemberNumberValue = WorkingFamilyMemberNumber.getText().toString();
-
                 NumOfHusbandValue = NumOfHusband.getText().toString();
                 NumOfWifeValue = NumOfWife.getText().toString();
                 NumOfChildrenValue = NumOfChildren.getText().toString();
                 NumOfRelativesValue = NumOfRelatives.getText().toString();
                 NumOfothersValue = NumOfothers.getText().toString();
+                FamilyMemberNumberValue = TotalFamilyMemberNumber.getText().toString();
+
+                WorkingNumOfHusbandValue= WorkingNumOfHusband.getText().toString();
+                WorkingNumOfWifeValue=WorkingNumOfWife.getText().toString();
+                WorkingNumOfChildrenValue=WorkingNumOfChildren.getText().toString();
+                WorkingNumOfRelativesValue=WorkingNumOfRelatives.getText().toString();
+                WorkingNumOfothersValue=WorkingNumOfothers.getText().toString();
+                WorkingFamilyMemberNumberValue = WorkingFamilyMemberNumber.getText().toString();
 
                 HusbandIncomeSource = HusbandIncomeDetail.getText().toString();
+                HusbandIncomeOtherSource = HusbandOthersIncomeDetail.getText().toString();
                 WifeIncomeSource = WifeIncomeDetail.getText().toString();
-                ChindrenIncomeSource = ChildrenIncomeDetail.getText().toString();
+                WifeIncomeOtherSource = WifeOthersIncomeDetail.getText().toString();
+                ChildrenIncomeSource = ChildrenIncomeDetail.getText().toString();
+                ChildrensIncomeOtherSource = ChildrenOthersIncomeDetail.getText().toString();
                 RelativesIncomeSource = RelativesIncomeDetail.getText().toString();
+                RelativesIncomeOtherSource = RelativesOthersIncomeDetail.getText().toString();
                 OthersIncomeSource = OthersIncomeDetail.getText().toString();
+                OthersIncomeOtherSource = OthersOthersIncomeDetail.getText().toString();
 
                 AverageMonthlyIncomeOfHusbandValue = AverageMonthlyIncomeOfHusband.getText().toString();
                 AverageMonthlyIncomeOfWifeValue = AverageMonthlyIncomeOfWife.getText().toString();
@@ -735,19 +758,30 @@ public class SurveyMain extends AppCompatActivity {
                         Log.d("", "onCreate: " + SexValue);
                         EmailValue = Email.getText().toString();
 
-                        WorkingFamilyMemberNumberValue = WorkingFamilyMemberNumber.getText().toString();
-
                         NumOfHusbandValue = NumOfHusband.getText().toString();
                         NumOfWifeValue = NumOfWife.getText().toString();
                         NumOfChildrenValue = NumOfChildren.getText().toString();
                         NumOfRelativesValue = NumOfRelatives.getText().toString();
                         NumOfothersValue = NumOfothers.getText().toString();
+                        FamilyMemberNumberValue = TotalFamilyMemberNumber.getText().toString();
+
+                        WorkingNumOfHusbandValue= WorkingNumOfHusband.getText().toString();
+                        WorkingNumOfWifeValue=WorkingNumOfWife.getText().toString();
+                        WorkingNumOfChildrenValue=WorkingNumOfChildren.getText().toString();
+                        WorkingNumOfRelativesValue=WorkingNumOfRelatives.getText().toString();
+                        WorkingNumOfothersValue=WorkingNumOfothers.getText().toString();
+                        WorkingFamilyMemberNumberValue = WorkingFamilyMemberNumber.getText().toString();
 
                         HusbandIncomeSource = HusbandIncomeDetail.getText().toString();
+                        HusbandIncomeOtherSource = HusbandOthersIncomeDetail.getText().toString();
                         WifeIncomeSource = WifeIncomeDetail.getText().toString();
-                        ChindrenIncomeSource = ChildrenIncomeDetail.getText().toString();
+                        WifeIncomeOtherSource = WifeOthersIncomeDetail.getText().toString();
+                        ChildrenIncomeSource = ChildrenIncomeDetail.getText().toString();
+                        ChildrensIncomeOtherSource = ChildrenOthersIncomeDetail.getText().toString();
                         RelativesIncomeSource = RelativesIncomeDetail.getText().toString();
+                        RelativesIncomeOtherSource = RelativesOthersIncomeDetail.getText().toString();
                         OthersIncomeSource = OthersIncomeDetail.getText().toString();
+                        OthersIncomeOtherSource = OthersOthersIncomeDetail.getText().toString();
 
                         AverageMonthlyIncomeOfHusbandValue = AverageMonthlyIncomeOfHusband.getText().toString();
                         AverageMonthlyIncomeOfWifeValue = AverageMonthlyIncomeOfWife.getText().toString();
@@ -1042,18 +1076,30 @@ public class SurveyMain extends AppCompatActivity {
             header.put("sex", SexValue);
             header.put("email", EmailValue);
 //            header.put("num_of_family_memb", FamilyMemberNumberValue);
-            header.put("num_of_working_family_memb", WorkingFamilyMemberNumberValue);
+            header.put("total_num_of_family_memb",FamilyMemberNumberValue);
             header.put("husband_no", NumOfHusbandValue);
             header.put("wife_no", NumOfWifeValue);
             header.put("children_no", NumOfChildrenValue);
             header.put("relatives_no", NumOfRelativesValue);
             header.put("others_no", NumOfothersValue);
 
+            header.put("num_of_working_family_memb", WorkingFamilyMemberNumberValue);
+            header.put("working_husband_no", NumOfHusbandValue);
+            header.put("working_wife_no", NumOfWifeValue);
+            header.put("working_children_no", NumOfChildrenValue);
+            header.put("working_relatives_no", NumOfRelativesValue);
+            header.put("working_others_no", NumOfothersValue);
+
             header.put("income_source_of_husband", HusbandIncomeSource);
+            header.put("income_other_source_of_husband", HusbandIncomeOtherSource);
             header.put("income_source_of_wife", WifeIncomeSource);
-            header.put("income_source_of_children", ChindrenIncomeSource);
+            header.put("income_other_source_of_wife", WifeIncomeOtherSource);
+            header.put("income_source_of_children", ChildrenIncomeSource);
+            header.put("income_other_source_of_children", ChildrensIncomeOtherSource);
             header.put("income_source_of_relatives", RelativesIncomeSource);
+            header.put("income_other_source_of_relatives", RelativesIncomeOtherSource);
             header.put("income_source_of_others", OthersIncomeSource);
+            header.put("income_other_source_of_others", OthersIncomeOtherSource);
 
             header.put("average_income_of_husband", AverageMonthlyIncomeOfHusbandValue);
             header.put("average_income_of_wife", AverageMonthlyIncomeOfWifeValue);
@@ -1107,18 +1153,35 @@ public class SurveyMain extends AppCompatActivity {
         SexValue = jsonObj.getString("sex");
         EmailValue = jsonObj.getString("email");
 //        FamilyMemberNumberValue = jsonObj.getString("num_of_family_memb");
-        WorkingFamilyMemberNumberValue = jsonObj.getString("num_of_working_family_memb");
+
         NumOfHusbandValue = jsonObj.getString("husband_no");
         NumOfWifeValue = jsonObj.getString("wife_no");
         NumOfChildrenValue = jsonObj.getString("children_no");
         NumOfRelativesValue = jsonObj.getString("relatives_no");
         NumOfothersValue = jsonObj.getString("others_no");
+        FamilyMemberNumberValue = jsonObj.getString("total_num_of_family_memb");
+
+        WorkingNumOfHusbandValue = jsonObj.getString("working_husband_no");
+        WorkingNumOfWifeValue = jsonObj.getString("working_wife_no");
+        WorkingNumOfChildrenValue = jsonObj.getString("working_children_no");
+        WorkingNumOfRelativesValue = jsonObj.getString("working_relatives_no");
+        WorkingNumOfothersValue = jsonObj.getString("working_others_no");
+        WorkingFamilyMemberNumberValue = jsonObj.getString("num_of_working_family_memb");
+
+
+
 
         HusbandIncomeSource = jsonObj.getString("income_source_of_husband");
+        HusbandIncomeOtherSource = jsonObj.getString("income_other_source_of_husband");
         WifeIncomeSource = jsonObj.getString("income_source_of_wife");
-        ChindrenIncomeSource = jsonObj.getString("income_source_of_children");
+        WifeIncomeOtherSource = jsonObj.getString("income_other_source_of_wife");
+        ChildrenIncomeSource = jsonObj.getString("income_source_of_children");
+        ChildrensIncomeOtherSource = jsonObj.getString("income_other_source_of_children");
         RelativesIncomeSource = jsonObj.getString("income_source_of_relatives");
+        RelativesIncomeOtherSource = jsonObj.getString("income_other_source_of_relatives");
         OthersIncomeSource = jsonObj.getString("income_source_of_others");
+        OthersIncomeOtherSource = jsonObj.getString("income_other_source_of_others");
+
 
         AverageMonthlyIncomeOfHusbandValue = jsonObj.getString("average_income_of_husband");
         AverageMonthlyIncomeOfWifeValue = jsonObj.getString("average_income_of_wife");
@@ -1143,40 +1206,106 @@ public class SurveyMain extends AppCompatActivity {
 //
         surveyorId.setText(SurveyIdNumValue);
         NameOfSurveyor.setText(NameOfSurveyorValue);
+        DateOfSurvey.setText(DateOfSurveyValue);
         HouseHoldId.setText(HouseHoldIdValue);
         Municipality.setText(MunicipalityValue);
         Ward.setText(WardValue);
-        Address.setText(HouseholdTypologyValue);
+        Address.setText(AddressValue);
+
+//        HouseholdTypology.setText(HouseholdTypologyValue);
+
+        if(HouseholdTypologyValue.equals("Single Family Detached")){
+            ((RadioButton)findViewById(R.id.single_f_d)).setChecked(true);
+        }else if(HouseholdTypologyValue.equals("Multy-Family House")) {
+            ((RadioButton)findViewById(R.id.multy_f_h)).setChecked(true);
+        }else if(HouseholdTypologyValue.equals("Apartment Block")){
+            ((RadioButton)findViewById(R.id.apartment_block)).setChecked(true);
+        }else if(HouseholdTypologyValue.equals("Mixed-Use Block")){
+            ((RadioButton)findViewById(R.id.mix_use_block)).setChecked(true);
+        }else {
+            ((RadioButton)findViewById(R.id.num_of_floor)).setChecked(true);
+        }
+
+
         Age.setText(AgeValue);
-        Address.setText(SexValue);
+
+//        Sex.setText(SexValue);
+//        String gender = "male";
+        // this comes from db - since we don't know the structure this is a plain guess.
+        if(SexValue.equals("male")){
+            ((RadioButton)findViewById(R.id.male)).setChecked(true);
+        }else if (SexValue.equals("female")){
+            ((RadioButton)findViewById(R.id.female)).setChecked(true);
+        }else {
+            ((RadioButton)findViewById(R.id.Other)).setChecked(true);
+        }
+
+
+
         Email.setText(EmailValue);
-        WorkingFamilyMemberNumber.setText(WorkingFamilyMemberNumberValue);
+
         NumOfHusband.setText(NumOfHusbandValue);
         NumOfWife.setText(NumOfWifeValue);
         NumOfChildren.setText(NumOfChildrenValue);
         NumOfRelatives.setText(NumOfRelativesValue);
         NumOfothers.setText(NumOfothersValue);
+        TotalFamilyMemberNumber.setText(FamilyMemberNumberValue);
+
+        WorkingNumOfHusband.setText(WorkingNumOfHusbandValue);
+        WorkingNumOfWife.setText(WorkingNumOfWifeValue);
+        WorkingNumOfChildren.setText(WorkingNumOfChildrenValue);
+        WorkingNumOfRelatives.setText(WorkingNumOfRelativesValue);
+        WorkingNumOfothers.setText(WorkingNumOfothersValue);
+        WorkingFamilyMemberNumber.setText(WorkingFamilyMemberNumberValue);
+
+
 
         HusbandIncomeDetail.setText(HusbandIncomeSource);
         if (!HusbandIncomeSource.equals("")) {
             HusbandIncomeDetail.setVisibility(View.VISIBLE);
         }
+        HusbandOthersIncomeDetail.setText(HusbandIncomeOtherSource);
+        if (!HusbandIncomeOtherSource.equals("")) {
+            HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+
         WifeIncomeDetail.setText(WifeIncomeSource);
         if (!WifeIncomeSource.equals("")) {
             WifeIncomeDetail.setVisibility(View.VISIBLE);
         }
-        ChildrenIncomeDetail.setText(ChindrenIncomeSource);
-        if (!ChindrenIncomeSource.equals("")) {
+        WifeOthersIncomeDetail.setText(WifeIncomeOtherSource);
+        if (!WifeIncomeOtherSource.equals("")) {
+            WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+
+       ChildrenIncomeDetail.setText(ChildrenIncomeSource);
+        if (!ChildrenIncomeSource.equals("")) {
             ChildrenIncomeDetail.setVisibility(View.VISIBLE);
         }
+        ChildrenOthersIncomeDetail.setText(ChildrensIncomeOtherSource);
+        if (!ChildrensIncomeOtherSource.equals("")) {
+            ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+
         RelativesIncomeDetail.setText(RelativesIncomeSource);
         if (!RelativesIncomeSource.equals("")) {
             RelativesIncomeDetail.setVisibility(View.VISIBLE);
         }
+        RelativesOthersIncomeDetail.setText(RelativesIncomeOtherSource);
+        if (!RelativesIncomeOtherSource.equals("")) {
+            RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+
         OthersIncomeDetail.setText(OthersIncomeSource);
         if (!OthersIncomeSource.equals("")) {
             OthersIncomeDetail.setVisibility(View.VISIBLE);
         }
+        OthersOthersIncomeDetail.setText(OthersIncomeOtherSource);
+        if (!OthersIncomeOtherSource.equals("")) {
+            OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+
+
         AverageMonthlyIncomeOfHusband.setText(AverageMonthlyIncomeOfHusbandValue);
         AverageMonthlyIncomeOfWife.setText(AverageMonthlyIncomeOfWifeValue);
         AverageMonthlyIncomeOfChildren.setText(AverageMonthlyIncomeOfChildrenValue);
@@ -1551,17 +1680,21 @@ public class SurveyMain extends AppCompatActivity {
         public void onItemsSelected(boolean[] selected) {
             // Do something here with the selected items
 
-            HusbandIncomeDetail.setVisibility(View.VISIBLE);
+//            HusbandIncomeDetail.setVisibility(View.VISIBLE);
 
             StringBuilder builder = new StringBuilder();
 
             int max = selected.length;
 
-            for (int i = 0; i < selected.length; i++) {
+            for (int i = 0; i < selected.length-1; i++) {
                 if (selected[i]) {
-                    HusbandIncomeDetail.setText(builder.append(adapter.getItem(i)).append("&"));
-                }
+                    HusbandIncomeDetail.setVisibility(View.VISIBLE);
+                    HusbandIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
 
+                }
+            }
+            if(selected[6]) {
+                HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
 
 //            Toast.makeText(ChildrenUnderTwo.this, builder.toString(), Toast.LENGTH_SHORT).show();
@@ -1572,7 +1705,7 @@ public class SurveyMain extends AppCompatActivity {
 
         public void onItemsSelected(boolean[] selected) {
             // Do something here with the selected items
-            WifeIncomeDetail.setVisibility(View.VISIBLE);
+//            WifeIncomeDetail.setVisibility(View.VISIBLE);
 
             StringBuilder builder = new StringBuilder();
 
@@ -1580,8 +1713,13 @@ public class SurveyMain extends AppCompatActivity {
 
             for (int i = 0; i < selected.length; i++) {
                 if (selected[i]) {
-                    WifeIncomeDetail.setText(builder.append(adapter.getItem(i)).append("&"));
+                    WifeIncomeDetail.setVisibility(View.VISIBLE);
+
+                    WifeIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
+            }
+            if(selected[6]) {
+                WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -1590,7 +1728,7 @@ public class SurveyMain extends AppCompatActivity {
 
         public void onItemsSelected(boolean[] selected) {
             // Do something here with the selected items
-            ChildrenIncomeDetail.setVisibility(View.VISIBLE);
+//            ChildrenIncomeDetail.setVisibility(View.VISIBLE);
 
             StringBuilder builder = new StringBuilder();
 
@@ -1598,8 +1736,13 @@ public class SurveyMain extends AppCompatActivity {
 
             for (int i = 0; i < selected.length; i++) {
                 if (selected[i]) {
-                    ChildrenIncomeDetail.setText(builder.append(adapter.getItem(i)).append("&"));
+                    ChildrenIncomeDetail.setVisibility(View.VISIBLE);
+
+                    ChildrenIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
+            }
+            if(selected[6]) {
+                ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -1608,7 +1751,7 @@ public class SurveyMain extends AppCompatActivity {
 
         public void onItemsSelected(boolean[] selected) {
             // Do something here with the selected items
-            RelativesIncomeDetail.setVisibility(View.VISIBLE);
+//            RelativesIncomeDetail.setVisibility(View.VISIBLE);
 
             StringBuilder builder = new StringBuilder();
 
@@ -1616,8 +1759,13 @@ public class SurveyMain extends AppCompatActivity {
 
             for (int i = 0; i < selected.length; i++) {
                 if (selected[i]) {
-                    RelativesIncomeDetail.setText(builder.append(adapter.getItem(i)).append("&"));
+                    RelativesIncomeDetail.setVisibility(View.VISIBLE);
+
+                    RelativesIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
+            }
+            if(selected[6]) {
+                RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -1626,7 +1774,7 @@ public class SurveyMain extends AppCompatActivity {
 
         public void onItemsSelected(boolean[] selected) {
             // Do something here with the selected items
-            OthersIncomeDetail.setVisibility(View.VISIBLE);
+//            OthersIncomeDetail.setVisibility(View.VISIBLE);
 
             StringBuilder builder = new StringBuilder();
 
@@ -1634,8 +1782,13 @@ public class SurveyMain extends AppCompatActivity {
 
             for (int i = 0; i < selected.length; i++) {
                 if (selected[i]) {
-                    OthersIncomeDetail.setText(builder.append(adapter.getItem(i)).append("&"));
+                    OthersIncomeDetail.setVisibility(View.VISIBLE);
+
+                    OthersIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
+            }
+            if(selected[6]) {
+                OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
         }
     };

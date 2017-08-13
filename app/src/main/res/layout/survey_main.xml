@@ -73,7 +73,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/survey_id_num"
                                     android:inputType="text"
-                                    android:text="1"
+                                    android:hint="id"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -103,7 +103,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Date of Survey"
-                                    android:inputType="text"
+                                    android:inputType="datetime"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
                         </LinearLayout>
@@ -142,7 +142,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/house_id_code"
                                     android:inputType="text"
-                                    android:text="1"
+                                    android:hint="id"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -972,6 +972,14 @@
                                     android:layout_below="@+id/spinnerMulti_Husband"
                                     android:visibility="gone" />
 
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_husband"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_income_details_husband"
+                                    android:hint="Specify other income source"
+                                    android:visibility="gone" />
+
 
                             </RelativeLayout>
 
@@ -1010,6 +1018,14 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/spinnerMulti_Wife"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_wife"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_income_details_wife"
+                                    android:hint="Specify other income source"
                                     android:visibility="gone" />
 
 
@@ -1052,6 +1068,14 @@
                                     android:layout_below="@+id/spinnerMulti_children"
                                     android:visibility="gone" />
 
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_children"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_income_details_children"
+                                    android:hint="Specify other income source"
+                                    android:visibility="gone" />
+
 
                             </RelativeLayout>
 
@@ -1092,6 +1116,14 @@
                                     android:layout_below="@+id/spinnerMulti_Relative"
                                     android:visibility="gone" />
 
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_relatives"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_income_details_relatives"
+                                    android:hint="Specify other income source"
+                                    android:visibility="gone" />
+
 
                             </RelativeLayout>
 
@@ -1130,6 +1162,14 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/spinnerMulti_Others"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_others"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_income_details_others"
+                                    android:hint="Specify other income source"
                                     android:visibility="gone" />
 
 
