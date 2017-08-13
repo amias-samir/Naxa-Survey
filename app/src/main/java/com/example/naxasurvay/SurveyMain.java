@@ -651,7 +651,7 @@ public class SurveyMain extends AppCompatActivity {
                 final EditText dateToInput = (EditText) showDialog.findViewById(R.id.input_date);
 
                 if (formNameSavedForm.equals("")) {
-                    FormNameToInput.setText("Household Survay");
+                    FormNameToInput.setText("Household Survey");
                 } else {
                     FormNameToInput.setText(formNameSavedForm);
                     Database_SaveForm dataBaseNsaveform = new Database_SaveForm(context);

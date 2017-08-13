@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NAXA Survay</string>
+    <string name="app_name">NAXA Survey</string>
 
     <string name="access_token">sk.eyJ1IjoicGVhY2VuZXBhbCIsImEiOiJjajZhZDdpbGwxMW0yMnFsc3J6dDhqaTRhIn0.-6QCbw7vfpHyuIcNcXGByg</string>
 </resources>
