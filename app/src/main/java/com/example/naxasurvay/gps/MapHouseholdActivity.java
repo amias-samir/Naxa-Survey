@@ -1,14 +1,23 @@
 package com.example.naxasurvay.gps;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.example.naxasurvay.R;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -34,6 +43,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
     private MapboxMap map;
     private Handler handler;
     private Runnable runnable;
+    FloatingActionButton getMyLocationFAB;
 
     private static int count = 0;
     private long distance;
@@ -49,8 +59,45 @@ public class MapHouseholdActivity extends AppCompatActivity {
         // This contains the MapView in XML and needs to be called after the account manager
         setContentView(R.layout.activity_map_household);
 
+
         // Initialize the map view
         mapView = (MapView) findViewById(R.id.mapView);
+
+        getMyLocationFAB = (FloatingActionButton) findViewById(R.id.myLocationButton);
+        getMyLocationFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Log.e(TAG, "onClick: ", );map.getMyLocation();
+
+                if (map.getMyLocation() != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
+//                    map.setCenterCoordinate(new LatLngZoom(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude(), 20), true);
+
+                    Double latitude = map.getMyLocation().getLatitude();
+                    Double longitude = map.getMyLocation().getLatitude();
+
+                    IconFactory iconFactory = IconFactory.getInstance(MapHouseholdActivity.this);
+//                    Drawable iconDrawable = ContextCompat.getDrawable(MapHouseholdActivity.this, R.drawable.marker_current);
+                    Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_current);
+                    Icon icon = iconFactory.fromBitmap(largeIcon);
+
+                    map.addMarker(new MarkerOptions()
+                            .position(new LatLng(latitude, longitude))
+                            .icon(icon)
+                            .title("Your Current Location"));
+
+
+                    // Animate camera to geocoder result location
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(latitude, longitude))
+                            .zoom(15)
+                            .build();
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+
+                }
+            }
+        });
+
+
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -65,6 +112,10 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
     } // End onCreate
 
     @Override
@@ -211,4 +262,10 @@ public class MapHouseholdActivity extends AppCompatActivity {
                 .build();
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
     }
+
+
+
+
+
+
 }
