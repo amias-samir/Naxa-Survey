@@ -35,8 +35,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SavedFormActivity"></activity>
-        <activity android:name=".gps.MapHouseholdActivity"></activity>
+        <activity android:name=".SavedFormActivity">
+
+        </activity>
+        <activity android:name=".gps.MapHouseholdActivity">
+
+        </activity>
     </application>
 
 </manifest>
