@@ -46,6 +46,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -107,7 +108,12 @@ public class SurveyMain extends AppCompatActivity {
     boolean isGpsTracking = false;
     boolean isGpsTaken = false;
 
+
     private int year, month, day;
+
+    public static final int GEOPOINT_RESULT_CODE = 1994;
+    public static final String LOCATION_RESULT = "LOCATION_RESULT";
+
 
     NetworkInfo networkInfo;
     ConnectivityManager connectivityManager;
@@ -132,6 +138,7 @@ public class SurveyMain extends AppCompatActivity {
     AutoCompleteTextView NameOfSurveyor;
     @BindView(R.id.date_of_survey)
     AutoCompleteTextView DateOfSurvey;
+//    @BindView(R.id.Survey_date)DatePicker SurveyDate;
 
     @BindView(R.id.id_code)
     EditText HouseHoldId;
@@ -263,6 +270,12 @@ public class SurveyMain extends AppCompatActivity {
     @BindView(R.id.selected_others_income_details_others)
     EditText OthersOthersIncomeDetail;
 
+    @BindView(R.id.selected_farm_income_details_husband)EditText HusbandFarmIncome;
+    @BindView(R.id.selected_farm_income_details_wife)EditText WifeFarmIncome;
+    @BindView(R.id.selected_farm_income_details_children)EditText ChildrenFarmIncome;
+    @BindView(R.id.selected_farm_income_details_relatives)EditText RelativesFarmIncome;
+    @BindView(R.id.selected_farm_income_details_others)EditText OthersFarmIncome;
+
     @BindView(R.id.Survay_average_monthlyIncome_of_husband)
     AutoCompleteTextView AverageMonthlyIncomeOfHusband;
     @BindView(R.id.husband_price_type)
@@ -333,6 +346,8 @@ public class SurveyMain extends AppCompatActivity {
 
     String HusbandIncometype, WifeIncomeType, CHildrenIncomeType, RelativesIncomeTypes, OthersIncomeTypes, LandAreaType, PropertyAreaType,
             LandPriceType, PropertyPriceType;
+
+    String HusbandFarmIncomeValue,WifeFarmIncomeValue,ChildrenFarmIncomeValue,RelativesFarmIncomeValue,OthersFarmIncomeValue;
 
     GoogleApiClient client;
     LocationRequest mLocationRequest;
@@ -593,42 +608,45 @@ public class SurveyMain extends AppCompatActivity {
         startGps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (GPS_SETTINGS.equals(true) || GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED) {
+//                if (GPS_SETTINGS.equals(true) || GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED) {
+//
+//                    if (gps.canGetLocation()) {
+//                        gpslocation.add(gps.getLocation());
+//                        finalLat = gps.getLatitude();
+//                        finalLong = gps.getLongitude();
+//                        if (finalLat != 0) {
+//                            try {
+//                                JSONObject data = new JSONObject();
+//                                data.put("latitude", finalLat);
+//                                data.put("longitude", finalLong);
+//
+//                                jsonArrayGPS.put(data);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                            LatLng location = new LatLng(finalLat, finalLong);
+//
+//                            listCf.add(location);
+//                            isGpsTaken = true;
+//                            Toast.makeText(
+//                                    getApplicationContext(),
+//                                    "Your Location is - \nLat: " + finalLat
+//                                            + "\nLong: " + finalLong, Toast.LENGTH_SHORT)
+//                                    .show();
+//                            stringBuilder.append("[" + finalLat + "," + finalLong + "]" + ",");
+//                        }
+//
+//                    }
+//                } else {
+//                    askForGPS();
+//                    gps = new GPS_TRACKER_FOR_POINT(SurveyMain.this);
+//                    Default_DIalog.showDefaultDialog(context, R.string.app_name, "Please try again, Gps not initialized");
+////                        com.example.naxasurvay.gps.showSettingsAlert();
+//                }
 
-                    if (gps.canGetLocation()) {
-                        gpslocation.add(gps.getLocation());
-                        finalLat = gps.getLatitude();
-                        finalLong = gps.getLongitude();
-                        if (finalLat != 0) {
-                            try {
-                                JSONObject data = new JSONObject();
-                                data.put("latitude", finalLat);
-                                data.put("longitude", finalLong);
-
-                                jsonArrayGPS.put(data);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            LatLng location = new LatLng(finalLat, finalLong);
-
-                            listCf.add(location);
-                            isGpsTaken = true;
-                            Toast.makeText(
-                                    getApplicationContext(),
-                                    "Your Location is - \nLat: " + finalLat
-                                            + "\nLong: " + finalLong, Toast.LENGTH_SHORT)
-                                    .show();
-                            stringBuilder.append("[" + finalLat + "," + finalLong + "]" + ",");
-                        }
-
-                    }
-                } else {
-                    askForGPS();
-                    gps = new GPS_TRACKER_FOR_POINT(SurveyMain.this);
-                    Default_DIalog.showDefaultDialog(context, R.string.app_name, "Please try again, Gps not initialized");
-//                        com.example.naxasurvay.gps.showSettingsAlert();
-                }
+                Intent toGeoPointActivity = new Intent(SurveyMain.this, GeoPointActivity.class);
+                startActivityForResult(toGeoPointActivity, GEOPOINT_RESULT_CODE);
             }
         });
 
@@ -704,6 +722,11 @@ public class SurveyMain extends AppCompatActivity {
                                 AverageMonthlyIncomeOfRelativesValue = AverageMonthlyIncomeOfRelatives.getText().toString();
                                 AverageMonthlyIncomeOfOthersValue = AverageMonthlyIncomeOfOthers.getText().toString();
 
+                                HusbandFarmIncomeValue = HusbandFarmIncome.getText().toString();
+                                WifeFarmIncomeValue = WifeFarmIncome.getText().toString();
+                                ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
+                                RelativesFarmIncomeValue = RelativesFarmIncome.getText().toString();
+                                OthersFarmIncomeValue = OthersFarmIncome.getText().toString();
 //                AreaOfLandValue = AreaOfLand.getText().toString();
 //                PriceOfLandValue = PriceOfLand.getText().toString();
                                 LandInAnnaValue = LandInAnna.getText().toString();
@@ -895,6 +918,11 @@ public class SurveyMain extends AppCompatActivity {
                         AverageMonthlyIncomeOfChildrenValue = AverageMonthlyIncomeOfChildren.getText().toString();
                         AverageMonthlyIncomeOfRelativesValue = AverageMonthlyIncomeOfRelatives.getText().toString();
                         AverageMonthlyIncomeOfOthersValue = AverageMonthlyIncomeOfOthers.getText().toString();
+                        HusbandFarmIncomeValue = HusbandFarmIncome.getText().toString();
+                        WifeFarmIncomeValue = WifeFarmIncome.getText().toString();
+                        ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
+                        RelativesFarmIncomeValue = RelativesFarmIncome.getText().toString();
+                        OthersFarmIncomeValue = OthersFarmIncome.getText().toString();
 
                         LandInAnnaValue = LandInAnna.getText().toString();
                         TotalLandPriceValue = TotalLandPrice.getText().toString();
@@ -992,11 +1020,12 @@ public class SurveyMain extends AppCompatActivity {
                 .append(year).append(" "));
 
         // set current date into datepicker
-//        dpResult.init(year, month, day, null);
+//        SurveyDate.init(year, month, day, null);
 
     }
-    static final int DATE_DIALOG_ID =999;
-    
+
+    static final int DATE_DIALOG_ID = 999;
+
     public void addListenerOnButton() {
 
 //        btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
@@ -1020,7 +1049,7 @@ public class SurveyMain extends AppCompatActivity {
             case DATE_DIALOG_ID:
                 // set date picker as current date
                 return new DatePickerDialog(this, datePickerListener,
-                        year, month,day);
+                        year, month, day);
         }
         return null;
     }
@@ -1041,11 +1070,10 @@ public class SurveyMain extends AppCompatActivity {
                     .append(" "));
 
             // set selected date into datepicker also
-//            dpResult.init(year, month, day, null);
+//            SurveyDate.init(year, month, day, null);
 
         }
     };
-
 
 
     String uniCode;
@@ -1321,6 +1349,12 @@ public class SurveyMain extends AppCompatActivity {
             header.put("average_income_of_relatives", AverageMonthlyIncomeOfRelativesValue);
             header.put("average_income_of_others", AverageMonthlyIncomeOfOthersValue);
 
+//            header.put("farm_income_of_husband", HusbandFarmIncomeValue);
+//            header.put("farm_income_of_wife", WifeFarmIncomeValue);
+//            header.put("farm_income_of_children", ChildrenFarmIncomeValue);
+//            header.put("farm_income_of_relatives", RelativesFarmIncomeValue);
+//            header.put("farm_income_of_others", OthersFarmIncomeValue);
+
             header.put("husband_price_type", HusbandIncometype);
             header.put("wife_price_type", WifeIncomeType);
             header.put("children_price_type", CHildrenIncomeType);
@@ -1413,6 +1447,12 @@ public class SurveyMain extends AppCompatActivity {
         AverageMonthlyIncomeOfChildrenValue = jsonObj.getString("average_income_of_children");
         AverageMonthlyIncomeOfRelativesValue = jsonObj.getString("average_income_of_relatives");
         AverageMonthlyIncomeOfOthersValue = jsonObj.getString("average_income_of_others");
+
+//        HusbandFarmIncomeValue = jsonObj.getString("farm_income_of_husband");
+//        WifeFarmIncomeValue = jsonObj.getString("farm_income_of_wife");
+//        ChildrenFarmIncomeValue = jsonObj.getString("farm_income_of_children");
+//        RelativesFarmIncomeValue = jsonObj.getString("farm_income_of_relatives");
+//        OthersFarmIncomeValue = jsonObj.getString("farm_income_of_others");
 
         HusbandIncometype = jsonObj.getString("husband_price_type");
         WifeIncomeType = jsonObj.getString("wife_price_type");
@@ -1517,6 +1557,10 @@ public class SurveyMain extends AppCompatActivity {
         if (!HusbandIncomeOtherSource.equals("")) {
             HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
+        HusbandFarmIncome.setText(HusbandFarmIncomeValue);
+        if (!HusbandFarmIncomeValue.equals("")) {
+            HusbandFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         WifeIncomeDetail.setText(WifeIncomeSource);
         if (!WifeIncomeSource.equals("")) {
@@ -1525,6 +1569,10 @@ public class SurveyMain extends AppCompatActivity {
         WifeOthersIncomeDetail.setText(WifeIncomeOtherSource);
         if (!WifeIncomeOtherSource.equals("")) {
             WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+        WifeFarmIncome.setText(WifeFarmIncomeValue);
+        if (!WifeFarmIncomeValue.equals("")) {
+            WifeFarmIncome.setVisibility(View.VISIBLE);
         }
 
         ChildrenIncomeDetail.setText(ChildrenIncomeSource);
@@ -1535,6 +1583,10 @@ public class SurveyMain extends AppCompatActivity {
         if (!ChildrensIncomeOtherSource.equals("")) {
             ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
+        ChildrenFarmIncome.setText(ChildrenFarmIncomeValue);
+        if (!ChildrenFarmIncomeValue.equals("")) {
+            ChildrenFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         RelativesIncomeDetail.setText(RelativesIncomeSource);
         if (!RelativesIncomeSource.equals("")) {
@@ -1544,6 +1596,10 @@ public class SurveyMain extends AppCompatActivity {
         if (!RelativesIncomeOtherSource.equals("")) {
             RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
+        RelativesFarmIncome.setText(RelativesFarmIncomeValue);
+        if (!RelativesFarmIncomeValue.equals("")) {
+            RelativesFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         OthersIncomeDetail.setText(OthersIncomeSource);
         if (!OthersIncomeSource.equals("")) {
@@ -1552,6 +1608,10 @@ public class SurveyMain extends AppCompatActivity {
         OthersOthersIncomeDetail.setText(OthersIncomeOtherSource);
         if (!OthersIncomeOtherSource.equals("")) {
             OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
+        }
+        OthersFarmIncome.setText(OthersFarmIncomeValue);
+        if (!OthersFarmIncomeValue.equals("")) {
+            OthersFarmIncome.setVisibility(View.VISIBLE);
         }
 
 
@@ -1634,9 +1694,56 @@ public class SurveyMain extends AppCompatActivity {
                 saveToExternalSorage(thumbnail);
                 addImage();
 //                Toast.makeText(getApplicationContext(), "" + encodedImage, Toast.LENGTH_SHORT).show();
+
+
             }
         }
+
+        if (requestCode == GEOPOINT_RESULT_CODE) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    String location = data.getStringExtra(LOCATION_RESULT);
+
+                    String string = location;
+                    String[] parts = string.split(" ");
+                    String split_lat = parts[0]; // 004
+                    String split_lon = parts[1]; // 034556
+
+
+                    if (!split_lat.equals("") && !split_lon.equals("")) {
+                        GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED = true;
+
+                        finalLat = Double.parseDouble(split_lat);
+                        finalLong = Double.parseDouble(split_lon);
+
+                        LatLng d = new LatLng(finalLat, finalLong);
+//
+                        listCf.add(d);
+                        isGpsTaken = true;
+
+                        try {
+                            JSONObject locationdata = new JSONObject();
+                            locationdata.put("latitude", finalLat);
+                            locationdata.put("longitude", finalLong);
+
+                            jsonArrayGPS.put(locationdata);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+//                                btnPreviewMap.setEnabled(true);
+                        startGps.setText("Location Recorded");
+                    }
+
+
+//                    Toast.makeText(this.context, location, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+
     }
+
+
 
     private void saveToExternalSorage(Bitmap thumbnail) {
         // TODO Auto-generated method stub
@@ -1660,7 +1767,9 @@ public class SurveyMain extends AppCompatActivity {
             out.flush();
             out.close();
             Toast.makeText(getApplicationContext(), "Saved " + imageName, Toast.LENGTH_SHORT).show();
+
         } catch (Exception e) {
+
             e.printStackTrace();
         }
     }
@@ -1710,44 +1819,44 @@ public class SurveyMain extends AppCompatActivity {
 
     }
 
-    private class RestApii extends AsyncTask<String, Void, String> {
+private class RestApii extends AsyncTask<String, Void, String> {
 
 
-        @Override
-        protected String doInBackground(String... params) {
+    @Override
+    protected String doInBackground(String... params) {
 
-            String text = null;
-            text = POST(UrlClass.URL_DATA_SEND);
-            Log.d(TAG, "RAW resposne" + text);
+        String text = null;
+        text = POST(UrlClass.URL_DATA_SEND);
+        Log.d(TAG, "RAW resposne" + text);
 
-            return text;
+        return text;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        // TODO Auto-generated method stub
+
+        if (mProgressDlg != null && mProgressDlg.isShowing()) {
+            mProgressDlg.dismiss();
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            // TODO Auto-generated method stub
 
-            if (mProgressDlg != null && mProgressDlg.isShowing()) {
-                mProgressDlg.dismiss();
-            }
+        Log.d(TAG, "on post resposne" + result);
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(result);
+            dataSentStatus = jsonObject.getString("status");
+            Log.d(TAG, "onPostExecute: " + dataSentStatus);
 
-
-            Log.d(TAG, "on post resposne" + result);
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(result);
-                dataSentStatus = jsonObject.getString("status");
-                Log.d(TAG, "onPostExecute: " + dataSentStatus);
-
-            } catch (JSONException e) {
-                Log.d(TAG, "dataSentStatus: " + e.toString());
-                e.printStackTrace();
-            }
+        } catch (JSONException e) {
+            Log.d(TAG, "dataSentStatus: " + e.toString());
+            e.printStackTrace();
+        }
 
 
-            if (dataSentStatus.equals("200")) {
-                Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
-                previewImageSite.setVisibility(View.GONE);
+        if (dataSentStatus.equals("200")) {
+            Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
+            previewImageSite.setVisibility(View.GONE);
 
 //                surveyorId.setText(SurveyIdNumValue);
 //                NameOfSurveyor.setText(NameOfSurveyorValue);
@@ -1787,62 +1896,62 @@ public class SurveyMain extends AppCompatActivity {
 ////                        .setTitleText("")
 ////                        .setContentText("Data sent successfully!")
 ////                        .show();
-                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
-                        "" + imageName, "Sent", "0"};
+            String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
+                    "" + imageName, "Sent", "0"};
 ////
 //                Log.d(TAG, "string data: " + data);
 ////
 
 
-                Database_SentForm dataBaseSent = new Database_SentForm(context);
-                dataBaseSent.open();
-                long id = dataBaseSent.insertIntoTable_Main(data);
-                Log.e("dbID", "" + id);
-                dataBaseSent.close();
+            Database_SentForm dataBaseSent = new Database_SentForm(context);
+            dataBaseSent.open();
+            long id = dataBaseSent.insertIntoTable_Main(data);
+            Log.e("dbID", "" + id);
+            dataBaseSent.close();
 
-                if (CheckValues.isFromSavedFrom) {
-                    Log.e(TAG, "onPostExecute: FormID : " + formid);
-                    Database_SaveForm dataBase_NotSent = new Database_SaveForm(context);
-                    dataBase_NotSent.open();
-                    dataBase_NotSent.dropRowNotSentForms(formid);
+            if (CheckValues.isFromSavedFrom) {
+                Log.e(TAG, "onPostExecute: FormID : " + formid);
+                Database_SaveForm dataBase_NotSent = new Database_SaveForm(context);
+                dataBase_NotSent.open();
+                dataBase_NotSent.dropRowNotSentForms(formid);
 //                    Log.e("dbID", "" + id);
-                    dataBase_NotSent.close();
+                dataBase_NotSent.close();
 //
-                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-                    int width = metrics.widthPixels;
-                    int height = metrics.heightPixels;
+                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                int width = metrics.widthPixels;
+                int height = metrics.heightPixels;
 
 //                    Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
 
-                    final Dialog showDialog = new Dialog(context);
-                    showDialog.setContentView(R.layout.thank_you_popup);
-                    final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
-                    final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
+                final Dialog showDialog = new Dialog(context);
+                showDialog.setContentView(R.layout.thank_you_popup);
+                final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
+                final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
 
-                    showDialog.setTitle("Successfully Sent");
-                    showDialog.setCancelable(false);
-                    showDialog.show();
-                    showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+                showDialog.setTitle("Successfully Sent");
+                showDialog.setCancelable(false);
+                showDialog.show();
+                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                    yes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showDialog.dismiss();
-                            Intent intent = new Intent(SurveyMain.this, SurveyMain.class);
-                            startActivity(intent);
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog.dismiss();
+                        Intent intent = new Intent(SurveyMain.this, SurveyMain.class);
+                        startActivity(intent);
 //                                finish();
-                        }
-                    });
+                    }
+                });
 //
-                    no.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showDialog.dismiss();
-                            Intent intent = new Intent(SurveyMain.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog.dismiss();
+                        Intent intent = new Intent(SurveyMain.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
 //
 //                if (!CheckValues.isFromSavedFrom) {
 //                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -1881,56 +1990,57 @@ public class SurveyMain extends AppCompatActivity {
 //                    });
 //                }
 
-            }
         }
-
-
-        public String POST(String urll) {
-            String result = "";
-            URL url;
-
-            try {
-                url = new URL(urll);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("data", jsonToSend);
-
-                String query = builder.build().getEncodedQuery();
-
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
-                int responseCode = conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    String line;
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line = br.readLine()) != null) {
-                        result += line;
-                    }
-                } else {
-                    result = "";
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-
     }
+
+
+    public String POST(String urll) {
+        String result = "";
+        URL url;
+
+        try {
+            url = new URL(urll);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("data", jsonToSend);
+
+            String query = builder.build().getEncodedQuery();
+
+            writer.write(query);
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                String line;
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    result += line;
+                }
+            } else {
+                result = "";
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+   }
+
+
 
     //=====================multispinner selection ============================//
 
@@ -1951,6 +2061,9 @@ public class SurveyMain extends AppCompatActivity {
                     HusbandIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
 
                 }
+            }
+            if (selected[0]) {
+                HusbandFarmIncome.setVisibility(View.VISIBLE);
             }
             if (selected[6]) {
                 HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
@@ -1977,6 +2090,9 @@ public class SurveyMain extends AppCompatActivity {
                     WifeIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
             }
+            if (selected[0]) {
+                WifeFarmIncome.setVisibility(View.VISIBLE);
+            }
             if (selected[6]) {
                 WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
@@ -1999,6 +2115,9 @@ public class SurveyMain extends AppCompatActivity {
 
                     ChildrenIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
+            }
+            if (selected[0]) {
+                ChildrenFarmIncome.setVisibility(View.VISIBLE);
             }
             if (selected[6]) {
                 ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
@@ -2023,6 +2142,9 @@ public class SurveyMain extends AppCompatActivity {
                     RelativesIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
             }
+            if (selected[0]) {
+                RelativesFarmIncome.setVisibility(View.VISIBLE);
+            }
             if (selected[6]) {
                 RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
@@ -2045,6 +2167,9 @@ public class SurveyMain extends AppCompatActivity {
 
                     OthersIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
+            }
+            if (selected[0]) {
+                OthersFarmIncome.setVisibility(View.VISIBLE);
             }
             if (selected[6]) {
                 OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
