@@ -38,7 +38,7 @@
             mapbox:pressedTranslationZ="12dp"
             mapbox:fabSize="normal"
             android:backgroundTint="@color/primary_dark"/>
-        
+
     </FrameLayout>
 
 </RelativeLayout>

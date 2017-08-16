@@ -97,10 +97,10 @@ public class MapHouseholdActivity extends AppCompatActivity {
                     Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_current);
                     Icon icon = iconFactory.fromBitmap(largeIcon);
 
-                    map.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-//                            .icon(icon)
-                            .title("Your Current Location"));
+//                    map.addMarker(new MarkerOptions()
+//                            .position(new LatLng(latitude, longitude))
+////                            .icon(icon)
+//                            .title("Your Current Location"));
 
 
                     // Animate camera to geocoder result location
