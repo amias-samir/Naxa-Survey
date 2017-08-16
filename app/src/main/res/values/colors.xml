@@ -9,6 +9,7 @@
     <color name="primary_darker">#0376b6</color>
 
     <color name="divider_grey">#A9A9A9</color>
+    <color name="monsoon">#777777</color>
 
     <color name="button_text_color">#FFFFFF</color>
 </resources>

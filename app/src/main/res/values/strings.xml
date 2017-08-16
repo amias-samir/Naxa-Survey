@@ -1,5 +1,44 @@
 <resources>
-    <string name="app_name">NAXA Survay</string>
+    <string name="app_name">NAXA Survey</string>
 
     <string name="access_token">sk.eyJ1IjoicGVhY2VuZXBhbCIsImEiOiJjajZhZDdpbGwxMW0yMnFsc3J6dDhqaTRhIn0.-6QCbw7vfpHyuIcNcXGByg</string>
+
+    <string-array name="district_name">
+        <item>Kathmandu</item>
+        <item>Lalitpur</item>
+        <item>Bhaktapur</item>
+    </string-array>
+
+    <string-array name="item_land">
+        <item>Aana</item>
+        <item>Ropani</item>
+        <item>Bigha</item>
+        <item>Sq.Meter</item>
+    </string-array>
+
+    <string-array name="item_price">
+        <item>Rupees</item>
+        <item>Hundred</item>
+        <item>Thousand</item>
+        <item>Lakh</item>
+        <item>Crore</item>
+    </string-array>
+
+    <string-array name="municipality_name">
+        <item>Kathmandu</item>
+        <item>Kirtipur</item>
+        <item>Lalitpur</item>
+        <item>Lubhu</item>
+        <item>Saibhu</item>
+        <item>Bhaktapur</item>
+        <item>Gothatar</item>
+        <item>Ichangu Narayan</item>
+        <item>Madhyapur Thimi</item>
+
+
+    </string-array>
+
+
+
+
 </resources>
