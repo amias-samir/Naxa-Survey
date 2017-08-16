@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.example.naxasurvay.gps.MapHouseholdActivity;
+import com.example.naxasurvay.gps.SimpleOfflineMapActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case (R.id.mapHousehold):
-                Intent intentMap = new Intent(MainActivity.this, MapHouseholdActivity.class);
+                Intent intentMap = new Intent(MainActivity.this, SimpleOfflineMapActivity.class);
                 startActivity(intentMap);
 
                 break;
