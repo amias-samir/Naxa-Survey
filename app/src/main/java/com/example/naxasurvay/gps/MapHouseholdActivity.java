@@ -68,13 +68,20 @@ public class MapHouseholdActivity extends AppCompatActivity {
         getMyLocationFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.e(TAG, "onClick: SAMIR"+ map.getMyLocation().toString() );
+                map.setMyLocationEnabled(true);
+
 
                 if (map.getMyLocation() != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
 //                    map.setCenterCoordinate(new LatLngZoom(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude(), 20), true);
 
                     Double latitude = map.getMyLocation().getLatitude();
-                    Double longitude = map.getMyLocation().getLatitude();
+                    Double longitude = map.getMyLocation().getLongitude();
+
+                    Log.e(TAG, "onClick: SAMIR"+ latitude.toString() + ","+longitude.toString() );
+
+                    // Load and Draw the GeoJSON. The marker animation is also handled here.
+//                    new MapHouseholdActivity.DrawGeoJson().execute();
+
 
                     IconFactory iconFactory = IconFactory.getInstance(MapHouseholdActivity.this);
 //                    Drawable iconDrawable = ContextCompat.getDrawable(MapHouseholdActivity.this, R.drawable.marker_current);
@@ -181,7 +188,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
             try {
                 // Load GeoJSON file
-                InputStream inputStream = getAssets().open("all_household_data.geojson");
+                InputStream inputStream = getAssets().open("geojson_household.geojson");
                 Log.e(TAG, "doInBackground: "+inputStream.toString() );
                 BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
                 StringBuilder sb = new StringBuilder();
