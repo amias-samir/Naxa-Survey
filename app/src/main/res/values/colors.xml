@@ -12,4 +12,5 @@
     <color name="monsoon">#777777</color>
 
     <color name="button_text_color">#FFFFFF</color>
+    <color name="black_alpha_40">#BF000000</color>
 </resources>
