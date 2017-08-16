@@ -56,6 +56,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -118,14 +119,13 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         setupMapView(mapboxMap);
         animateMapToCurLocation(mapboxMap);
         setupOfflineMapManager(mapboxMap);
-        downloadOfflineRegion();
+        prepareToDownloadOfflineRegion();
 
         mapboxMap.setOnMarkerClickListener(this);
         mapboxMap.setOnMapClickListener(this);
 
 
         new DrawGeoJson().execute();
-
     }
 
 
@@ -179,6 +179,28 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
     }
 
+
+    private void prepareToDownloadOfflineRegion() {
+        if (offlineManager != null) {
+            offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
+                @Override
+                public void onList(OfflineRegion[] offlineRegions) {
+                    if (offlineRegions.length == 0) {
+                        showToast("Downloading Offline Map");
+                        downloadOfflineRegion();
+                    } else {
+                        showToast("Loading Offline Map ");
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "onListError: " + error);
+                }
+            });
+        }
+    }
+
     private void downloadOfflineRegion() {
         new Thread(new Runnable() {
             public void run() {
@@ -222,6 +244,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                                         Log.e(TAG, "onError message: " + error.getMessage());
 
                                         showToast(error.getMessage());
+                                        clearCorruptMapTile();
 
                                     }
 
@@ -368,6 +391,40 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         super.onPause();
         mapView.onPause();
 
+
+    }
+
+    private void clearCorruptMapTile() {
+        if (offlineManager != null) {
+            offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
+                @Override
+                public void onList(OfflineRegion[] offlineRegions) {
+                    if (offlineRegions.length > 0) {
+
+                        offlineRegions[(offlineRegions.length - 1)].delete(new OfflineRegion.OfflineRegionDeleteCallback() {
+                            @Override
+                            public void onDelete() {
+                                Toast.makeText(
+                                        SimpleOfflineMapActivity.this,
+                                        "Clearing Corrupt Map Data",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Log.e(TAG, "On Delete error: " + error);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "onListError: " + error);
+                }
+            });
+        }
     }
 
 
@@ -388,24 +445,22 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-
-        routeLat = marker.getPosition().getLatitude();
-        routeLon = marker.getPosition().getLongitude();
-
-        startRouteButton.setVisibility(View.VISIBLE);
-        startRouteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                routeTwoPointsInGMaps(routeLat, routeLon);
-            }
-        });
+        prepareToRoute(marker);
         return false;
     }
 
+    private void prepareToRoute(Marker marker) {
 
-    private void routeTwoPointsInGMaps(double lat, double lon) {
+        routeLat = marker.getPosition().getLatitude();
+        routeLon = marker.getPosition().getLongitude();
+        startRouteButton.setVisibility(View.VISIBLE);
+    }
+
+
+    @OnClick(R.id.startRouteButton)
+    public void routeTwoPointsInGMaps() {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse("http://maps.google.com/maps?daddr=" + lat + "," + lon));
+                Uri.parse("http://maps.google.com/maps?daddr=" + routeLat + "," + routeLon));
         startActivity(intent);
     }
 
