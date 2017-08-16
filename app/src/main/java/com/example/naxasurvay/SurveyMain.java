@@ -43,6 +43,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -103,6 +104,10 @@ public class SurveyMain extends AppCompatActivity {
     double finalLong;
     boolean isGpsTracking = false;
     boolean isGpsTaken = false;
+
+    public static final int GEOPOINT_RESULT_CODE = 1994;
+    public static final String LOCATION_RESULT = "LOCATION_RESULT";
+
 
     NetworkInfo networkInfo;
     ConnectivityManager connectivityManager;
@@ -606,42 +611,45 @@ public class SurveyMain extends AppCompatActivity {
         startGps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (GPS_SETTINGS.equals(true) || GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED) {
+//                if (GPS_SETTINGS.equals(true) || GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED) {
+//
+//                    if (gps.canGetLocation()) {
+//                        gpslocation.add(gps.getLocation());
+//                        finalLat = gps.getLatitude();
+//                        finalLong = gps.getLongitude();
+//                        if (finalLat != 0) {
+//                            try {
+//                                JSONObject data = new JSONObject();
+//                                data.put("latitude", finalLat);
+//                                data.put("longitude", finalLong);
+//
+//                                jsonArrayGPS.put(data);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                            LatLng location = new LatLng(finalLat, finalLong);
+//
+//                            listCf.add(location);
+//                            isGpsTaken = true;
+//                            Toast.makeText(
+//                                    getApplicationContext(),
+//                                    "Your Location is - \nLat: " + finalLat
+//                                            + "\nLong: " + finalLong, Toast.LENGTH_SHORT)
+//                                    .show();
+//                            stringBuilder.append("[" + finalLat + "," + finalLong + "]" + ",");
+//                        }
+//
+//                    }
+//                } else {
+//                    askForGPS();
+//                    gps = new GPS_TRACKER_FOR_POINT(SurveyMain.this);
+//                    Default_DIalog.showDefaultDialog(context, R.string.app_name, "Please try again, Gps not initialized");
+////                        com.example.naxasurvay.gps.showSettingsAlert();
+//                }
 
-                    if (gps.canGetLocation()) {
-                        gpslocation.add(gps.getLocation());
-                        finalLat = gps.getLatitude();
-                        finalLong = gps.getLongitude();
-                        if (finalLat != 0) {
-                            try {
-                                JSONObject data = new JSONObject();
-                                data.put("latitude", finalLat);
-                                data.put("longitude", finalLong);
-
-                                jsonArrayGPS.put(data);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            LatLng location = new LatLng(finalLat, finalLong);
-
-                            listCf.add(location);
-                            isGpsTaken = true;
-                            Toast.makeText(
-                                    getApplicationContext(),
-                                    "Your Location is - \nLat: " + finalLat
-                                            + "\nLong: " + finalLong, Toast.LENGTH_SHORT)
-                                    .show();
-                            stringBuilder.append("[" + finalLat + "," + finalLong + "]" + ",");
-                        }
-
-                    }
-                } else {
-                    askForGPS();
-                    gps = new GPS_TRACKER_FOR_POINT(SurveyMain.this);
-                    Default_DIalog.showDefaultDialog(context, R.string.app_name, "Please try again, Gps not initialized");
-//                        com.example.naxasurvay.gps.showSettingsAlert();
-                }
+                Intent toGeoPointActivity = new Intent(SurveyMain.this, GeoPointActivity.class);
+                startActivityForResult(toGeoPointActivity, GEOPOINT_RESULT_CODE);
             }
         });
 
@@ -1610,6 +1618,49 @@ public class SurveyMain extends AppCompatActivity {
                         saveToExternalSorage(thumbnail);
                         addImage();
 //                Toast.makeText(getApplicationContext(), "" + encodedImage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                if (requestCode == GEOPOINT_RESULT_CODE) {
+                    switch (resultCode) {
+                        case RESULT_OK:
+                            String location = data.getStringExtra(LOCATION_RESULT);
+
+                            String string = location;
+                            String[] parts = string.split(" ");
+                            String split_lat = parts[0]; // 004
+                            String split_lon = parts[1]; // 034556
+
+
+
+                            if (!split_lat.equals("") && !split_lon.equals("")) {
+                                GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED = true;
+
+                                finalLat = Double.parseDouble(split_lat);
+                                finalLong = Double.parseDouble(split_lon);
+
+                                LatLng d = new LatLng(finalLat, finalLong);
+//
+                                listCf.add(d);
+                                isGpsTaken = true;
+
+                                try {
+                                JSONObject locationdata = new JSONObject();
+                                    locationdata.put("latitude", finalLat);
+                                    locationdata.put("longitude", finalLong);
+
+                                jsonArrayGPS.put(locationdata);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+//                                btnPreviewMap.setEnabled(true);
+                                startGps.setText("Location Recorded");
+                            }
+
+
+//                    Toast.makeText(this.context, location, Toast.LENGTH_SHORT).show();
+                            break;
                     }
                 }
             }

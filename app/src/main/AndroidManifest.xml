@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".SavedFormActivity"></activity>
         <activity android:name=".gps.MapHouseholdActivity"></activity>
+        <activity android:name=".easy_gps.GeoPointActivity"></activity>
     </application>
 
 </manifest>
