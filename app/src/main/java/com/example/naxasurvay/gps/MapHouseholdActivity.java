@@ -1,13 +1,12 @@
 package com.example.naxasurvay.gps;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,7 +16,6 @@ import com.example.naxasurvay.R;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -36,8 +34,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MapHouseholdActivity extends AppCompatActivity {
     private static final String TAG = "MarkerFollowingRoute";
+
 
     private MapView mapView;
     private MapboxMap map;
@@ -47,6 +50,11 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
     private static int count = 0;
     private long distance;
+
+    ArrayList<String> Location = new ArrayList<>();
+    ArrayList<String> Code = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +66,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
         // This contains the MapView in XML and needs to be called after the account manager
         setContentView(R.layout.activity_map_household);
+        ButterKnife.bind(this);
 
 
         // Initialize the map view
@@ -77,7 +86,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
                     Double latitude = map.getMyLocation().getLatitude();
                     Double longitude = map.getMyLocation().getLongitude();
 
-                    Log.e(TAG, "onClick: SAMIR"+ latitude.toString() + ","+longitude.toString() );
+                    Log.e(TAG, "onClick: SAMIR" + latitude.toString() + "," + longitude.toString());
 
                     // Load and Draw the GeoJSON. The marker animation is also handled here.
 //                    new MapHouseholdActivity.DrawGeoJson().execute();
@@ -90,14 +99,14 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
                     map.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
-                            .icon(icon)
+//                            .icon(icon)
                             .title("Your Current Location"));
 
 
                     // Animate camera to geocoder result location
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(new LatLng(latitude, longitude))
-                            .zoom(15)
+                            .zoom(17)
                             .build();
                     map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
 
@@ -113,15 +122,13 @@ public class MapHouseholdActivity extends AppCompatActivity {
                 map = mapboxMap;
 
                 // Load and Draw the GeoJSON. The marker animation is also handled here.
-                new MapHouseholdActivity.DrawGeoJson().execute();
+                new DrawGeoJson().execute();
 
 //                updateMap(45.52214,-122.63748);
 
 
             }
         });
-
-
 
 
     } // End onCreate
@@ -177,6 +184,8 @@ public class MapHouseholdActivity extends AppCompatActivity {
         mapView.onSaveInstanceState(outState);
     }
 
+
+
     // We want to load in the GeoJSON file asynchronous so the UI thread isn't handling the file
 // loading. The GeoJSON file we are using is stored in the assets folder, you could also get
 // this information from the Mapbox map matching API during runtime.
@@ -189,7 +198,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
             try {
                 // Load GeoJSON file
                 InputStream inputStream = getAssets().open("geojson_household.geojson");
-                Log.e(TAG, "doInBackground: "+inputStream.toString() );
+                Log.e(TAG, "doInBackground: " + inputStream.toString());
                 BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
                 StringBuilder sb = new StringBuilder();
                 int cp;
@@ -204,13 +213,14 @@ public class MapHouseholdActivity extends AppCompatActivity {
                 JSONArray features = json.getJSONArray("features");
 
                 JSONObject feature = features.getJSONObject(0);
-                Log.e(TAG, "doInBackground: feature : "+feature.length() );
-                Log.e(TAG, "doInBackground: features : "+features.length() );
+                Log.e(TAG, "doInBackground: feature : " + feature.length());
+                Log.e(TAG, "doInBackground: features : " + features.length());
 //                JSONObject properties = feature.getJSONObject("properties");
-                for (int i = 0; i < features.length(); i++ ) {
+                for (int i = 0; i < features.length(); i++) {
                     JSONObject jobj = features.getJSONObject(i);
                     JSONObject geometry = jobj.getJSONObject("geometry");
-                    Log.e(TAG, "doInBackground: geometry"+geometry.toString() );
+                    JSONObject properties = jobj.getJSONObject("properties");
+                    Log.e(TAG, "doInBackground: geometry" + geometry.toString());
                     if (geometry != null) {
                         String type = geometry.getString("type");
 
@@ -221,8 +231,14 @@ public class MapHouseholdActivity extends AppCompatActivity {
                             JSONArray coords = geometry.getJSONArray("coordinates");
 //                            for (int lc = 0; lc < coords.length(); lc++) {
 //                                JSONArray coord = coords.getJSONArray(lc);
-                                LatLng latLng = new LatLng(coords.getDouble(1), coords.getDouble(0));
-                                points.add(latLng);
+                            LatLng latLng = new LatLng(coords.getDouble(1), coords.getDouble(0));
+                            points.add(latLng);
+
+                            String location = properties.getString("Location");
+                            String code = properties.getString("Code");
+
+                            Location.add(location);
+                            Code.add(code);
 
 //                            }
                         }
@@ -249,19 +265,20 @@ public class MapHouseholdActivity extends AppCompatActivity {
 //                        .color(Color.parseColor("#d0423b"))
 //                        .width(2));
 
-                for (int i = 0; i<points.size(); i++){
+                for (int i = 0; i < points.size(); i++) {
 
-                    updateMap(points.get(i).getLatitude(),points.get(i).getLongitude(), i);
+
+                    updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i));
                 }
             }
         }
     }
 
-    private void updateMap(double latitude, double longitude, int i) {
+    private void updateMap(double latitude, double longitude, String Code, String Location) {
         // Build marker
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .title("Household No."+i));
+                .title(Code +"\n" + Location));
 
         // Animate camera to geocoder result location
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -270,10 +287,6 @@ public class MapHouseholdActivity extends AppCompatActivity {
                 .build();
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
     }
-
-
-
-
 
 
 }
