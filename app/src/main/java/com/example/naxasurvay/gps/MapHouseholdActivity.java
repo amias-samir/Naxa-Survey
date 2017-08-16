@@ -63,11 +63,12 @@ public class MapHouseholdActivity extends AppCompatActivity {
         // Initialize the map view
         mapView = (MapView) findViewById(R.id.mapView);
 
+//        curent position marker
         getMyLocationFAB = (FloatingActionButton) findViewById(R.id.myLocationButton);
         getMyLocationFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.e(TAG, "onClick: ", );map.getMyLocation();
+//                Log.e(TAG, "onClick: SAMIR"+ map.getMyLocation().toString() );
 
                 if (map.getMyLocation() != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
 //                    map.setCenterCoordinate(new LatLngZoom(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude(), 20), true);
