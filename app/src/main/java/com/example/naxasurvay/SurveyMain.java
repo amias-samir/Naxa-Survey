@@ -559,6 +559,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Household Survey");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
 
@@ -1893,11 +1894,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
 
-    String check1, check2, check3, check4, check5;
+    String check1 = "", check2 = "", check3 = "", check4 = "", check5 = "";
 
     public void splitString(String htvString) {
         int commas = 0;
-        List<String> topology = new ArrayList<>();
+        ArrayList<String> topology = new ArrayList<>();
         for (int i = 0; i < htvString.length(); i++) {
             if (htvString.charAt(i) == ',') commas++;
         }
@@ -1918,9 +1919,29 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //        Log.e("Household_Survey", "HouseholdTypologyValue5 :" + check4);
 //        Log.e("Household_Survey", "HouseholdTypologyValue6 :" + check5);
 
-        for (int j=0; j<=commas; j++)
+        for (int j=0; j<commas; j++)
         {
+                String topologyValue = topology.get(j);
+            Log.e(TAG, "splitString:  topologyValue "+ topologyValue );
+            if(topologyValue.equals("single family detached")){
+                check1 = topologyValue;
+            }
+            else if(topologyValue.equals("Multi family house")){
+                check2 = topologyValue;
 
+            }
+            else if(topologyValue.equals("apartment block")){
+                check3 = topologyValue;
+
+            }
+            else if(topologyValue.equals("mixed use block")){
+                check4 = topologyValue;
+
+            }
+            else if(topologyValue.equals("number of floors")){
+                check5 = topologyValue;
+
+            }
         }
 
     }
