@@ -34,6 +34,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -73,6 +75,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -90,7 +93,7 @@ import butterknife.OnClick;
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.id;
 
-public class SurveyMain extends AppCompatActivity {
+public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener{
 
     private static final String TAG = "naxa_Survay";
     ProgressDialog mProgressDlg;
@@ -142,8 +145,19 @@ public class SurveyMain extends AppCompatActivity {
     AutoCompleteTextView Ward;
     @BindView(R.id.Survay_address)
     AutoCompleteTextView Address;
-    @BindView(R.id.HouseHold_type)
-    RadioGroup HouseholdTypology;
+//    @BindView(R.id.HouseHold_type)
+//    RadioGroup HouseholdTypology;
+
+    @BindView(R.id.single_family_detached)
+    CheckBox SingleFamilyDetached;
+    @BindView(R.id.multy_family_house)
+    CheckBox MultyFamilyhouse;
+    @BindView(R.id.apartment_block)
+    CheckBox ApartmentBlock;
+    @BindView(R.id.mixed_use_block)
+    CheckBox MixedUseBlock;
+    @BindView(R.id.number_of_floors)
+    CheckBox NumberOfFloors;
 
     @BindView(R.id.house_GpsStart)
     Button startGps;
@@ -522,6 +536,12 @@ public class SurveyMain extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        SingleFamilyDetached.setOnCheckedChangeListener( this);
+        MultyFamilyhouse.setOnCheckedChangeListener( this);
+        ApartmentBlock.setOnCheckedChangeListener( this);
+        MixedUseBlock.setOnCheckedChangeListener( this);
+        NumberOfFloors.setOnCheckedChangeListener( this);
+
 //        fillarray();
 
 //        District.setAdapter(new ArrayAdapter<String>(SurveyMain.this,
@@ -658,7 +678,7 @@ public class SurveyMain extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                SurveyIdNumValue = surveyorId.getText().toString();
+                        SurveyIdNumValue = surveyorId.getText().toString();
                         NameOfSurveyorValue = NameOfSurveyor.getText().toString();
                         DateOfSurveyValue = DateOfSurvey.getText().toString();
 
@@ -666,8 +686,8 @@ public class SurveyMain extends AppCompatActivity {
 //                MunicipalityValue = Municipality.getText().toString();
                         WardValue = Ward.getText().toString();
                         AddressValue = Address.getText().toString();
-                        RadioButton checkedBtn1 = (RadioButton) findViewById(HouseholdTypology.getCheckedRadioButtonId());
-                        HouseholdTypologyValue = checkedBtn1.getText().toString();
+//                        RadioButton checkedBtn1 = (RadioButton) findViewById(HouseholdTypology.getCheckedRadioButtonId());
+//                        HouseholdTypologyValue = checkedBtn1.getText().toString();
 
 
                         AgeValue = Age.getText().toString();
@@ -843,8 +863,8 @@ public class SurveyMain extends AppCompatActivity {
 //                        MunicipalityValue = Municipality.getText().toString();
                                 WardValue = Ward.getText().toString();
                                 AddressValue = Address.getText().toString();
-                                RadioButton checkedBtn1 = (RadioButton) findViewById(HouseholdTypology.getCheckedRadioButtonId());
-                                HouseholdTypologyValue = checkedBtn1.getText().toString();
+//                                RadioButton checkedBtn1 = (RadioButton) findViewById(HouseholdTypology.getCheckedRadioButtonId());
+//                                HouseholdTypologyValue = checkedBtn1.getText().toString();
 
 
                                 AgeValue = Age.getText().toString();
@@ -934,7 +954,7 @@ public class SurveyMain extends AppCompatActivity {
                                             mProgressDlg.show();
                                             convertDataToJson();
                                             sendDatToserver();
-//                                finish();
+//                                          finish();
                                         }
                                     });
 
@@ -1398,44 +1418,22 @@ public class SurveyMain extends AppCompatActivity {
                 Municipality.setSelection(setMunicipalityName);
 
 
-//        if (DistrictValue.equals("Kathmandu")) {
-////            ArrayList<String> kathmandu = new ArrayList<String>();
-//            int setMunicipality = kathmandu.indexOf(MunicipalityValue);
-//            Municipality.setSelection(setMunicipality);
-//
-//
-//            Log.e("Children Under Two", "Parsed data1 " + MunicipalityValue );
-//            Log.e("Children Under Two", "Parsed data1a " + setMunicipality );
-//            Log.e("Children Under Two", "Parsed data1b " + kathmandu );
-//
-//        } else if (DistrictValue.equals("Lalitpur")) {
-////            ArrayList<String> lalitpur = new ArrayList<String>();
-//            int setMunicipality = lalitpur.indexOf(MunicipalityValue);
-//            Municipality.setSelection(setMunicipality);
-//            Log.e("Children Under Two", "Parsed data2 " + MunicipalityValue );
-//        } else {
-////            ArrayList<String> bhaktapur = new Arr'[ayList<String>();
-//            int setMunicipality = bhaktapur.indexOf(MunicipalityValue);
-//            Municipality.setSelection(setMunicipality);
-//            Log.e("Children Under Two", "Parsed data3 " + MunicipalityValue );
-//        }
-//        Municipality.setText(MunicipalityValue);
                 Ward.setText(WardValue);
                 Address.setText(AddressValue);
 
 //        HouseholdTypology.setText(HouseholdTypologyValue);
 
-                if (HouseholdTypologyValue.equals("Single Family Detached")) {
-                    ((RadioButton) findViewById(R.id.single_f_d)).setChecked(true);
-                } else if (HouseholdTypologyValue.equals("Multy-Family House")) {
-                    ((RadioButton) findViewById(R.id.multy_f_h)).setChecked(true);
-                } else if (HouseholdTypologyValue.equals("Apartment Block")) {
-                    ((RadioButton) findViewById(R.id.apartment_block)).setChecked(true);
-                } else if (HouseholdTypologyValue.equals("Mixed-Use Block")) {
-                    ((RadioButton) findViewById(R.id.mix_use_block)).setChecked(true);
-                } else {
-                    ((RadioButton) findViewById(R.id.num_of_floor)).setChecked(true);
-                }
+//                if (HouseholdTypologyValue.equals("Single Family Detached")) {
+//                    ((RadioButton) findViewById(R.id.single_f_d)).setChecked(true);
+//                } else if (HouseholdTypologyValue.equals("Multy-Family House")) {
+//                    ((RadioButton) findViewById(R.id.multy_f_h)).setChecked(true);
+//                } else if (HouseholdTypologyValue.equals("Apartment Block")) {
+//                    ((RadioButton) findViewById(R.id.apartment_block)).setChecked(true);
+//                } else if (HouseholdTypologyValue.equals("Mixed-Use Block")) {
+//                    ((RadioButton) findViewById(R.id.mix_use_block)).setChecked(true);
+//                } else {
+//                    ((RadioButton) findViewById(R.id.num_of_floor)).setChecked(true);
+//                }
 
 
                 Age.setText(AgeValue);
@@ -1737,7 +1735,58 @@ public class SurveyMain extends AppCompatActivity {
 
             }
 
-            private class RestApii extends AsyncTask<String, Void, String> {
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+        switch(buttonView.getId()){
+            case R.id.single_family_detached:
+                if (SingleFamilyDetached.isChecked() == true) {
+                    HouseholdTypologyValue = HouseholdTypologyValue + "single family detached"+"," ;
+
+                }
+
+
+                break;
+            case R.id.multy_family_house:
+                if (MultyFamilyhouse.isChecked() == true) {
+                    HouseholdTypologyValue = HouseholdTypologyValue + "Multi family house"+"," ;
+
+                }
+
+
+                break;
+            case R.id.apartment_block:
+                if (ApartmentBlock.isChecked() == true) {
+                    HouseholdTypologyValue = HouseholdTypologyValue + "apartment block"+"," ;
+
+                }
+
+
+                break;
+            case R.id.mixed_use_block:
+                if (MixedUseBlock.isChecked() == true) {
+                    HouseholdTypologyValue = HouseholdTypologyValue + "mixed use block"+"," ;
+
+
+                }
+
+                break;
+
+            case R.id.number_of_floors:
+                if (NumberOfFloors.isChecked() == true) {
+                    HouseholdTypologyValue = HouseholdTypologyValue + "number of floors"+", " ;
+
+                }
+
+                break;
+
+
+//            HouseholdTypologyValue = topology;
+        }
+        Log.e("Household_Survey", "HouseholdTypologyValue :" + HouseholdTypologyValue);
+    }
+
+    private class RestApii extends AsyncTask<String, Void, String> {
 
 
                 @Override
