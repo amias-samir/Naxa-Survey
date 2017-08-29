@@ -682,7 +682,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                     try {
                         photoFile = createImageFile();
                     } catch (IOException ex) {
-                        Log.d("Nishon",ex.toString());
+                        Log.d("Nishon", ex.toString());
                         ex.printStackTrace();
                         // Error occurred while creating the File
                     }
@@ -1176,9 +1176,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     private void setPic(ImageView mImageView, String mCurrentPhotoPath) {
         // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
-
+        previewImageSite.setVisibility(View.VISIBLE);
+        int targetW = previewImageSite.getWidth();
+        int targetH = previewImageSite.getHeight();
+        Log.d("size", "image size :" + targetW);
+        Log.d("size", "image size :" + targetH);
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
@@ -1926,12 +1928,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         if (requestCode == CAMERA_PIC_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.d("Nishon", mCurrentPhotoPath + " is the path\n Does folder exists? "+photoFile.exists());
+                Log.d("Nishon", mCurrentPhotoPath + " is the path\n Does folder exists? " + photoFile.exists());
+                previewImageSite.setVisibility(View.VISIBLE);
 
                 setPic(previewImageSite, mCurrentPhotoPath);
 
-
-                previewImageSite.setVisibility(View.VISIBLE);
 
 //                saveToExternalSorage(thumbnail);
                 addImage();
@@ -2072,20 +2073,19 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         int i = 2;
         File file = new File(DIR);
-        Log.d("Nishon","Creating file "+file.getAbsolutePath());
+        Log.d("Nishon", "Creating file " + file.getAbsolutePath());
 
         while (file.exists()) {
             DIR = Environment.getExternalStorageDirectory() + File.separator + "NAXA Survey" + File.separator + "JPEG_" + timeStamp + "_" + i + ".jpg";
             file = new File(DIR);
-            Log.d("Nishon","Retrying ");
-            Log.d("Nishon","Creating file "+file.getAbsolutePath());
+            Log.d("Nishon", "Retrying ");
+            Log.d("Nishon", "Creating file " + file.getAbsolutePath());
         }
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = file.getAbsolutePath();
 
         return file;
-
 
 
     }
