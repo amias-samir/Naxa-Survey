@@ -8,10 +8,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,9 +22,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -78,6 +82,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -88,7 +93,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -98,6 +105,8 @@ import butterknife.OnClick;
 
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.id;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
@@ -105,7 +114,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     ProgressDialog mProgressDlg;
     int CAMERA_PIC_REQUEST = 2;
     String imagePath, encodedImage = "", imageName = "no_photo", image;
-    Bitmap thumbnail;
+    Bitmap thumbnail, realimage;
 
     GPS_TRACKER_FOR_POINT gps;
     List<Location> gpslocation = new ArrayList<>();
@@ -127,6 +136,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     String latLangArray = "", jsonLatLangArray = "";
     String a, b, c, d, e;
 
+    private Uri fileUri; // file url to store image/video
 
     static final Integer LOCATION = 0x1;
     static final Integer GPS_SETTINGS = 0x8;
@@ -339,6 +349,18 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     @BindView(R.id.property_price_spinner)
     Spinner property_price_spinner;
 
+    @BindView(R.id.land_pooling_house)
+    CheckBox poolingHouse;
+    @BindView(R.id.land_pooling_land)
+    CheckBox poolingland;
+    @BindView(R.id.pooling_yearof_purchase)
+    AutoCompleteTextView yearOfPurchase;
+    @BindView(R.id.pooling_valueof_purchase)
+    AutoCompleteTextView valueOfPurchase;
+    @BindView(R.id.pooling_price_spinner)
+    Spinner Pooling_price_spinner;
+
+
     @BindView(R.id.Naxa_survay_save)
     Button Save;
     @BindView(R.id.Naxa_survay_send)
@@ -371,9 +393,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     String HusbandFarmIncomeValue, WifeFarmIncomeValue, ChildrenFarmIncomeValue, RelativesFarmIncomeValue, OthersFarmIncomeValue;
 
+    String yearOfPurchaseValue, valueOfPurchaseValue, PoolingPriceType, HouseCode;
+
     GoogleApiClient client;
     LocationRequest mLocationRequest;
     PendingResult<LocationSettingsResult> result;
+    private File photoFile;
 
     @OnClick({R.id.button_inc_husband, R.id.button_inc_wife, R.id.button_inc_childrens, R.id.button_inc_relatives, R.id.button_inc_others})
     public void checkboxListner(View view) {
@@ -551,6 +576,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     DatePickerDialog datePickerDialog;
 
+    SharedPreferences preferences;
+    public Bitmap bitmapGlobal;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -563,6 +591,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         ButterKnife.bind(this);
 
+        HouseCode = getIntent().getStringExtra("HouseCode");
 
         SingleFamilyDetached.setOnCheckedChangeListener(this);
         MultyFamilyhouse.setOnCheckedChangeListener(this);
@@ -570,10 +599,21 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         MixedUseBlock.setOnCheckedChangeListener(this);
         NumberOfFloors.setOnCheckedChangeListener(this);
 
+        poolingHouse.setOnCheckedChangeListener(this);
+        poolingland.setOnCheckedChangeListener(this);
+
 //        fillarray();
         setCurrentDateOnView();
         addListenerOnButton();
 
+        preferences = getSharedPreferences("userinfo", 0);
+        String registeredSurveyorId = preferences.getString("Surveyor_Id", "");
+        String registeredSurveyorName = preferences.getString("Surveyor_Name", "");
+
+
+        surveyorId.setText(registeredSurveyorId);
+        NameOfSurveyor.setText(registeredSurveyorName);
+        HouseHoldId.setText(HouseCode);
 
 //        new DatePickerDialog(this, datePickerListener, year, month,day);
 
@@ -621,6 +661,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 .addApi(LocationServices.API)
                 .build();
         askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, LOCATION);
+        askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, CAMERA_PIC_REQUEST);
 
         //Check internet connection
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -632,8 +673,30 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        Log.d("Nishon",ex.toString());
+                        ex.printStackTrace();
+                        // Error occurred while creating the File
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile(getApplicationContext(),
+                                "com.example.naxasurvay",
+                                photoFile);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(intent, CAMERA_PIC_REQUEST);
+                    }
+                }
+
+
             }
         });
 
@@ -686,6 +749,259 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             @Override
             public void onClick(View v) {
 
+//                if (isGpsTaken) {
+
+                image = encodedImage;
+
+//                    if (image != null && !image.isEmpty()) {
+
+                SurveyIdNumValue = surveyorId.getText().toString();
+                NameOfSurveyorValue = NameOfSurveyor.getText().toString();
+                DateOfSurveyValue = DateOfSurvey.getText().toString();
+
+                HouseHoldIdValue = HouseHoldId.getText().toString();
+                //                              MunicipalityValue = Municipality.getText().toString();
+                WardValue = Ward.getText().toString();
+                AddressValue = Address.getText().toString();
+
+
+//                    if (SurveyIdNumValue != null && !SurveyIdNumValue.isEmpty() && NameOfSurveyorValue != null && !NameOfSurveyorValue.isEmpty() && HouseHoldIdValue != null && !HouseHoldIdValue.isEmpty() && WardValue != null && !WardValue.isEmpty() && AddressValue != null && !AddressValue.isEmpty()) {
+
+
+//                            HouseHoldIdValue = HouseHoldId.getText().toString();
+//                              MunicipalityValue = Municipality.getText().toString();
+//                            WardValue = Ward.getText().toString();
+//                            AddressValue = Address.getText().toString();
+
+//                                HouseholdTypologyValue = checkedBtn1.getText().toString();
+
+
+                AgeValue = Age.getText().toString();
+
+
+                RadioButton checkedBtn = (RadioButton) findViewById(Sex.getCheckedRadioButtonId());
+                SexValue = checkedBtn.getText().toString();
+
+                Log.d("", "onCreate: " + SexValue);
+                EmailValue = Email.getText().toString();
+
+                NumOfHusbandValue = NumOfHusband.getText().toString();
+                NumOfWifeValue = NumOfWife.getText().toString();
+                NumOfChildrenValue = NumOfChildren.getText().toString();
+                NumOfRelativesValue = NumOfRelatives.getText().toString();
+                NumOfothersValue = NumOfothers.getText().toString();
+                FamilyMemberNumberValue = TotalFamilyMemberNumber.getText().toString();
+
+                WorkingNumOfHusbandValue = WorkingNumOfHusband.getText().toString();
+                WorkingNumOfWifeValue = WorkingNumOfWife.getText().toString();
+                WorkingNumOfChildrenValue = WorkingNumOfChildren.getText().toString();
+                WorkingNumOfRelativesValue = WorkingNumOfRelatives.getText().toString();
+                WorkingNumOfothersValue = WorkingNumOfothers.getText().toString();
+                WorkingFamilyMemberNumberValue = WorkingFamilyMemberNumber.getText().toString();
+
+                HusbandIncomeSource = HusbandIncomeDetail.getText().toString();
+                HusbandIncomeOtherSource = HusbandOthersIncomeDetail.getText().toString();
+                WifeIncomeSource = WifeIncomeDetail.getText().toString();
+                WifeIncomeOtherSource = WifeOthersIncomeDetail.getText().toString();
+                ChildrenIncomeSource = ChildrenIncomeDetail.getText().toString();
+                ChildrensIncomeOtherSource = ChildrenOthersIncomeDetail.getText().toString();
+                RelativesIncomeSource = RelativesIncomeDetail.getText().toString();
+                RelativesIncomeOtherSource = RelativesOthersIncomeDetail.getText().toString();
+                OthersIncomeSource = OthersIncomeDetail.getText().toString();
+                OthersIncomeOtherSource = OthersOthersIncomeDetail.getText().toString();
+
+                AverageMonthlyIncomeOfHusbandValue = AverageMonthlyIncomeOfHusband.getText().toString();
+                AverageMonthlyIncomeOfWifeValue = AverageMonthlyIncomeOfWife.getText().toString();
+                AverageMonthlyIncomeOfChildrenValue = AverageMonthlyIncomeOfChildren.getText().toString();
+                AverageMonthlyIncomeOfRelativesValue = AverageMonthlyIncomeOfRelatives.getText().toString();
+                AverageMonthlyIncomeOfOthersValue = AverageMonthlyIncomeOfOthers.getText().toString();
+
+                HusbandFarmIncomeValue = HusbandFarmIncome.getText().toString();
+                WifeFarmIncomeValue = WifeFarmIncome.getText().toString();
+                ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
+                RelativesFarmIncomeValue = RelativesFarmIncome.getText().toString();
+                OthersFarmIncomeValue = OthersFarmIncome.getText().toString();
+
+                LandInAnnaValue = LandInAnna.getText().toString();
+                TotalLandPriceValue = TotalLandPrice.getText().toString();
+                PropertyInAnnaValue = PropertyInAnna.getText().toString();
+                TotalPropertyPriceValue = TotalPropertyPrice.getText().toString();
+
+                jsonLatLangArray = jsonArrayGPS.toString();
+                image = encodedImage;
+
+                DistrictValue = District.getSelectedItem().toString();
+                MunicipalityValue = Municipality.getSelectedItem().toString();
+                HusbandIncometype = Husband_income_type.getSelectedItem().toString();
+                WifeIncomeType = Wife_income_type.getSelectedItem().toString();
+                CHildrenIncomeType = Children_income_type.getSelectedItem().toString();
+                RelativesIncomeTypes = Relatives_income_type.getSelectedItem().toString();
+                OthersIncomeTypes = Others_income_type.getSelectedItem().toString();
+                LandAreaType = land_area_spinner.getSelectedItem().toString();
+                PropertyAreaType = property_area_spinner.getSelectedItem().toString();
+                LandPriceType = land_price_spinner.getSelectedItem().toString();
+                PropertyPriceType = property_price_spinner.getSelectedItem().toString();
+
+                yearOfPurchaseValue = yearOfPurchase.getText().toString();
+                valueOfPurchaseValue = valueOfPurchase.getText().toString();
+                PoolingPriceType = Pooling_price_spinner.getSelectedItem().toString();
+
+                uniqueCode();
+
+                convertDataToJson();
+
+                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                final int width = metrics.widthPixels;
+                int height = metrics.heightPixels;
+
+                final Dialog showDialog = new Dialog(context);
+                showDialog.setContentView(R.layout.alert_dialog_before_send);
+                final Button yes = (Button) showDialog.findViewById(R.id.alertButtonYes);
+                final Button no = (Button) showDialog.findViewById(R.id.alertButtonNo);
+
+                showDialog.setTitle("WARNING !!!");
+                showDialog.setCancelable(false);
+                showDialog.show();
+                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog.dismiss();
+                        mProgressDlg = new ProgressDialog(context);
+                        mProgressDlg.setMessage("Please wait...");
+                        mProgressDlg.setIndeterminate(false);
+                        mProgressDlg.setCancelable(false);
+                        mProgressDlg.show();
+                        convertDataToJson();
+//                                    sendDatToserver();
+//                                          finish();
+                    }
+                });
+
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog.dismiss();
+                    }
+                });
+//
+//                                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+//                                    final int width = metrics.widthPixels;
+//                                    int height = metrics.heightPixels;
+//
+//
+//                            final Dialog showDialog = new Dialog(context);
+                showDialog.setContentView(R.layout.date_input_layout);
+                final EditText FormNameToInput = (EditText) showDialog.findViewById(R.id.input_tableName);
+                final EditText dateToInput = (EditText) showDialog.findViewById(R.id.input_date);
+
+                if (formNameSavedForm.equals("")) {
+                    FormNameToInput.setText("Household Survey");
+                } else {
+                    FormNameToInput.setText(formNameSavedForm);
+                    Database_SaveForm dataBaseNsaveform = new Database_SaveForm(context);
+                    dataBaseNsaveform.open();
+                    dataBaseNsaveform.dropRowNotSentForms(formid);
+                }
+
+                long date = System.currentTimeMillis();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+                String dateString = sdf.format(date);
+                dateToInput.setText(dateString);
+
+                AppCompatButton logIn = (AppCompatButton) showDialog.findViewById(R.id.login_button);
+                showDialog.setTitle("Save Data");
+                showDialog.setCancelable(true);
+                showDialog.show();
+                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                logIn.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        String dateDataCollected = dateToInput.getText().toString();
+                        String formName = FormNameToInput.getText().toString();
+
+                        String[] data = new String[]{"1", formName, dateDataCollected, jsonToSend, jsonLatLangArray,
+                                "" + imageName, "Not Sent", "0"};
+
+
+                        Database_SaveForm dataBaseSaveform = new Database_SaveForm(context);
+                        dataBaseSaveform.open();
+                        long id = dataBaseSaveform.insertIntoTable_Main(data);
+                        Log.e("dbID", "" + id);
+                        dataBaseSaveform.close();
+
+                        Toast.makeText(SurveyMain.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
+
+                        Database_Marker marker = new Database_Marker(getApplicationContext());
+                        marker.replaceSave(HouseHoldIdValue);
+                        Log.d("checkDb", "HouseHoldIdValue" + HouseHoldIdValue);
+
+                        showDialog.dismiss();
+
+                        final Dialog showDialog = new Dialog(context);
+                        showDialog.setContentView(R.layout.savedform_sent_popup);
+                        final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
+                        final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
+
+                        showDialog.setTitle("Successfully Saved");
+                        showDialog.setCancelable(false);
+                        showDialog.show();
+                        showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        yes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showDialog.dismiss();
+                                Intent intent = new Intent(SurveyMain.this, SavedFormActivity.class);
+                                startActivity(intent);
+//                                                 finish();
+                            }
+                        });
+
+                        no.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showDialog.dismiss();
+                                Intent intent = new Intent(SurveyMain.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+
+
+                    }
+                });
+                // this
+
+
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "Something is no fill in the form", Toast.LENGTH_SHORT).show();
+//
+//                    }
+
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "You need to take a house image", Toast.LENGTH_SHORT).show();
+//
+//                    }
+
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
+//
+//                }
+            }
+
+
+        });
+
+        // add click listener to Button "POST"
+        Send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
                 if (isGpsTaken) {
 
                     image = encodedImage;
@@ -697,24 +1013,17 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                         DateOfSurveyValue = DateOfSurvey.getText().toString();
 
                         HouseHoldIdValue = HouseHoldId.getText().toString();
-                        //                              MunicipalityValue = Municipality.getText().toString();
+
                         WardValue = Ward.getText().toString();
                         AddressValue = Address.getText().toString();
 
-
                         if (SurveyIdNumValue != null && !SurveyIdNumValue.isEmpty() && NameOfSurveyorValue != null && !NameOfSurveyorValue.isEmpty() && HouseHoldIdValue != null && !HouseHoldIdValue.isEmpty() && WardValue != null && !WardValue.isEmpty() && AddressValue != null && !AddressValue.isEmpty()) {
 
+//                        MunicipalityValue = Municipality.getText().toString();
 
-                            HouseHoldIdValue = HouseHoldId.getText().toString();
-//                              MunicipalityValue = Municipality.getText().toString();
-                            WardValue = Ward.getText().toString();
-                            AddressValue = Address.getText().toString();
-
-//                                HouseholdTypologyValue = checkedBtn1.getText().toString();
-
+//                        HouseholdTypologyValue = checkedBtn1.getText().toString();
 
                             AgeValue = Age.getText().toString();
-//        String SexValue = Sex.getText().toString();
 
                             RadioButton checkedBtn = (RadioButton) findViewById(Sex.getCheckedRadioButtonId());
                             SexValue = checkedBtn.getText().toString();
@@ -758,15 +1067,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
                             RelativesFarmIncomeValue = RelativesFarmIncome.getText().toString();
                             OthersFarmIncomeValue = OthersFarmIncome.getText().toString();
-//                AreaOfLandValue = AreaOfLand.getText().toString();
-//                PriceOfLandValue = PriceOfLand.getText().toString();
+
                             LandInAnnaValue = LandInAnna.getText().toString();
                             TotalLandPriceValue = TotalLandPrice.getText().toString();
                             PropertyInAnnaValue = PropertyInAnna.getText().toString();
                             TotalPropertyPriceValue = TotalPropertyPrice.getText().toString();
-
-                            jsonLatLangArray = jsonArrayGPS.toString();
-                            image = encodedImage;
 
                             DistrictValue = District.getSelectedItem().toString();
                             MunicipalityValue = Municipality.getSelectedItem().toString();
@@ -780,16 +1085,18 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             LandPriceType = land_price_spinner.getSelectedItem().toString();
                             PropertyPriceType = property_price_spinner.getSelectedItem().toString();
 
-                            uniqueCode();
+                            yearOfPurchaseValue = yearOfPurchase.getText().toString();
+                            valueOfPurchaseValue = valueOfPurchase.getText().toString();
+                            PoolingPriceType = Pooling_price_spinner.getSelectedItem().toString();
 
-                            convertDataToJson();
+                            uniqueCode();
 
 
                             if (networkInfo != null && networkInfo.isConnected()) {
 
 
                                 DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-                                final int width = metrics.widthPixels;
+                                int width = metrics.widthPixels;
                                 int height = metrics.heightPixels;
 
                                 final Dialog showDialog = new Dialog(context);
@@ -813,7 +1120,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                         mProgressDlg.show();
                                         convertDataToJson();
                                         sendDatToserver();
-//                                          finish();
+
+
+//                                finish();
                                     }
                                 });
 
@@ -823,252 +1132,71 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                         showDialog.dismiss();
                                     }
                                 });
-//
-//                                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-//                                    final int width = metrics.widthPixels;
-//                                    int height = metrics.heightPixels;
-//
-//
-//                                    final Dialog showDialog = new Dialog(context);
-                                showDialog.setContentView(R.layout.date_input_layout);
-                                final EditText FormNameToInput = (EditText) showDialog.findViewById(R.id.input_tableName);
-                                final EditText dateToInput = (EditText) showDialog.findViewById(R.id.input_date);
-
-                                if (formNameSavedForm.equals("")) {
-                                    FormNameToInput.setText("Household Survey");
-                                } else {
-                                    FormNameToInput.setText(formNameSavedForm);
-                                    Database_SaveForm dataBaseNsaveform = new Database_SaveForm(context);
-                                    dataBaseNsaveform.open();
-                                    dataBaseNsaveform.dropRowNotSentForms(formid);
-                                }
-
-                                long date = System.currentTimeMillis();
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
-                                String dateString = sdf.format(date);
-                                dateToInput.setText(dateString);
-
-                                AppCompatButton logIn = (AppCompatButton) showDialog.findViewById(R.id.login_button);
-                                showDialog.setTitle("Save Data");
-                                showDialog.setCancelable(true);
-                                showDialog.show();
-                                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                                logIn.setOnClickListener(new View.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-                                        String dateDataCollected = dateToInput.getText().toString();
-                                        String formName = FormNameToInput.getText().toString();
-
-                                        String[] data = new String[]{"1", formName, dateDataCollected, jsonToSend, jsonLatLangArray,
-                                                "" + imageName, "Not Sent", "0"};
 
 
-                                        Database_SaveForm dataBaseSaveform = new Database_SaveForm(context);
-                                        dataBaseSaveform.open();
-                                        long id = dataBaseSaveform.insertIntoTable_Main(data);
-                                        Log.e("dbID", "" + id);
-                                        dataBaseSaveform.close();
-
-                                        Toast.makeText(SurveyMain.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
-                                        showDialog.dismiss();
-
-                                        final Dialog showDialog = new Dialog(context);
-                                        showDialog.setContentView(R.layout.savedform_sent_popup);
-                                        final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
-                                        final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
-
-                                        showDialog.setTitle("Successfully Saved");
-                                        showDialog.setCancelable(false);
-                                        showDialog.show();
-                                        showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                                        yes.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                showDialog.dismiss();
-                                                Intent intent = new Intent(SurveyMain.this, SavedFormActivity.class);
-                                                startActivity(intent);
-//                                                 finish();
-                                            }
-                                        });
-
-                                        no.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                showDialog.dismiss();
-                                                Intent intent = new Intent(SurveyMain.this, MainActivity.class);
-                                                startActivity(intent);
-                                            }
-                                        });
-
-
-                                    }
-                                });
-                                // this
                             } else {
-                                Toast.makeText(getApplicationContext(), "Something is no fill in the form", Toast.LENGTH_SHORT).show();
-
+                                final View coordinatorLayoutView = findViewById(R.id.naxa_Survay);
+                                Snackbar.make(coordinatorLayoutView, "No internet connection", Snackbar.LENGTH_LONG)
+                                        .setAction("Retry", null).show();
                             }
-
                         } else {
-                            Toast.makeText(getApplicationContext(), "You need to take a house image", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Something is no fill in the form", Toast.LENGTH_SHORT).show();
 
                         }
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "You need to take a house image", Toast.LENGTH_SHORT).show();
 
                     }
-                }
-            }
 
-        });
-
-        // add click listener to Button "POST"
-        Send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (isGpsTracking) {
-                    Toast.makeText(getApplicationContext(), "Please end GPS Tracking.", Toast.LENGTH_SHORT).show();
                 } else {
+                    Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
 
-                    if (isGpsTaken) {
-
-                        SurveyIdNumValue = surveyorId.getText().toString();
-                        NameOfSurveyorValue = NameOfSurveyor.getText().toString();
-                        DateOfSurveyValue = DateOfSurvey.getText().toString();
-
-                        HouseHoldIdValue = HouseHoldId.getText().toString();
-//                        MunicipalityValue = Municipality.getText().toString();
-                        WardValue = Ward.getText().toString();
-                        AddressValue = Address.getText().toString();
-//                        HouseholdTypologyValue = checkedBtn1.getText().toString();
-
-                        AgeValue = Age.getText().toString();
-
-                        RadioButton checkedBtn = (RadioButton) findViewById(Sex.getCheckedRadioButtonId());
-                        SexValue = checkedBtn.getText().toString();
-
-                        Log.d("", "onCreate: " + SexValue);
-                        EmailValue = Email.getText().toString();
-
-                        NumOfHusbandValue = NumOfHusband.getText().toString();
-                        NumOfWifeValue = NumOfWife.getText().toString();
-                        NumOfChildrenValue = NumOfChildren.getText().toString();
-                        NumOfRelativesValue = NumOfRelatives.getText().toString();
-                        NumOfothersValue = NumOfothers.getText().toString();
-                        FamilyMemberNumberValue = TotalFamilyMemberNumber.getText().toString();
-
-                        WorkingNumOfHusbandValue = WorkingNumOfHusband.getText().toString();
-                        WorkingNumOfWifeValue = WorkingNumOfWife.getText().toString();
-                        WorkingNumOfChildrenValue = WorkingNumOfChildren.getText().toString();
-                        WorkingNumOfRelativesValue = WorkingNumOfRelatives.getText().toString();
-                        WorkingNumOfothersValue = WorkingNumOfothers.getText().toString();
-                        WorkingFamilyMemberNumberValue = WorkingFamilyMemberNumber.getText().toString();
-
-                        HusbandIncomeSource = HusbandIncomeDetail.getText().toString();
-                        HusbandIncomeOtherSource = HusbandOthersIncomeDetail.getText().toString();
-                        WifeIncomeSource = WifeIncomeDetail.getText().toString();
-                        WifeIncomeOtherSource = WifeOthersIncomeDetail.getText().toString();
-                        ChildrenIncomeSource = ChildrenIncomeDetail.getText().toString();
-                        ChildrensIncomeOtherSource = ChildrenOthersIncomeDetail.getText().toString();
-                        RelativesIncomeSource = RelativesIncomeDetail.getText().toString();
-                        RelativesIncomeOtherSource = RelativesOthersIncomeDetail.getText().toString();
-                        OthersIncomeSource = OthersIncomeDetail.getText().toString();
-                        OthersIncomeOtherSource = OthersOthersIncomeDetail.getText().toString();
-
-                        AverageMonthlyIncomeOfHusbandValue = AverageMonthlyIncomeOfHusband.getText().toString();
-                        AverageMonthlyIncomeOfWifeValue = AverageMonthlyIncomeOfWife.getText().toString();
-                        AverageMonthlyIncomeOfChildrenValue = AverageMonthlyIncomeOfChildren.getText().toString();
-                        AverageMonthlyIncomeOfRelativesValue = AverageMonthlyIncomeOfRelatives.getText().toString();
-                        AverageMonthlyIncomeOfOthersValue = AverageMonthlyIncomeOfOthers.getText().toString();
-                        HusbandFarmIncomeValue = HusbandFarmIncome.getText().toString();
-                        WifeFarmIncomeValue = WifeFarmIncome.getText().toString();
-                        ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
-                        RelativesFarmIncomeValue = RelativesFarmIncome.getText().toString();
-                        OthersFarmIncomeValue = OthersFarmIncome.getText().toString();
-
-                        LandInAnnaValue = LandInAnna.getText().toString();
-                        TotalLandPriceValue = TotalLandPrice.getText().toString();
-                        PropertyInAnnaValue = PropertyInAnna.getText().toString();
-                        TotalPropertyPriceValue = TotalPropertyPrice.getText().toString();
-
-                        DistrictValue = District.getSelectedItem().toString();
-                        MunicipalityValue = Municipality.getSelectedItem().toString();
-                        HusbandIncometype = Husband_income_type.getSelectedItem().toString();
-                        WifeIncomeType = Wife_income_type.getSelectedItem().toString();
-                        CHildrenIncomeType = Children_income_type.getSelectedItem().toString();
-                        RelativesIncomeTypes = Relatives_income_type.getSelectedItem().toString();
-                        OthersIncomeTypes = Others_income_type.getSelectedItem().toString();
-                        LandAreaType = land_area_spinner.getSelectedItem().toString();
-                        PropertyAreaType = property_area_spinner.getSelectedItem().toString();
-                        LandPriceType = land_price_spinner.getSelectedItem().toString();
-                        PropertyPriceType = property_price_spinner.getSelectedItem().toString();
-
-                        uniqueCode();
-
-
-                        if (networkInfo != null && networkInfo.isConnected()) {
-
-
-                            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-                            int width = metrics.widthPixels;
-                            int height = metrics.heightPixels;
-
-                            final Dialog showDialog = new Dialog(context);
-                            showDialog.setContentView(R.layout.alert_dialog_before_send);
-                            final Button yes = (Button) showDialog.findViewById(R.id.alertButtonYes);
-                            final Button no = (Button) showDialog.findViewById(R.id.alertButtonNo);
-
-                            showDialog.setTitle("WARNING !!!");
-                            showDialog.setCancelable(false);
-                            showDialog.show();
-                            showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                            yes.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    showDialog.dismiss();
-                                    mProgressDlg = new ProgressDialog(context);
-                                    mProgressDlg.setMessage("Please wait...");
-                                    mProgressDlg.setIndeterminate(false);
-                                    mProgressDlg.setCancelable(false);
-                                    mProgressDlg.show();
-                                    convertDataToJson();
-                                    sendDatToserver();
-//                                finish();
-                                }
-                            });
-
-                            no.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    showDialog.dismiss();
-                                }
-                            });
-
-
-                        } else {
-                            final View coordinatorLayoutView = findViewById(R.id.naxa_Survay);
-                            Snackbar.make(coordinatorLayoutView, "No internet connection", Snackbar.LENGTH_LONG)
-                                    .setAction("Retry", null).show();
-                        }
-
-                    } else {
-                        Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
-
-                    }
                 }
+
+
+//                if (isGpsTracking) {
+//                    Toast.makeText(getApplicationContext(), "Please end GPS Tracking.", Toast.LENGTH_SHORT).show();
+//                } else {
+//
+//                    if (isGpsTaken) {
+//
+//
+//
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                }
 
             }
         });
     }
 
+
+    private void setPic(ImageView mImageView, String mCurrentPhotoPath) {
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        mImageView.setImageBitmap(bitmap);
+    }
 
     // display current date
 
@@ -1155,7 +1283,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         Log.e("main_activity", "unique code: " + uniCode);
     }
-
 
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(SurveyMain.this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -1266,7 +1393,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //            previewMap.setEnabled(true);
             Bundle bundle = intent.getExtras();
             String jsonToParse = (String) bundle.get("JSON1");
-            imageName = (String) bundle.get("photo");
+            String imagePath = (String) bundle.get("photo");
             String gpsLocationtoParse = (String) bundle.get("gps");
             formid = (String) bundle.get("DBid");
             String sent_Status = (String) bundle.get("sent_Status");
@@ -1300,20 +1427,25 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             }
 
-
-            Log.e("Household_Survey", "i-" + imageName);
-
-            if (imageName.equals("no_photo")) {
-            } else {
-                File file1 = new File(Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES), imageName);
-                String path = file1.toString();
-                Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
-
-                loadImageFromStorage(path);
+            if (!imagePath.equals("")) {
+                loadImageFromStorage(imagePath);
 
                 addImage();
             }
+
+//            Log.e("Household_Survey", "i-" + imageName);
+//
+//            if (imageName.equals("no_photo")) {
+//            } else {
+//                File file1 = new File(Environment.getExternalStoragePublicDirectory(
+//                        Environment.DIRECTORY_PICTURES), imageName);
+//                String path = file1.toString();
+//                Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
+//
+//                loadImageFromStorage(imagePath);
+//
+//                addImage();
+//            }
             try {
                 //new adjustment
                 Log.e("HouseholdSurvey", "" + jsonToParse);
@@ -1387,60 +1519,76 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             header.put("sex", SexValue);
             header.put("email", EmailValue);
 //            header.put("num_of_family_memb", FamilyMemberNumberValue);
-            header.put("total_num_of_family_memb", FamilyMemberNumberValue);
             header.put("husband_no", NumOfHusbandValue);
             header.put("wife_no", NumOfWifeValue);
             header.put("children_no", NumOfChildrenValue);
             header.put("relatives_no", NumOfRelativesValue);
             header.put("others_no", NumOfothersValue);
+            header.put("total_num_of_family_memb", FamilyMemberNumberValue);
 
+
+            header.put("working_husband_no", WorkingNumOfHusbandValue);
+            header.put("working_wife_no", WorkingNumOfWifeValue);
+            header.put("working_children_no", WorkingNumOfChildrenValue);
+            header.put("working_relatives_no", WorkingNumOfRelativesValue);
+            header.put("working_others_no", WorkingNumOfothersValue);
             header.put("num_of_working_family_memb", WorkingFamilyMemberNumberValue);
-            header.put("working_husband_no", NumOfHusbandValue);
-            header.put("working_wife_no", NumOfWifeValue);
-            header.put("working_children_no", NumOfChildrenValue);
-            header.put("working_relatives_no", NumOfRelativesValue);
-            header.put("working_others_no", NumOfothersValue);
+
 
             header.put("income_source_of_husband", HusbandIncomeSource);
             header.put("income_other_source_of_husband", HusbandIncomeOtherSource);
+//            header.put("farm_income_of_husband", HusbandFarmIncomeValue);
+
             header.put("income_source_of_wife", WifeIncomeSource);
             header.put("income_other_source_of_wife", WifeIncomeOtherSource);
+//            header.put("farm_income_of_wife", WifeFarmIncomeValue);
+
             header.put("income_source_of_children", ChildrenIncomeSource);
             header.put("income_other_source_of_children", ChildrensIncomeOtherSource);
+//            header.put("farm_income_of_children", ChildrenFarmIncomeValue);
+
             header.put("income_source_of_relatives", RelativesIncomeSource);
             header.put("income_other_source_of_relatives", RelativesIncomeOtherSource);
+//            header.put("farm_income_of_relatives", RelativesFarmIncomeValue);
+
             header.put("income_source_of_others", OthersIncomeSource);
             header.put("income_other_source_of_others", OthersIncomeOtherSource);
-
-            header.put("average_income_of_husband", AverageMonthlyIncomeOfHusbandValue);
-            header.put("average_income_of_wife", AverageMonthlyIncomeOfWifeValue);
-            header.put("average_income_of_children", AverageMonthlyIncomeOfChildrenValue);
-            header.put("average_income_of_relatives", AverageMonthlyIncomeOfRelativesValue);
-            header.put("average_income_of_others", AverageMonthlyIncomeOfOthersValue);
-
-//            header.put("farm_income_of_husband", HusbandFarmIncomeValue);
-//            header.put("farm_income_of_wife", WifeFarmIncomeValue);
-//            header.put("farm_income_of_children", ChildrenFarmIncomeValue);
-//            header.put("farm_income_of_relatives", RelativesFarmIncomeValue);
 //            header.put("farm_income_of_others", OthersFarmIncomeValue);
 
+
+            header.put("average_income_of_husband", AverageMonthlyIncomeOfHusbandValue);
             header.put("husband_price_type", HusbandIncometype);
+
+            header.put("average_income_of_wife", AverageMonthlyIncomeOfWifeValue);
             header.put("wife_price_type", WifeIncomeType);
+
+            header.put("average_income_of_children", AverageMonthlyIncomeOfChildrenValue);
             header.put("children_price_type", CHildrenIncomeType);
+
+            header.put("average_income_of_relatives", AverageMonthlyIncomeOfRelativesValue);
             header.put("relatives_price_type", RelativesIncomeTypes);
+
+            header.put("average_income_of_others", AverageMonthlyIncomeOfOthersValue);
             header.put("others_price_type", OthersIncomeTypes);
+
 
             header.put("land_anna", LandInAnnaValue);
             header.put("land_anna_type", LandAreaType);
 
-            header.put("land_total_price", TotalLandPriceValue);
-            header.put("land_total_price_type", LandPriceType);
-
             header.put("property_anna", PropertyInAnnaValue);
             header.put("property_anna_type", PropertyAreaType);
 
+            header.put("land_total_price", TotalLandPriceValue);
+            header.put("land_total_price_type", LandPriceType);
+
             header.put("property_total_price", TotalPropertyPriceValue);
             header.put("property_total_price_type", PropertyPriceType);
+
+//            header.put("pooling_type", PoolingValue);
+//            header.put("pooling_yearof_purchase", yearOfPurchaseValue);
+//            header.put("pooling_valueof_purchase", valueOfPurchaseValue);
+//            header.put("pooling_total_price_type", PoolingPriceType);
+
 
             header.put("latitude", finalLat);
             header.put("longitude", finalLong);
@@ -1520,11 +1668,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         AverageMonthlyIncomeOfRelativesValue = jsonObj.getString("average_income_of_relatives");
         AverageMonthlyIncomeOfOthersValue = jsonObj.getString("average_income_of_others");
 
-//        HusbandFarmIncomeValue = jsonObj.getString("farm_income_of_husband");
-//        WifeFarmIncomeValue = jsonObj.getString("farm_income_of_wife");
-//        ChildrenFarmIncomeValue = jsonObj.getString("farm_income_of_children");
-//        RelativesFarmIncomeValue = jsonObj.getString("farm_income_of_relatives");
-//        OthersFarmIncomeValue = jsonObj.getString("farm_income_of_others");
+        HusbandFarmIncomeValue = jsonObj.getString("farm_income_of_husband");
+        WifeFarmIncomeValue = jsonObj.getString("farm_income_of_wife");
+        ChildrenFarmIncomeValue = jsonObj.getString("farm_income_of_children");
+        RelativesFarmIncomeValue = jsonObj.getString("farm_income_of_relatives");
+        OthersFarmIncomeValue = jsonObj.getString("farm_income_of_others");
 
         HusbandIncometype = jsonObj.getString("husband_price_type");
         WifeIncomeType = jsonObj.getString("wife_price_type");
@@ -1543,6 +1691,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         TotalPropertyPriceValue = jsonObj.getString("property_total_price");
         PropertyPriceType = jsonObj.getString("property_total_price_type");
+
+        PoolingValue = jsonObj.getString("pooling_type");
+        splitString1(PoolingValue);
+        yearOfPurchaseValue = jsonObj.getString("pooling_yearof_purchase");
+        valueOfPurchaseValue = jsonObj.getString("pooling_valueof_purchase");
+        PoolingPriceType = jsonObj.getString("pooling_total_price_type");
 
         finalLat = Double.parseDouble(jsonObj.getString("latitude"));
         finalLong = Double.parseDouble(jsonObj.getString("longitude"));
@@ -1593,14 +1747,14 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             NumberOfFloors.setChecked(true);
         }
 
-
         Age.setText(AgeValue);
 
 //        Sex.setText(SexValue);
+        Log.e("IMAGE STRING", "SexValue" + SexValue);
 
-        if (SexValue.equals("male")) {
+        if (SexValue.equals("Male")) {
             ((RadioButton) findViewById(R.id.male)).setChecked(true);
-        } else if (SexValue.equals("female")) {
+        } else if (SexValue.equals("Female")) {
             ((RadioButton) findViewById(R.id.female)).setChecked(true);
         } else {
             ((RadioButton) findViewById(R.id.Other)).setChecked(true);
@@ -1632,10 +1786,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!HusbandIncomeOtherSource.equals("")) {
             HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        HusbandFarmIncome.setText(HusbandFarmIncomeValue);
-//        if (!HusbandFarmIncomeValue.equals("")) {
-//            HusbandFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        HusbandFarmIncome.setText(HusbandFarmIncomeValue);
+        if (!HusbandFarmIncomeValue.equals("")) {
+            HusbandFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         WifeIncomeDetail.setText(WifeIncomeSource);
         if (!WifeIncomeSource.equals("")) {
@@ -1645,10 +1799,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!WifeIncomeOtherSource.equals("")) {
             WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        WifeFarmIncome.setText(WifeFarmIncomeValue);
-//        if (!WifeFarmIncomeValue.equals("")) {
-//            WifeFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        WifeFarmIncome.setText(WifeFarmIncomeValue);
+        if (!WifeFarmIncomeValue.equals("")) {
+            WifeFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         ChildrenIncomeDetail.setText(ChildrenIncomeSource);
         if (!ChildrenIncomeSource.equals("")) {
@@ -1658,10 +1812,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!ChildrensIncomeOtherSource.equals("")) {
             ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        ChildrenFarmIncome.setText(ChildrenFarmIncomeValue);
-//        if (!ChildrenFarmIncomeValue.equals("")) {
-//            ChildrenFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        ChildrenFarmIncome.setText(ChildrenFarmIncomeValue);
+        if (!ChildrenFarmIncomeValue.equals("")) {
+            ChildrenFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         RelativesIncomeDetail.setText(RelativesIncomeSource);
         if (!RelativesIncomeSource.equals("")) {
@@ -1671,10 +1825,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!RelativesIncomeOtherSource.equals("")) {
             RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        RelativesFarmIncome.setText(RelativesFarmIncomeValue);
-//        if (!RelativesFarmIncomeValue.equals("")) {
-//            RelativesFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        RelativesFarmIncome.setText(RelativesFarmIncomeValue);
+        if (!RelativesFarmIncomeValue.equals("")) {
+            RelativesFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         OthersIncomeDetail.setText(OthersIncomeSource);
         if (!OthersIncomeSource.equals("")) {
@@ -1684,10 +1838,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!OthersIncomeOtherSource.equals("")) {
             OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        OthersFarmIncome.setText(OthersFarmIncomeValue);
-//        if (!OthersFarmIncomeValue.equals("")) {
-//            OthersFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        OthersFarmIncome.setText(OthersFarmIncomeValue);
+        if (!OthersFarmIncomeValue.equals("")) {
+            OthersFarmIncome.setVisibility(View.VISIBLE);
+        }
 
 
         AverageMonthlyIncomeOfHusband.setText(AverageMonthlyIncomeOfHusbandValue);
@@ -1735,6 +1889,16 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         int setPropertyPrice = ItemPriceValue.indexOf(PropertyPriceType);
         property_price_spinner.setSelection(setPropertyPrice);
 
+        if (pcheck1.equals("House")) {
+            poolingHouse.setChecked(true);
+        }
+        if (pcheck2.equals("Land")) {
+            poolingland.setChecked(true);
+        }
+        yearOfPurchase.setText(yearOfPurchaseValue);
+        valueOfPurchase.setText(valueOfPurchaseValue);
+        int setPoolingPrice = ItemPriceValue.indexOf(PoolingPriceType);
+        Pooling_price_spinner.setSelection(setPoolingPrice);
     }
 
     @Override
@@ -1759,20 +1923,23 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //                    //NOT IN REQUIRED FORMAT
 //                }
             }
+
         if (requestCode == CAMERA_PIC_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                thumbnail = (Bitmap) data.getExtras().get("data");
-                //  ImageView image =(ImageView) findViewById(R.id.Photo);
-                // image.setImageBitmap(thumbnail);
+                Log.d("Nishon", mCurrentPhotoPath + " is the path\n Does folder exists? "+photoFile.exists());
+
+                setPic(previewImageSite, mCurrentPhotoPath);
+
+
                 previewImageSite.setVisibility(View.VISIBLE);
-                previewImageSite.setImageBitmap(thumbnail);
-                saveToExternalSorage(thumbnail);
+
+//                saveToExternalSorage(thumbnail);
                 addImage();
-//                Toast.makeText(getApplicationContext(), "" + encodedImage, Toast.LENGTH_SHORT).show();
 
 
             }
         }
+
 
         if (requestCode == GEOPOINT_RESULT_CODE) {
             switch (resultCode) {
@@ -1818,15 +1985,15 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
-
     private void saveToExternalSorage(Bitmap thumbnail) {
         // TODO Auto-generated method stub
         //String merocinema="Mero Cinema";
 //        String movname=getIntent().getExtras().getString("Title");
-        Calendar calendar = Calendar.getInstance();
-        long timeInMillis = calendar.getTimeInMillis();
+//        Calendar calendar = Calendar.getInstance();
+//        long timeInMillis = calendar.getTimeInMillis();
 
-        imageName = "Household Survey" + timeInMillis;
+        imageName = "Household Survey" + HouseHoldIdValue;
+        Log.d("imageName", "imageName" + imageName);
 
         File file1 = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), imageName);
@@ -1837,7 +2004,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (file1.exists()) file1.delete();
         try {
             FileOutputStream out = new FileOutputStream(file1);
-            thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            thumbnail.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.flush();
             out.close();
             Toast.makeText(getApplicationContext(), "Saved " + imageName, Toast.LENGTH_SHORT).show();
@@ -1869,18 +2036,19 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     public void addImage() {
         File file1 = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), imageName);
-        String path = file1.toString();
+//        String path = file1.toString();
+        String path = file1.getAbsolutePath();
 
         BitmapFactory.Options options = new BitmapFactory.Options();
 
-        options.inSampleSize = 1;
-        options.inPurgeable = true;
-        Bitmap bm = BitmapFactory.decodeFile(path, options);
+        options.inSampleSize = 2;
+
+        Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath, options);
 //        Bitmap bm = BitmapFactory.decodeFile( imagePath ,options);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
 
         // bitmap object
@@ -1893,8 +2061,63 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
+    String mCurrentPhotoPath;
 
-    String check1 = "", check2 = "", check3 = "", check4 = "", check5 = "";
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        // File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String DIR = Environment.getExternalStorageDirectory() + File.separator + "NAXA Survey" + File.separator + "JPEG_" + timeStamp + "_" + ".jpg";
+
+        int i = 2;
+        File file = new File(DIR);
+        Log.d("Nishon","Creating file "+file.getAbsolutePath());
+
+        while (file.exists()) {
+            DIR = Environment.getExternalStorageDirectory() + File.separator + "NAXA Survey" + File.separator + "JPEG_" + timeStamp + "_" + i + ".jpg";
+            file = new File(DIR);
+            Log.d("Nishon","Retrying ");
+            Log.d("Nishon","Creating file "+file.getAbsolutePath());
+        }
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = file.getAbsolutePath();
+
+        return file;
+
+
+
+    }
+
+
+    String check1 = "", check2 = "", check3 = "", check4 = "", check5 = "", pcheck1 = "", pcheck2 = "";
+
+    public void splitString1(String htvString) {
+        int commas = 0;
+        ArrayList<String> pooling = new ArrayList<>();
+        for (int i = 0; i < htvString.length(); i++) {
+            if (htvString.charAt(i) == ',') commas++;
+        }
+
+        for (int i = 0; i < commas; i++) {
+            String[] parts = htvString.split(", ");
+            pooling.add(parts[i]);
+
+        }
+
+        for (int j = 0; j < commas; j++) {
+            String poolingValue = pooling.get(j);
+            Log.e(TAG, "splitString:  topologyValue " + poolingValue);
+            if (poolingValue.equals("House")) {
+                pcheck1 = poolingValue;
+            }
+            if (poolingValue.equals("Land")) {
+                pcheck2 = poolingValue;
+            }
+        }
+    }
+
 
     public void splitString(String htvString) {
         int commas = 0;
@@ -1919,26 +2142,21 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //        Log.e("Household_Survey", "HouseholdTypologyValue5 :" + check4);
 //        Log.e("Household_Survey", "HouseholdTypologyValue6 :" + check5);
 
-        for (int j=0; j<commas; j++)
-        {
-                String topologyValue = topology.get(j);
-            Log.e(TAG, "splitString:  topologyValue "+ topologyValue );
-            if(topologyValue.equals("single family detached")){
+        for (int j = 0; j < commas; j++) {
+            String topologyValue = topology.get(j);
+            Log.e(TAG, "splitString:  topologyValue " + topologyValue);
+            if (topologyValue.equals("single family detached")) {
                 check1 = topologyValue;
-            }
-            else if(topologyValue.equals("Multi family house")){
+            } else if (topologyValue.equals("Multi family house")) {
                 check2 = topologyValue;
 
-            }
-            else if(topologyValue.equals("apartment block")){
+            } else if (topologyValue.equals("apartment block")) {
                 check3 = topologyValue;
 
-            }
-            else if(topologyValue.equals("mixed use block")){
+            } else if (topologyValue.equals("mixed use block")) {
                 check4 = topologyValue;
 
-            }
-            else if(topologyValue.equals("number of floors")){
+            } else if (topologyValue.equals("number of floors")) {
                 check5 = topologyValue;
 
             }
@@ -1996,13 +2214,32 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                 break;
 
+            case R.id.land_pooling_house:
+                if (poolingHouse.isChecked() == true) {
+                    Pooling1 = "House" + ", ";
+                } else {
+                    Pooling1 = "";
+                }
+
+                break;
+
+            case R.id.land_pooling_land:
+                if (poolingland.isChecked() == true) {
+                    Pooling2 = "Land" + ", ";
+                } else {
+                    Pooling2 = "";
+                }
+
+                break;
 
 //            HouseholdTypologyValue = topology;
         }
+        PoolingValue = Pooling1 + Pooling2;
         HouseholdTypologyValue = HouseholdTypologyValue1 + HouseholdTypologyValue2 + HouseholdTypologyValue3 + HouseholdTypologyValue4 + HouseholdTypologyValue5;
         Log.e("Household_Survey", "HouseholdTypologyValue :" + HouseholdTypologyValue);
     }
 
+    String PoolingValue = "", Pooling1 = "", Pooling2 = "";
     String HouseholdTypologyValue1 = "", HouseholdTypologyValue2 = "", HouseholdTypologyValue3 = "", HouseholdTypologyValue4 = "", HouseholdTypologyValue5 = "";
 
     private class RestApii extends AsyncTask<String, Void, String> {
@@ -2082,18 +2319,19 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 ////                        .setTitleText("")
 ////                        .setContentText("Data sent successfully!")
 ////                        .show();
-                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
-                        "" + imageName, "Sent", "0"};
+//                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
+//                        "" + imageName, "Sent", "0"};
 ////
 //                Log.d(TAG, "string data: " + data);
 ////
+                Database_Marker marker = new Database_Marker(getApplicationContext());
+                marker.replaceSend(HouseHoldIdValue);
 
-
-                Database_SentForm dataBaseSent = new Database_SentForm(context);
-                dataBaseSent.open();
-                long id = dataBaseSent.insertIntoTable_Main(data);
-                Log.e("dbID", "" + id);
-                dataBaseSent.close();
+//                Database_SentForm dataBaseSent = new Database_SentForm(context);
+//                dataBaseSent.open();
+//                long id = dataBaseSent.insertIntoTable_Main(data);
+//                Log.e("dbID", "" + id);
+//                dataBaseSent.close();
 
                 if (CheckValues.isFromSavedFrom) {
                     Log.e(TAG, "onPostExecute: FormID : " + formid);
@@ -2247,9 +2485,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                 }
             }
-            if (selected[0]) {
-                HusbandFarmIncome.setVisibility(View.VISIBLE);
-            }
+//            if (selected[0]) {
+//                HusbandFarmIncome.setVisibility(View.VISIBLE);
+//            }
             if (selected[6]) {
                 HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
@@ -2275,9 +2513,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                     WifeIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
             }
-            if (selected[0]) {
-                WifeFarmIncome.setVisibility(View.VISIBLE);
-            }
+//            if (selected[0]) {
+//                WifeFarmIncome.setVisibility(View.VISIBLE);
+//            }
             if (selected[6]) {
                 WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
@@ -2301,9 +2539,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                     ChildrenIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
             }
-            if (selected[0]) {
-                ChildrenFarmIncome.setVisibility(View.VISIBLE);
-            }
+//            if (selected[0]) {
+//                ChildrenFarmIncome.setVisibility(View.VISIBLE);
+//            }
             if (selected[6]) {
                 ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
@@ -2327,9 +2565,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                     RelativesIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
             }
-            if (selected[0]) {
-                RelativesFarmIncome.setVisibility(View.VISIBLE);
-            }
+//            if (selected[0]) {
+//                RelativesFarmIncome.setVisibility(View.VISIBLE);
+//            }
             if (selected[6]) {
                 RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
             }
@@ -2353,9 +2591,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                     OthersIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
                 }
             }
-            if (selected[0]) {
-                OthersFarmIncome.setVisibility(View.VISIBLE);
-            }
+//            if (selected[0]) {
+//                OthersFarmIncome.setVisibility(View.VISIBLE);
+//            }
             if (selected[6]) {
                 OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
             }

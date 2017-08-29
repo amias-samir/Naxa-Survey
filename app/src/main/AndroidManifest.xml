@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.naxasurvay">
 
+    <uses-feature android:name="android.hardware.camera"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.example.naxasurvay.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -19,15 +22,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Dark">
-
-
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDHtZos91FsjtWmOD7M_E0xTEMjaGc-NpI" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.naxasurvay"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -36,29 +46,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:exported="true"
-            android:name=".gps.SimpleOfflineMapActivity"></activity>
-
-        <activity android:name=".SurveyMain"
+            android:name=".gps.SimpleOfflineMapActivity"
+            android:exported="true" />
+        <activity
+            android:name=".SurveyMain"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity android:name=".SavedFormActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
-        <activity android:name=".gps.MapHouseholdActivity">
-
-        </activity>
-        <activity android:name=".easy_gps.GeoPointActivity"></activity>
-
+        <activity android:name=".gps.MapHouseholdActivity"></activity>
+        <activity android:name=".easy_gps.GeoPointActivity" />
+        <activity android:name=".RegisterActivity"></activity>
     </application>
 
 </manifest>

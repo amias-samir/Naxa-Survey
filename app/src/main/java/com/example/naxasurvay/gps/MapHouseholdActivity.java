@@ -3,16 +3,22 @@ package com.example.naxasurvay.gps;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.example.naxasurvay.Database_Marker;
+import com.example.naxasurvay.MainActivity;
+import com.example.naxasurvay.Mapinfo;
 import com.example.naxasurvay.R;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -55,7 +61,6 @@ public class MapHouseholdActivity extends AppCompatActivity {
     ArrayList<String> Code = new ArrayList<>();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +76,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
         // Initialize the map view
         mapView = (MapView) findViewById(R.id.mapView);
+
 
 //        curent position marker
         getMyLocationFAB = (FloatingActionButton) findViewById(R.id.myLocationButton);
@@ -99,7 +105,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
 //                    map.addMarker(new MarkerOptions()
 //                            .position(new LatLng(latitude, longitude))
-////                            .icon(icon)
+//                            .icon(icon)
 //                            .title("Your Current Location"));
 
 
@@ -121,12 +127,17 @@ public class MapHouseholdActivity extends AppCompatActivity {
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
 
-                // Load and Draw the GeoJSON. The marker animation is also handled here.
-                new DrawGeoJson().execute();
+                Database_Marker databaseMarker = new Database_Marker(getApplicationContext());
+//                int num = databaseMarker.getProfilesCount();
 
-//                updateMap(45.52214,-122.63748);
+//                if (num <= 0) {
+//                    // Load and Draw the GeoJSON. The marker animation is also handled here.
+//                    new DrawGeoJson().execute();
+//
+//                }
+////              }  updateMap(45.52214,-122.63748);
 
-
+                parseArray();
             }
         });
 
@@ -185,7 +196,6 @@ public class MapHouseholdActivity extends AppCompatActivity {
     }
 
 
-
     // We want to load in the GeoJSON file asynchronous so the UI thread isn't handling the file
 // loading. The GeoJSON file we are using is stored in the assets folder, you could also get
 // this information from the Mapbox map matching API during runtime.
@@ -198,7 +208,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
             try {
                 // Load GeoJSON file
                 InputStream inputStream = getAssets().open("geojson_household.geojson");
-                Log.e(TAG, "doInBackground: " + inputStream.toString());
+//                Log.e(TAG, "doInBackground: " + inputStream.toString());
                 BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
                 StringBuilder sb = new StringBuilder();
                 int cp;
@@ -213,14 +223,25 @@ public class MapHouseholdActivity extends AppCompatActivity {
                 JSONArray features = json.getJSONArray("features");
 
                 JSONObject feature = features.getJSONObject(0);
-                Log.e(TAG, "doInBackground: feature : " + feature.length());
-                Log.e(TAG, "doInBackground: features : " + features.length());
+//                Log.e(TAG, "doInBackground: feature : " + feature.length());
+//                Log.e(TAG, "doInBackground: features : " + features.length());
 //                JSONObject properties = feature.getJSONObject("properties");
                 for (int i = 0; i < features.length(); i++) {
                     JSONObject jobj = features.getJSONObject(i);
                     JSONObject geometry = jobj.getJSONObject("geometry");
                     JSONObject properties = jobj.getJSONObject("properties");
+                    String code =  properties.getString("Code");
+                    String location_name =  properties.getString("Location");
                     Log.e(TAG, "doInBackground: geometry" + geometry.toString());
+
+                    JSONArray coords = geometry.getJSONArray("coordinates");
+                    Log.d("SUSAN", "MarkerDATA: " + code + "\n" +
+                            coords.getDouble(1) + "\n" +  coords.getDouble(0) + "\n" + location_name);
+
+                    Database_Marker marker = new Database_Marker(getApplicationContext());
+                    marker.insertIntoMarker(code, coords.getDouble(1), coords.getDouble(0), "0", location_name);
+
+
                     if (geometry != null) {
                         String type = geometry.getString("type");
 
@@ -228,19 +249,14 @@ public class MapHouseholdActivity extends AppCompatActivity {
                         if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("Point")) {
 
                             // Get the Coordinates
-                            JSONArray coords = geometry.getJSONArray("coordinates");
 //                            for (int lc = 0; lc < coords.length(); lc++) {
 //                                JSONArray coord = coords.getJSONArray(lc);
+//                            JSONArray coords = geometry.getJSONArray("coordinates");
+
+                            Log.d(TAG, "Coordinates: " + coords.getDouble(1) + "  " +coords.getDouble(0));
                             LatLng latLng = new LatLng(coords.getDouble(1), coords.getDouble(0));
                             points.add(latLng);
 
-                            String location = properties.getString("Location");
-                            String code = properties.getString("Code");
-
-                            Location.add(location);
-                            Code.add(code);
-
-//                            }
                         }
                     }
                 }
@@ -267,7 +283,7 @@ public class MapHouseholdActivity extends AppCompatActivity {
 
                 for (int i = 0; i < points.size(); i++) {
 
-
+                    // TODO: 8/24/2017 set coordinates lat lang
                     updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i));
                 }
             }
@@ -278,7 +294,62 @@ public class MapHouseholdActivity extends AppCompatActivity {
         // Build marker
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .title(Code +"\n" + Location));
+                .title(Code + "\n" + Location));
+
+        // Animate camera to geocoder result location
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(latitude, longitude))
+                .zoom(15)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+    }
+
+    public void parseArray() {
+//        Array database bata tana
+        Database_Marker marker = new Database_Marker(getApplicationContext());
+
+        List<Mapinfo> points = marker.getUnsavedata();
+        if (points.size() > 0) {
+
+            // Draw polyline on map
+//                map.addPolyline(new PolylineOptions()
+//                        .addAll(points)
+//                        .color(Color.parseColor("#d0423b"))
+//                        .width(2));
+
+            for (int i = 0; i < points.size(); i++) {
+                Mapinfo info = points.get(i);
+                String housecode = info.houseCode;
+                String status = info.status;
+                String placename = info.placeName;
+                Double Latitude = info.latitude;
+                Double Longitude = info.longitude;
+
+                updateSaveMap(Latitude, Longitude, housecode, placename);
+//                updateSaveMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i));
+            }
+        }
+    }
+
+    private void updateSaveMap(double latitude, double longitude, String Code, String Location) {
+
+//        IconFactory iconFactory = IconFactory.getInstance(MapHouseholdActivity.this);
+////                    Drawable iconDrawable = ContextCompat.getDrawable(MapHouseholdActivity.this, R.drawable.marker_current);
+//        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_current);
+//        Icon icon = iconFactory.fromBitmap(largeIcon);
+
+        IconFactory iconFactory = IconFactory.getInstance(MapHouseholdActivity.this);
+//        Drawable iconDrawable = ContextCompat.getDrawable(MapHouseholdActivity.this, R.drawable.marker_saved);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_saved);
+        Icon icon = iconFactory.fromBitmap(largeIcon);
+
+        // Build marker
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(Code + "\n" + Location))
+                .setIcon(icon);
+
+
 
         // Animate camera to geocoder result location
         CameraPosition cameraPosition = new CameraPosition.Builder()

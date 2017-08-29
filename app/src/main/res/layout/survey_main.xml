@@ -72,8 +72,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/survey_id_num"
-                                    android:inputType="text"
                                     android:hint="id"
+                                    android:inputType="text"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -142,8 +142,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/house_id_code"
-                                    android:inputType="text"
                                     android:hint="id"
+                                    android:inputType="text"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -175,9 +175,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/district_name"
                                     android:layout_toEndOf="@+id/District"
-                                    android:layout_toRightOf="@+id/District" />
+                                    android:layout_toRightOf="@+id/District"
+                                    android:entries="@array/district_name" />
 
                             </RelativeLayout>
 
@@ -209,9 +209,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/municipality_name"
                                     android:layout_toEndOf="@+id/Municipality"
-                                    android:layout_toRightOf="@+id/Municipality" />
+                                    android:layout_toRightOf="@+id/Municipality"
+                                    android:entries="@array/municipality_name" />
 
                             </RelativeLayout>
 
@@ -231,18 +231,18 @@
                             </android.support.design.widget.TextInputLayout>
 
                             <android.support.design.widget.TextInputLayout
-                            android:id="@+id/Address"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                                android:id="@+id/Address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
 
-                            <AutoCompleteTextView
-                            android:id="@+id/Survay_address"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="45dp"
-                            android:hint="Address"
-                            android:inputType="text"
-                            android:textColor="#000" />
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_address"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Address"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
 
@@ -497,8 +497,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:text="Family Member In Houseold"
-                                android:textStyle="bold"
-                                 />
+                                android:textStyle="bold" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -527,7 +526,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_husband"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -568,7 +567,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_wife"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -608,7 +607,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_childrens"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -648,7 +647,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_relatives"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -688,7 +687,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_others"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -738,8 +737,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:text="Working Family Member In Houseold"
-                                android:textStyle="bold"
-                                />
+                                android:textStyle="bold" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -768,7 +766,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_husband"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -809,7 +807,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_wife"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -849,7 +847,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_children"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -889,7 +887,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_relatives"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -929,7 +927,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_others"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -979,10 +977,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="18sp"
                                 android:text="Source of income of Family Members"
-                                android:textStyle="bold"
-                                />
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
                             <!-- husband -->
                             <RelativeLayout
@@ -1289,16 +1286,15 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="18sp"
                                 android:text="Average Monthly Income of Family Members"
-                                android:textStyle="bold"
-                                />
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
                             <!-- husband -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_husband"
                                     android:layout_width="150dp"
@@ -1320,17 +1316,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_husband"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_husband" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_husband"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- wife -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_wife"
                                     android:layout_width="150dp"
@@ -1352,17 +1348,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_wife"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_wife" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_wife"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- children -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_children"
                                     android:layout_width="150dp"
@@ -1384,17 +1380,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_children"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_children" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_children"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- relatives -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_relatives"
                                     android:layout_width="150dp"
@@ -1416,17 +1412,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_relatives"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_relatives" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_relatives"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- others -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_others"
                                     android:layout_width="150dp"
@@ -1448,9 +1444,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_others"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_others" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_others"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
@@ -1513,7 +1509,7 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
-                                            android:hint="Anna"
+                                            android:hint="Area"
                                             android:inputType="text"
                                             android:textColor="#000" />
 
@@ -1534,9 +1530,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_alignParentTop="true"
-                                        android:layout_toEndOf="@+id/vdcName"
-                                        android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_land"/>
+                                        android:entries="@array/item_land" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -1575,7 +1569,7 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
-                                            android:hint="Anna"
+                                            android:hint="Area"
                                             android:inputType="text"
                                             android:textColor="#000" />
 
@@ -1596,9 +1590,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_alignParentTop="true"
-                                        android:layout_toEndOf="@+id/vdcName"
-                                        android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_land"/>
+                                        android:entries="@array/item_land" />
                                 </LinearLayout>
                             </LinearLayout>
 
@@ -1681,9 +1673,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_alignParentTop="true"
-                                        android:layout_toEndOf="@+id/vdcName"
-                                        android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_price"/>
+                                        android:entries="@array/item_price" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -1740,14 +1730,109 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_alignParentTop="true"
-                                        android:layout_toEndOf="@+id/vdcName"
-                                        android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_price"/>
+                                        android:entries="@array/item_price" />
                                 </LinearLayout>
 
                             </LinearLayout>
                         </LinearLayout>
 
+                    </android.support.v7.widget.CardView>
+
+                    <!-- Land pooling -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="If Land Pooling"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <CheckBox
+                                android:id="@+id/land_pooling_house"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="House" />
+
+                            <CheckBox
+                                android:id="@+id/land_pooling_land"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Land" />
+
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/pooling_yearof_purchase"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Year Of Purchase"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="4">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/pooling_valueof_purchase"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Value of Purchase"
+                                            android:inputType="text"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/pooling_price_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentTop="true"
+                                        android:entries="@array/item_price" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
                     </android.support.v7.widget.CardView>
 
                     <!--save / send-->

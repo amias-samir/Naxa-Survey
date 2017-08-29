@@ -1,6 +1,8 @@
 package com.example.naxasurvay.gps;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,8 +17,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.naxasurvay.Database_Marker;
+import com.example.naxasurvay.Mapinfo;
 import com.example.naxasurvay.R;
+import com.example.naxasurvay.SurveyMain;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -71,8 +78,10 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     ProgressBar progressBar;
     @BindView(R.id.startRouteButton)
     Button startRouteButton;
+    @BindView(R.id.go_to_form)
+    Button GoToForm;
 
-
+    String code, Housecode, Title;
     private boolean isEndNotified;
 
     private OfflineManager offlineManager;
@@ -87,6 +96,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     ArrayList<String> Location = new ArrayList<>();
     ArrayList<String> Code = new ArrayList<>();
     private MapboxMap mapboxMap;
+
+    FloatingActionButton getMyLocationFAB;
 
     private double routeLat;
     private double routeLon;
@@ -109,6 +120,48 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+        //        curent position marker
+        getMyLocationFAB = (FloatingActionButton) findViewById(R.id.myLocationButton);
+        getMyLocationFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapboxMap.setMyLocationEnabled(true);
+
+
+                if (mapboxMap.getMyLocation() != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
+//                    map.setCenterCoordinate(new LatLngZoom(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude(), 20), true);
+
+                    Double latitude = mapboxMap.getMyLocation().getLatitude();
+                    Double longitude = mapboxMap.getMyLocation().getLongitude();
+
+                    Log.e(TAG, "onClick: SAMIR" + latitude.toString() + "," + longitude.toString());
+
+                    // Load and Draw the GeoJSON. The marker animation is also handled here.
+//                    new MapHouseholdActivity.DrawGeoJson().execute();
+
+
+                    IconFactory iconFactory = IconFactory.getInstance(SimpleOfflineMapActivity.this);
+//                    Drawable iconDrawable = ContextCompat.getDrawable(MapHouseholdActivity.this, R.drawable.marker_current);
+                    Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_current);
+                    Icon icon = iconFactory.fromBitmap(largeIcon);
+
+//                    map.addMarker(new MarkerOptions()
+//                            .position(new LatLng(latitude, longitude))
+//                            .icon(icon)
+//                            .title("Your Current Location"));
+
+
+                    // Animate camera to geocoder result location
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(latitude, longitude))
+                            .zoom(17)
+                            .build();
+                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+
+                }
+            }
+        });
+
 
     }
 
@@ -125,7 +178,11 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         mapboxMap.setOnMapClickListener(this);
 
 
+        // Load and Draw the GeoJSON. The marker animation is also handled here.
         new DrawGeoJson().execute();
+
+        parseArray();
+
     }
 
 
@@ -300,7 +357,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-
     private void calculateRoute(final MapboxMap mapboxMap, Position destination) {
         Location userLocation = mapboxMap.getMyLocation();
         if (userLocation == null) {
@@ -339,7 +395,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
     }
 
-
     @Override
     public void onLowMemory() {
         super.onLowMemory();
@@ -366,7 +421,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         mapView.onSaveInstanceState(outState);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -384,7 +438,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         super.onStop();
         mapView.onStop();
     }
-
 
     @Override
     public void onPause() {
@@ -427,7 +480,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
     }
 
-
     @Override
     public void onRunning(boolean running) {
 
@@ -454,8 +506,11 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         routeLat = marker.getPosition().getLatitude();
         routeLon = marker.getPosition().getLongitude();
         startRouteButton.setVisibility(View.VISIBLE);
-    }
+        GoToForm.setVisibility(View.VISIBLE);
+        Housecode = marker.getTitle();
 
+        Log.d("check code", "codeCheck :" + Housecode);
+    }
 
     @OnClick(R.id.startRouteButton)
     public void routeTwoPointsInGMaps() {
@@ -464,9 +519,17 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         startActivity(intent);
     }
 
+    @OnClick(R.id.go_to_form)
+    public void TakeHouseholdCode() {
+        Intent intent1 = new Intent(SimpleOfflineMapActivity.this, SurveyMain.class);
+        intent1.putExtra("HouseCode", Housecode);
+        startActivity(intent1);
+    }
+
     @Override
     public void onMapClick(@NonNull LatLng point) {
         startRouteButton.setVisibility(View.GONE);
+        GoToForm.setVisibility(View.GONE);
     }
 
 
@@ -496,6 +559,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 JSONObject feature = features.getJSONObject(0);
                 Log.e(TAG, "doInBackground: feature : " + feature.length());
                 Log.e(TAG, "doInBackground: features : " + features.length());
+                int counter = 0;
+
 //                JSONObject properties = feature.getJSONObject("properties");
                 for (int i = 0; i < features.length(); i++) {
                     JSONObject jobj = features.getJSONObject(i);
@@ -516,7 +581,35 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                             points.add(latLng);
 
                             String location = properties.getString("Location");
-                            String code = properties.getString("Code");
+                            code = properties.getString("Code");
+
+                            Log.d("SUSAN", "insertIntoMarker 2 : " + code + "\n" +
+                                    coords.getDouble(1) + "\n" + coords.getDouble(0) + "\n" + location);
+
+
+//                            if (points.size() > 0) {
+////                                 Draw polyline on map
+////                                 map.addPolyline(new PolylineOptions()
+////                                .addAll(points)
+////                                .color(Color.parseColor("#d0423b"))
+////                                .width(2));
+//
+//                                for (int j = 0; j< points.size(); j++) {
+//
+//                                    Log.d("Pradip", "insertIntoMarker 1 : " + Code.get(j));
+//                                    Log.d("Pradip", "insertIntoMarker 1 : " + points.get(j).getLatitude());
+//                                    Log.d("Pradip", "insertIntoMarker 1 : " + points.get(j).getLongitude());
+//                                    Log.d("Pradip", "insertIntoMarker 1 : " + Location.get(j));
+//
+////                                 updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i))
+                            Database_Marker marker = new Database_Marker(getApplicationContext());
+                            boolean doesDataExist = marker.doesDataExistOrNot(code);
+
+                            if (doesDataExist == false) {
+                                marker.insertIntoMarker(code, coords.getDouble(1), coords.getDouble(0), "0", location);
+                                counter++;
+                            }
+//                            }
 
                             Location.add(location);
                             Code.add(code);
@@ -525,6 +618,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                         }
                     }
                 }
+
 
             } catch (Exception exception) {
                 Log.e(TAG, "Exception Loading GeoJSON: " + exception.toString());
@@ -537,6 +631,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         protected void onPostExecute(List<LatLng> points) {
             super.onPostExecute(points);
             Log.d(TAG, "Station: " + points.toString());
+            Log.d(TAG, "Station:  PRADIP" + points.size());
 
             if (points.size() > 0) {
 
@@ -549,7 +644,9 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 for (int i = 0; i < points.size(); i++) {
 
 
-                    updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i));
+//                    updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i));
+
+
                 }
             }
 
@@ -557,13 +654,112 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
     }
 
+
     private void updateMap(double latitude, double longitude, String Code, String Location) {
         // Build marker
         mapboxMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .title(Code + "\n" + Location));
+                .title(Code))
+                .setSnippet(Location);
 
 
     }
 
+    public void parseArray() {
+//        Array database bata tana
+        Database_Marker marker = new Database_Marker(getApplicationContext());
+
+        int row = marker.getProfilesCount();
+        Log.d("getUnsavedata", "getProfilesCount : " + row);
+
+        List<Mapinfo> points = marker.getUnsavedata();
+        Log.d("getUnsavedata", "pointSize : " + points.size());
+        Log.d("getUnsavedata", "getUnsavedata : " + points.toString());
+        if (points.size() > 0) {
+
+            for (int i = 0; i < points.size(); i++) {
+                Mapinfo info = points.get(i);
+                String housecode = info.houseCode;
+                String status = info.status;
+                String placename = info.placeName;
+                Double Latitude = info.latitude;
+                Double Longitude = info.longitude;
+
+                updateMap(Latitude, Longitude, housecode, placename);
+            }
+        }
+
+        List<Mapinfo> points1 = marker.getsavedata();
+        Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+        if (points1.size() > 0) {
+
+            for (int i = 0; i < points1.size(); i++) {
+                Mapinfo info = points1.get(i);
+                String housecode = info.houseCode;
+                String status = info.status;
+                String placename = info.placeName;
+                Double Latitude = info.latitude;
+                Double Longitude = info.longitude;
+
+                updateSaveMap(Latitude, Longitude, housecode, placename);
+            }
+        }
+
+        List<Mapinfo> points2 = marker.getsenddata();
+        if (points2.size() > 0) {
+
+            for (int i = 0; i < points2.size(); i++) {
+                Mapinfo info = points2.get(i);
+                String housecode = info.houseCode;
+                String status = info.status;
+                String placename = info.placeName;
+                Double Latitude = info.latitude;
+                Double Longitude = info.longitude;
+
+                updateSendMap(Latitude, Longitude, housecode, placename);
+            }
+        }
+    }
+
+    private void updateSaveMap(double latitude, double longitude, String Code, String Location) {
+
+        IconFactory iconFactory = IconFactory.getInstance(SimpleOfflineMapActivity.this);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_saved);
+        Icon icon = iconFactory.fromBitmap(largeIcon);
+
+        // Build marker
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(Code)
+                .setSnippet(Location)
+                .setIcon(icon));
+
+        // Animate camera to geocoder result location
+//        CameraPosition cameraPosition = new CameraPosition.Builder()
+//                .target(new LatLng(latitude, longitude))
+//                .zoom(15)
+//                .build();
+//        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+    }
+
+    private void updateSendMap(double latitude, double longitude, String Code, String Location) {
+
+        IconFactory iconFactory = IconFactory.getInstance(SimpleOfflineMapActivity.this);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_start);
+        Icon icon = iconFactory.fromBitmap(largeIcon);
+
+        // Build marker
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(Code)
+                .setSnippet(Location)
+                .setIcon(icon));
+
+//        // Animate camera to geocoder result location
+//        CameraPosition cameraPosition = new CameraPosition.Builder()
+//                .target(new LatLng(latitude, longitude))
+//                .zoom(15)
+//                .build();
+//        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+    }
 }
