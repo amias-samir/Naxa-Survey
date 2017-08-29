@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -88,6 +89,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -632,8 +634,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+
+                dispatchTakePictureIntent();
             }
         });
 
@@ -1067,6 +1069,100 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             }
         });
+    }
+
+    static final int REQUEST_IMAGE_CAPTURE = 28371;
+
+    private void dispatchTakePictureIntent() {
+
+        //scaling down needs the imageview to be visible
+        //so start early
+        previewImageSite.setVisibility(View.VISIBLE);
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.naxasurvay.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+    private void setPic(ImageView mImageView, String imagePath) {
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+
+
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+
+        //bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inSampleSize = scaleFactor;
+
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        mImageView.setImageBitmap(bitmap);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
     }
 
 
@@ -1759,19 +1855,14 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //                    //NOT IN REQUIRED FORMAT
 //                }
             }
-        if (requestCode == CAMERA_PIC_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                thumbnail = (Bitmap) data.getExtras().get("data");
-                //  ImageView image =(ImageView) findViewById(R.id.Photo);
-                // image.setImageBitmap(thumbnail);
-                previewImageSite.setVisibility(View.VISIBLE);
-                previewImageSite.setImageBitmap(thumbnail);
-                saveToExternalSorage(thumbnail);
-                addImage();
-//                Toast.makeText(getApplicationContext(), "" + encodedImage, Toast.LENGTH_SHORT).show();
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+            galleryAddPic();
+            setPic(previewImageSite, mCurrentPhotoPath);
 
 
-            }
+
         }
 
         if (requestCode == GEOPOINT_RESULT_CODE) {
@@ -1919,26 +2010,21 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //        Log.e("Household_Survey", "HouseholdTypologyValue5 :" + check4);
 //        Log.e("Household_Survey", "HouseholdTypologyValue6 :" + check5);
 
-        for (int j=0; j<commas; j++)
-        {
-                String topologyValue = topology.get(j);
-            Log.e(TAG, "splitString:  topologyValue "+ topologyValue );
-            if(topologyValue.equals("single family detached")){
+        for (int j = 0; j < commas; j++) {
+            String topologyValue = topology.get(j);
+            Log.e(TAG, "splitString:  topologyValue " + topologyValue);
+            if (topologyValue.equals("single family detached")) {
                 check1 = topologyValue;
-            }
-            else if(topologyValue.equals("Multi family house")){
+            } else if (topologyValue.equals("Multi family house")) {
                 check2 = topologyValue;
 
-            }
-            else if(topologyValue.equals("apartment block")){
+            } else if (topologyValue.equals("apartment block")) {
                 check3 = topologyValue;
 
-            }
-            else if(topologyValue.equals("mixed use block")){
+            } else if (topologyValue.equals("mixed use block")) {
                 check4 = topologyValue;
 
-            }
-            else if(topologyValue.equals("number of floors")){
+            } else if (topologyValue.equals("number of floors")) {
                 check5 = topologyValue;
 
             }

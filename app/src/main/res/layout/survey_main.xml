@@ -10,7 +10,7 @@
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-    // xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -57,6 +57,7 @@
                                 android:layout_height="wrap_content">
 
                                 <TextView
+
                                     android:id="@+id/survey_id_num"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -72,8 +73,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/survey_id_num"
-                                    android:inputType="text"
                                     android:hint="id"
+                                    android:inputType="text"
+                                    android:text="123"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -89,6 +91,7 @@
                                     android:layout_marginTop="45dp"
                                     android:hint="Name of Surveyor"
                                     android:inputType="text"
+                                    android:text="Nishon Tandukar"
                                     android:textColor="#000" />
 
                             </android.support.design.widget.TextInputLayout>
@@ -142,8 +145,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/house_id_code"
-                                    android:inputType="text"
                                     android:hint="id"
+                                    android:inputType="text"
+                                    android:text="1234"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -175,9 +179,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/district_name"
                                     android:layout_toEndOf="@+id/District"
-                                    android:layout_toRightOf="@+id/District" />
+                                    android:layout_toRightOf="@+id/District"
+                                    android:entries="@array/district_name" />
 
                             </RelativeLayout>
 
@@ -209,9 +213,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/municipality_name"
                                     android:layout_toEndOf="@+id/Municipality"
-                                    android:layout_toRightOf="@+id/Municipality" />
+                                    android:layout_toRightOf="@+id/Municipality"
+                                    android:entries="@array/municipality_name" />
 
                             </RelativeLayout>
 
@@ -227,22 +231,25 @@
                                     android:layout_marginTop="45dp"
                                     android:hint="Ward no"
                                     android:inputType="text"
+                                    android:text="21"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
                             <android.support.design.widget.TextInputLayout
-                            android:id="@+id/Address"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
 
-                            <AutoCompleteTextView
-                            android:id="@+id/Survay_address"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="45dp"
-                            android:hint="Address"
-                            android:inputType="text"
-                            android:textColor="#000" />
+                                android:id="@+id/Address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/Survay_address"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Address"
+                                    android:inputType="text"
+                                    android:text="Putali Saddak"
+                                    android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
 
@@ -497,8 +504,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:text="Family Member In Houseold"
-                                android:textStyle="bold"
-                                 />
+                                android:textStyle="bold" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -738,8 +744,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:text="Working Family Member In Houseold"
-                                android:textStyle="bold"
-                                />
+                                android:textStyle="bold" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -979,10 +984,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="18sp"
                                 android:text="Source of income of Family Members"
-                                android:textStyle="bold"
-                                />
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
                             <!-- husband -->
                             <RelativeLayout
@@ -1289,16 +1293,15 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="18sp"
                                 android:text="Average Monthly Income of Family Members"
-                                android:textStyle="bold"
-                                />
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
                             <!-- husband -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_husband"
                                     android:layout_width="150dp"
@@ -1320,17 +1323,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_husband"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_husband" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_husband"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- wife -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_wife"
                                     android:layout_width="150dp"
@@ -1352,17 +1355,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_wife"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_wife" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_wife"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- children -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_children"
                                     android:layout_width="150dp"
@@ -1384,17 +1387,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_children"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_children" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_children"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- relatives -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_relatives"
                                     android:layout_width="150dp"
@@ -1416,17 +1419,17 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_relatives"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_relatives" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_relatives"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
                             <!-- others -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                >
+                                android:layout_height="wrap_content">
+
                                 <android.support.design.widget.TextInputLayout
                                     android:id="@+id/average_monthlyIncome_of_others"
                                     android:layout_width="150dp"
@@ -1448,9 +1451,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentTop="true"
-                                    android:entries="@array/item_price"
                                     android:layout_toEndOf="@+id/average_monthlyIncome_of_others"
-                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_others" />
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_others"
+                                    android:entries="@array/item_price" />
 
                             </RelativeLayout>
 
@@ -1536,7 +1539,7 @@
                                         android:layout_alignParentTop="true"
                                         android:layout_toEndOf="@+id/vdcName"
                                         android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_land"/>
+                                        android:entries="@array/item_land" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -1598,7 +1601,7 @@
                                         android:layout_alignParentTop="true"
                                         android:layout_toEndOf="@+id/vdcName"
                                         android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_land"/>
+                                        android:entries="@array/item_land" />
                                 </LinearLayout>
                             </LinearLayout>
 
@@ -1683,7 +1686,7 @@
                                         android:layout_alignParentTop="true"
                                         android:layout_toEndOf="@+id/vdcName"
                                         android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_price"/>
+                                        android:entries="@array/item_price" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -1742,7 +1745,7 @@
                                         android:layout_alignParentTop="true"
                                         android:layout_toEndOf="@+id/vdcName"
                                         android:layout_toRightOf="@+id/vdcName"
-                                        android:entries="@array/item_price"/>
+                                        android:entries="@array/item_price" />
                                 </LinearLayout>
 
                             </LinearLayout>
