@@ -17,8 +17,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.naxasurvay.Database_Marker;
-import com.example.naxasurvay.Mapinfo;
+
 import com.example.naxasurvay.R;
 import com.example.naxasurvay.SurveyMain;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -38,17 +37,9 @@ import com.mapbox.mapboxsdk.offline.OfflineRegion;
 import com.mapbox.mapboxsdk.offline.OfflineRegionError;
 import com.mapbox.mapboxsdk.offline.OfflineRegionStatus;
 import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
-import com.mapbox.services.android.location.LostLocationEngine;
-import com.mapbox.services.android.navigation.v5.MapboxNavigation;
-import com.mapbox.services.android.navigation.v5.listeners.NavigationEventListener;
-import com.mapbox.services.android.navigation.v5.offroute.OffRouteListener;
-import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
-import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
+
 import com.mapbox.services.android.telemetry.location.LocationEngine;
-import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
-import com.mapbox.services.api.utils.turf.TurfConstants;
-import com.mapbox.services.api.utils.turf.TurfMeasurement;
+
 import com.mapbox.services.commons.models.Position;
 
 import org.json.JSONArray;
@@ -64,9 +55,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
 import timber.log.Timber;
 
 
@@ -760,6 +749,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                .target(new LatLng(latitude, longitude))
 //                .zoom(15)
 //                .build();
-//        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+//f        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
     }
 }
