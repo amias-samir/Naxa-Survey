@@ -1,14 +1,19 @@
 package com.example.naxasurvay.gps;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,8 +23,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import com.example.naxasurvay.Database_Marker;
+import com.example.naxasurvay.Mapinfo;
 import com.example.naxasurvay.R;
 import com.example.naxasurvay.SurveyMain;
+import com.example.naxasurvay.UrlClass;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -38,24 +46,45 @@ import com.mapbox.mapboxsdk.offline.OfflineRegionError;
 import com.mapbox.mapboxsdk.offline.OfflineRegionStatus;
 import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 
+import com.mapbox.services.android.location.LostLocationEngine;
+import com.mapbox.services.android.navigation.v5.MapboxNavigation;
+import com.mapbox.services.android.navigation.v5.listeners.NavigationEventListener;
+import com.mapbox.services.android.navigation.v5.offroute.OffRouteListener;
+import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
+import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 
+import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
+import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.services.api.utils.turf.TurfConstants;
+import com.mapbox.services.api.utils.turf.TurfMeasurement;
 import com.mapbox.services.commons.models.Position;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 
@@ -75,6 +104,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
     private OfflineManager offlineManager;
 
+    NetworkInfo networkInfo;
+    ConnectivityManager connectivityManager;
 
     public static final String JSON_CHARSET = "UTF-8";
     public static final String JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME";
@@ -87,6 +118,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     private MapboxMap mapboxMap;
 
     FloatingActionButton getMyLocationFAB;
+
+    ProgressDialog mProgressDlg;
 
     private double routeLat;
     private double routeLon;
@@ -105,9 +138,25 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         navigation.setLocationEngine(locationEngine);
 
 
+        //Check internet connection
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkInfo = connectivityManager.getActiveNetworkInfo();
+
+
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+//            mProgressDlg = new ProgressDialog(getApplicationContext());
+//            mProgressDlg.setMessage("Please wait...");
+//            mProgressDlg.setIndeterminate(false);
+//            mProgressDlg.setCancelable(false);
+//            mProgressDlg.show();
+            CompletedStatusUpdate completedStatusUpdate = new CompletedStatusUpdate();
+            completedStatusUpdate.execute();
+        }
 
         //        curent position marker
         getMyLocationFAB = (FloatingActionButton) findViewById(R.id.myLocationButton);
@@ -530,7 +579,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
             try {
                 // Load GeoJSON file
-                InputStream inputStream = getAssets().open("geojson_household.geojson");
+                InputStream inputStream = getAssets().open("household_revised02.geojson");
                 Log.e(TAG, "doInBackground: " + inputStream.toString());
                 BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
                 StringBuilder sb = new StringBuilder();
@@ -543,6 +592,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
                 // Parse JSON
                 JSONObject json = new JSONObject(sb.toString());
+
                 JSONArray features = json.getJSONArray("features");
 
                 JSONObject feature = features.getJSONObject(0);
@@ -557,11 +607,15 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                     JSONObject properties = jobj.getJSONObject("properties");
                     Log.e(TAG, "doInBackground: geometry" + geometry.toString());
                     if (geometry != null) {
-                        String type = geometry.getString("type");
 
+
+                        String status = properties.getString("Status");
+
+                        String type = geometry.getString("type");
+                        Log.e(TAG, "Type : " + type);
                         // Our GeoJSON only has one feature: a line string
                         if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("Point")) {
-
+                            Log.e(TAG, "status : " + status);
                             // Get the Coordinates
                             JSONArray coords = geometry.getJSONArray("coordinates");
 //                            for (int lc = 0; lc < coords.length(); lc++) {
@@ -569,8 +623,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                             LatLng latLng = new LatLng(coords.getDouble(1), coords.getDouble(0));
                             points.add(latLng);
 
-                            String location = properties.getString("Location");
-                            code = properties.getString("Code");
+                            String location = properties.getString("location");
+                            code = properties.getString("code");
 
                             Log.d("SUSAN", "insertIntoMarker 2 : " + code + "\n" +
                                     coords.getDouble(1) + "\n" + coords.getDouble(0) + "\n" + location);
@@ -595,7 +649,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                             boolean doesDataExist = marker.doesDataExistOrNot(code);
 
                             if (doesDataExist == false) {
-                                marker.insertIntoMarker(code, coords.getDouble(1), coords.getDouble(0), "0", location);
+                                marker.insertIntoMarker(code, coords.getDouble(1), coords.getDouble(0), status, location);
                                 counter++;
                             }
 //                            }
@@ -750,5 +804,128 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                .zoom(15)
 //                .build();
 //f        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+    }
+
+    private class CompletedStatusUpdate extends AsyncTask<String, Void, String> {
+        JSONArray data = null;
+
+        protected String getASCIIContentFromEntity(HttpURLConnection entity)
+                throws IllegalStateException, IOException {
+            InputStream in = (InputStream) entity.getContent();
+
+            StringBuffer out = new StringBuffer();
+            int n = 1;
+            while (n > 0) {
+                byte[] b = new byte[4096];
+                n = in.read(b);
+
+                if (n > 0)
+                    out.append(new String(b, 0, n));
+            }
+
+            return out.toString();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            String text = "";
+
+
+            if (networkInfo != null && networkInfo.isConnected()) {
+                text = POST("http://naxa.com.np/householdsurvey/ApiController/surveyedhouses");
+
+            } else {
+                Toast.makeText(SimpleOfflineMapActivity.this, "Unable to sync map data", Toast.LENGTH_SHORT).show();
+
+                try {
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+                JSONObject jsonObj = new JSONObject(text);
+                data = jsonObj.getJSONArray("data");
+                Database_Marker databaseMarker = new Database_Marker(getApplicationContext());
+                Log.e("DATA", "" + data.toString());
+
+                for (int i = 0; i < data.length(); i++) {
+
+                    Log.e("","HOUSEHOLD ID LIST "+i);
+
+                    JSONObject c = data.getJSONObject(i);
+
+
+                    String house_code = c.getString("house_id");
+                    Log.e("","HOUSEHOLD CODE"+ house_code);
+
+                    databaseMarker.replaceSend(house_code);
+                }
+            } catch (Exception e) {
+                return e.getLocalizedMessage();
+            }
+
+            return text.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // TODO Auto-generated method stub
+
+            if (result != null) {
+//                if (mProgressDlg.isShowing() && !mProgressDlg.equals(null)) {
+//                    mProgressDlg.dismiss();
+//                }
+            }
+
+        }
+
+        public String POST(String myurl) {
+
+            URL url;
+            String response = "";
+            try {
+                url = new URL(myurl);
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("", "");
+                String query = builder.build().getEncodedQuery();
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line = br.readLine()) != null) {
+                        response += line;
+                    }
+                } else {
+                    response = "";
+
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+
     }
 }

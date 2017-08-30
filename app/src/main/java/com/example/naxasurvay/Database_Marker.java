@@ -206,7 +206,7 @@ public class Database_Marker extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(STATUS,1);
+        contentValues.put(STATUS,2);
 
         int i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
 

@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
-import com.example.naxasurvay.gps.MapHouseholdActivity;
+import com.example.naxasurvay.gps.SimpleOfflineMapActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case (R.id.mapHousehold):
-                Intent intentMap = new Intent(MainActivity.this, MapHouseholdActivity.class);
+                Intent intentMap = new Intent(MainActivity.this, SimpleOfflineMapActivity.class);
                 startActivity(intentMap);
 
                 break;
