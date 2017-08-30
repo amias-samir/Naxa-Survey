@@ -717,7 +717,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
                             AgeValue = Age.getText().toString();
-//        String SexValue = Sex.getText().toString();
+//                                String SexValue = Sex.getText().toString();
 
                             RadioButton checkedBtn = (RadioButton) findViewById(Sex.getCheckedRadioButtonId());
                             SexValue = checkedBtn.getText().toString();
@@ -761,8 +761,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
                             RelativesFarmIncomeValue = RelativesFarmIncome.getText().toString();
                             OthersFarmIncomeValue = OthersFarmIncome.getText().toString();
-//                AreaOfLandValue = AreaOfLand.getText().toString();
-//                PriceOfLandValue = PriceOfLand.getText().toString();
+//                              AreaOfLandValue = AreaOfLand.getText().toString();
+//                               PriceOfLandValue = PriceOfLand.getText().toString();
                             LandInAnnaValue = LandInAnna.getText().toString();
                             TotalLandPriceValue = TotalLandPrice.getText().toString();
                             PropertyInAnnaValue = PropertyInAnna.getText().toString();
@@ -788,44 +788,41 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             convertDataToJson();
 
 
-                            if (networkInfo != null && networkInfo.isConnected()) {
+                            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                            final int width = metrics.widthPixels;
+                            int height = metrics.heightPixels;
 
+                            final Dialog showDialog = new Dialog(context);
+                            showDialog.setContentView(R.layout.alert_dialog_before_send);
+                            final Button yes = (Button) showDialog.findViewById(R.id.alertButtonYes);
+                            final Button no = (Button) showDialog.findViewById(R.id.alertButtonNo);
 
-                                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-                                final int width = metrics.widthPixels;
-                                int height = metrics.heightPixels;
+                            showDialog.setTitle("WARNING !!!");
+                            showDialog.setCancelable(false);
+                            showDialog.show();
+                            showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                                final Dialog showDialog = new Dialog(context);
-                                showDialog.setContentView(R.layout.alert_dialog_before_send);
-                                final Button yes = (Button) showDialog.findViewById(R.id.alertButtonYes);
-                                final Button no = (Button) showDialog.findViewById(R.id.alertButtonNo);
-
-                                showDialog.setTitle("WARNING !!!");
-                                showDialog.setCancelable(false);
-                                showDialog.show();
-                                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                                yes.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        showDialog.dismiss();
-                                        mProgressDlg = new ProgressDialog(context);
-                                        mProgressDlg.setMessage("Please wait...");
-                                        mProgressDlg.setIndeterminate(false);
-                                        mProgressDlg.setCancelable(false);
-                                        mProgressDlg.show();
-                                        convertDataToJson();
-                                        sendDatToserver();
+                            yes.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    showDialog.dismiss();
+                                    mProgressDlg = new ProgressDialog(context);
+                                    mProgressDlg.setMessage("Please wait...");
+                                    mProgressDlg.setIndeterminate(false);
+                                    mProgressDlg.setCancelable(false);
+                                    mProgressDlg.show();
+                                    convertDataToJson();
+                                    sendDatToserver();
 //                                          finish();
-                                    }
-                                });
+                                }
+                            });
 
-                                no.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        showDialog.dismiss();
-                                    }
-                                });
+                            no.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    showDialog.dismiss();
+                                }
+                            });
 //
 //                                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 //                                    final int width = metrics.widthPixels;
@@ -833,86 +830,86 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //
 //
 //                                    final Dialog showDialog = new Dialog(context);
-                                showDialog.setContentView(R.layout.date_input_layout);
-                                final EditText FormNameToInput = (EditText) showDialog.findViewById(R.id.input_tableName);
-                                final EditText dateToInput = (EditText) showDialog.findViewById(R.id.input_date);
+                            showDialog.setContentView(R.layout.date_input_layout);
+                            final EditText FormNameToInput = (EditText) showDialog.findViewById(R.id.input_tableName);
+                            final EditText dateToInput = (EditText) showDialog.findViewById(R.id.input_date);
 
-                                if (formNameSavedForm.equals("")) {
-                                    FormNameToInput.setText("Household Survey");
-                                } else {
-                                    FormNameToInput.setText(formNameSavedForm);
-                                    Database_SaveForm dataBaseNsaveform = new Database_SaveForm(context);
-                                    dataBaseNsaveform.open();
-                                    dataBaseNsaveform.dropRowNotSentForms(formid);
-                                }
-
-                                long date = System.currentTimeMillis();
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
-                                String dateString = sdf.format(date);
-                                dateToInput.setText(dateString);
-
-                                AppCompatButton logIn = (AppCompatButton) showDialog.findViewById(R.id.login_button);
-                                showDialog.setTitle("Save Data");
-                                showDialog.setCancelable(true);
-                                showDialog.show();
-                                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                                logIn.setOnClickListener(new View.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-                                        String dateDataCollected = dateToInput.getText().toString();
-                                        String formName = FormNameToInput.getText().toString();
-
-                                        String[] data = new String[]{"1", formName, dateDataCollected, jsonToSend, jsonLatLangArray,
-                                                "" + imageName, "Not Sent", "0"};
-
-
-                                        Database_SaveForm dataBaseSaveform = new Database_SaveForm(context);
-                                        dataBaseSaveform.open();
-                                        long id = dataBaseSaveform.insertIntoTable_Main(data);
-                                        Log.e("dbID", "" + id);
-                                        dataBaseSaveform.close();
-
-                                        Toast.makeText(SurveyMain.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
-                                        showDialog.dismiss();
-
-                                        final Dialog showDialog = new Dialog(context);
-                                        showDialog.setContentView(R.layout.savedform_sent_popup);
-                                        final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
-                                        final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
-
-                                        showDialog.setTitle("Successfully Saved");
-                                        showDialog.setCancelable(false);
-                                        showDialog.show();
-                                        showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                                        yes.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                showDialog.dismiss();
-                                                Intent intent = new Intent(SurveyMain.this, SavedFormActivity.class);
-                                                startActivity(intent);
-//                                                 finish();
-                                            }
-                                        });
-
-                                        no.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                showDialog.dismiss();
-                                                Intent intent = new Intent(SurveyMain.this, MainActivity.class);
-                                                startActivity(intent);
-                                            }
-                                        });
-
-
-                                    }
-                                });
-                                // this
+                            if (formNameSavedForm.equals("")) {
+                                FormNameToInput.setText("Household Survey");
+                            } else {
+                                FormNameToInput.setText(formNameSavedForm);
+                                Database_SaveForm dataBaseNsaveform = new Database_SaveForm(context);
+                                dataBaseNsaveform.open();
+                                dataBaseNsaveform.dropRowNotSentForms(formid);
                             }
+
+                            long date = System.currentTimeMillis();
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+                            String dateString = sdf.format(date);
+                            dateToInput.setText(dateString);
+
+                            AppCompatButton logIn = (AppCompatButton) showDialog.findViewById(R.id.login_button);
+                            showDialog.setTitle("Save Data");
+                            showDialog.setCancelable(true);
+                            showDialog.show();
+                            showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                            logIn.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    // TODO Auto-generated method stub
+                                    String dateDataCollected = dateToInput.getText().toString();
+                                    String formName = FormNameToInput.getText().toString();
+
+                                    String[] data = new String[]{"1", formName, dateDataCollected, jsonToSend, jsonLatLangArray,
+                                            "" + imageName, "Not Sent", "0"};
+
+
+                                    Database_SaveForm dataBaseSaveform = new Database_SaveForm(context);
+                                    dataBaseSaveform.open();
+                                    long id = dataBaseSaveform.insertIntoTable_Main(data);
+                                    Log.e("dbID", "" + id);
+                                    dataBaseSaveform.close();
+
+                                    Toast.makeText(SurveyMain.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
+                                    showDialog.dismiss();
+
+                                    final Dialog showDialog = new Dialog(context);
+                                    showDialog.setContentView(R.layout.savedform_sent_popup);
+                                    final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
+                                    final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
+
+                                    showDialog.setTitle("Successfully Saved");
+                                    showDialog.setCancelable(false);
+                                    showDialog.show();
+                                    showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                                    yes.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            showDialog.dismiss();
+                                            Intent intent = new Intent(SurveyMain.this, SavedFormActivity.class);
+                                            startActivity(intent);
+//                                                 finish();
+                                        }
+                                    });
+
+                                    no.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            showDialog.dismiss();
+                                            Intent intent = new Intent(SurveyMain.this, MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+
+
+                                }
+                            });
+                            // this
+
                         } else {
                             Toast.makeText(getApplicationContext(), "Something is no fill in the form", Toast.LENGTH_SHORT).show();
 
@@ -1493,11 +1490,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             header.put("others_no", NumOfothersValue);
 
             header.put("num_of_working_family_memb", WorkingFamilyMemberNumberValue);
-            header.put("working_husband_no", NumOfHusbandValue);
-            header.put("working_wife_no", NumOfWifeValue);
-            header.put("working_children_no", NumOfChildrenValue);
-            header.put("working_relatives_no", NumOfRelativesValue);
-            header.put("working_others_no", NumOfothersValue);
+            header.put("working_husband_no", WorkingNumOfHusbandValue);
+            header.put("working_wife_no", WorkingNumOfWifeValue);
+            header.put("working_children_no", WorkingNumOfChildrenValue);
+            header.put("working_relatives_no", WorkingNumOfRelativesValue);
+            header.put("working_others_no", WorkingNumOfothersValue);
 
             header.put("income_source_of_husband", HusbandIncomeSource);
             header.put("income_other_source_of_husband", HusbandIncomeOtherSource);
@@ -1696,9 +1693,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 //        Sex.setText(SexValue);
 
-        if (SexValue.equals("male")) {
+        if (SexValue.equals("Male")) {
             ((RadioButton) findViewById(R.id.male)).setChecked(true);
-        } else if (SexValue.equals("female")) {
+        } else if (SexValue.equals("Female")) {
             ((RadioButton) findViewById(R.id.female)).setChecked(true);
         } else {
             ((RadioButton) findViewById(R.id.Other)).setChecked(true);
@@ -1730,10 +1727,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!HusbandIncomeOtherSource.equals("")) {
             HusbandOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        HusbandFarmIncome.setText(HusbandFarmIncomeValue);
-//        if (!HusbandFarmIncomeValue.equals("")) {
-//            HusbandFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        HusbandFarmIncome.setText(HusbandFarmIncomeValue);
+        if (!HusbandFarmIncomeValue.equals("")) {
+            HusbandFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         WifeIncomeDetail.setText(WifeIncomeSource);
         if (!WifeIncomeSource.equals("")) {
@@ -1743,10 +1740,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!WifeIncomeOtherSource.equals("")) {
             WifeOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        WifeFarmIncome.setText(WifeFarmIncomeValue);
-//        if (!WifeFarmIncomeValue.equals("")) {
-//            WifeFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        WifeFarmIncome.setText(WifeFarmIncomeValue);
+        if (!WifeFarmIncomeValue.equals("")) {
+            WifeFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         ChildrenIncomeDetail.setText(ChildrenIncomeSource);
         if (!ChildrenIncomeSource.equals("")) {
@@ -1756,10 +1753,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!ChildrensIncomeOtherSource.equals("")) {
             ChildrenOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        ChildrenFarmIncome.setText(ChildrenFarmIncomeValue);
-//        if (!ChildrenFarmIncomeValue.equals("")) {
-//            ChildrenFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        ChildrenFarmIncome.setText(ChildrenFarmIncomeValue);
+        if (!ChildrenFarmIncomeValue.equals("")) {
+            ChildrenFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         RelativesIncomeDetail.setText(RelativesIncomeSource);
         if (!RelativesIncomeSource.equals("")) {
@@ -1769,10 +1766,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!RelativesIncomeOtherSource.equals("")) {
             RelativesOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        RelativesFarmIncome.setText(RelativesFarmIncomeValue);
-//        if (!RelativesFarmIncomeValue.equals("")) {
-//            RelativesFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        RelativesFarmIncome.setText(RelativesFarmIncomeValue);
+        if (!RelativesFarmIncomeValue.equals("")) {
+            RelativesFarmIncome.setVisibility(View.VISIBLE);
+        }
 
         OthersIncomeDetail.setText(OthersIncomeSource);
         if (!OthersIncomeSource.equals("")) {
@@ -1782,10 +1779,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (!OthersIncomeOtherSource.equals("")) {
             OthersOthersIncomeDetail.setVisibility(View.VISIBLE);
         }
-//        OthersFarmIncome.setText(OthersFarmIncomeValue);
-//        if (!OthersFarmIncomeValue.equals("")) {
-//            OthersFarmIncome.setVisibility(View.VISIBLE);
-//        }
+        OthersFarmIncome.setText(OthersFarmIncomeValue);
+        if (!OthersFarmIncomeValue.equals("")) {
+            OthersFarmIncome.setVisibility(View.VISIBLE);
+        }
 
 
         AverageMonthlyIncomeOfHusband.setText(AverageMonthlyIncomeOfHusbandValue);
@@ -1944,7 +1941,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         previewImageSite.setVisibility(View.VISIBLE);
-       previewImageSite.setImageBitmap(decodedByte);
+        previewImageSite.setImageBitmap(decodedByte);
 
     }
 
