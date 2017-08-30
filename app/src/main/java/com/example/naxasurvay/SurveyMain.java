@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -342,6 +343,21 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     @BindView(R.id.property_price_spinner)
     Spinner property_price_spinner;
 
+    @BindView(R.id.land_pooling_house)
+    CheckBox poolingHouse;
+    @BindView(R.id.land_pooling_land)
+    CheckBox poolingland;
+    @BindView(R.id.pooling_yearof_purchase)
+    AutoCompleteTextView yearOfPurchase;
+    @BindView(R.id.pooling_valueof_purchase)
+    AutoCompleteTextView valueOfPurchase;
+    @BindView(R.id.pooling_price_spinner)
+    Spinner Pooling_price_spinner;
+
+    String yearOfPurchaseValue, valueOfPurchaseValue, PoolingPriceType, HouseCode;
+
+    SharedPreferences preferences;
+
     @BindView(R.id.Naxa_survay_save)
     Button Save;
     @BindView(R.id.Naxa_survay_send)
@@ -566,12 +582,27 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         ButterKnife.bind(this);
 
+        HouseCode = getIntent().getStringExtra("HouseCode");
 
         SingleFamilyDetached.setOnCheckedChangeListener(this);
         MultyFamilyhouse.setOnCheckedChangeListener(this);
         ApartmentBlock.setOnCheckedChangeListener(this);
         MixedUseBlock.setOnCheckedChangeListener(this);
         NumberOfFloors.setOnCheckedChangeListener(this);
+
+        poolingHouse.setOnCheckedChangeListener(this);
+        poolingland.setOnCheckedChangeListener(this);
+
+
+        preferences = getSharedPreferences("userinfo", 0);
+        String registeredSurveyorId = preferences.getString("Surveyor_Id", "");
+        String registeredSurveyorName = preferences.getString("Surveyor_Name", "");
+
+
+        surveyorId.setText(registeredSurveyorId);
+        NameOfSurveyor.setText(registeredSurveyorName);
+        HouseHoldId.setText(HouseCode);
+
 
 //        fillarray();
         setCurrentDateOnView();
@@ -1830,6 +1861,17 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         int setPropertyPrice = ItemPriceValue.indexOf(PropertyPriceType);
         property_price_spinner.setSelection(setPropertyPrice);
 
+        if (pcheck1.equals("House")) {
+            poolingHouse.setChecked(true);
+        }
+        if (pcheck2.equals("Land")) {
+            poolingland.setChecked(true);
+        }
+        yearOfPurchase.setText(yearOfPurchaseValue);
+        valueOfPurchase.setText(valueOfPurchaseValue);
+        int setPoolingPrice = ItemPriceValue.indexOf(PoolingPriceType);
+        Pooling_price_spinner.setSelection(setPoolingPrice);
+
     }
 
     @Override
@@ -1993,6 +2035,29 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
+    public void splitString1(String htvString) {
+        int commas = 0;
+        ArrayList<String> pooling = new ArrayList<>();
+        for (int i = 0; i < htvString.length(); i++) {
+            if (htvString.charAt(i) == ',') commas++;
+        }
+        for (int i = 0; i < commas; i++) {
+            String[] parts = htvString.split(", ");
+            pooling.add(parts[i]);
+
+        }
+        for (int j = 0; j < commas; j++) {
+            String poolingValue = pooling.get(j);
+            Log.e(TAG, "splitString:  topologyValue " + poolingValue);
+            if (poolingValue.equals("House")) {
+                pcheck1 = poolingValue;
+            }
+            if (poolingValue.equals("Land")) {
+                pcheck2 = poolingValue;
+            }
+        }
+    }
+
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -2042,14 +2107,33 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 }
 
                 break;
+            case R.id.land_pooling_house:
+                if (poolingHouse.isChecked() == true) {
+                    Pooling1 = "House" + ", ";
+                } else {
+                    Pooling1 = "";
+                }
+
+                break;
+
+            case R.id.land_pooling_land:
+                if (poolingland.isChecked() == true) {
+                    Pooling2 = "Land" + ", ";
+                } else {
+                    Pooling2 = "";
+                }
+
+                break;
 
 
 //            HouseholdTypologyValue = topology;
         }
+        PoolingValue = Pooling1 + Pooling2;
         HouseholdTypologyValue = HouseholdTypologyValue1 + HouseholdTypologyValue2 + HouseholdTypologyValue3 + HouseholdTypologyValue4 + HouseholdTypologyValue5;
         Log.e("Household_Survey", "HouseholdTypologyValue :" + HouseholdTypologyValue);
     }
 
+    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1, pcheck2;
     String HouseholdTypologyValue1 = "", HouseholdTypologyValue2 = "", HouseholdTypologyValue3 = "", HouseholdTypologyValue4 = "", HouseholdTypologyValue5 = "";
 
     private class RestApii extends AsyncTask<String, Void, String> {
