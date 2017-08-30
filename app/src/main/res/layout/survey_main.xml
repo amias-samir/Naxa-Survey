@@ -1745,6 +1745,103 @@
 
                     </android.support.v7.widget.CardView>
 
+                    <!-- Land pooling -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="If Land Pooling"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <CheckBox
+                                android:id="@+id/land_pooling_house"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="House" />
+
+                            <CheckBox
+                                android:id="@+id/land_pooling_land"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Land" />
+
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/pooling_yearof_purchase"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Year Of Purchase"
+                                    android:inputType="text"
+                                    android:textColor="#000" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="4">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/pooling_valueof_purchase"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Value of Purchase"
+                                            android:inputType="text"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/pooling_price_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentTop="true"
+                                        android:entries="@array/item_price" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
                     <!--save / send-->
                     <android.support.v7.widget.CardView
                         android:id="@+id/cv_SaveSend"

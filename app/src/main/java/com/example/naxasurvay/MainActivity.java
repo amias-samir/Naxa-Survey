@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -77,5 +79,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_layout, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        switch (id) {
+
+            case R.id.action_setting:
+                Intent intent = new Intent(MainActivity.this,RegisterActivity.class);
+                startActivity(intent);
+//                Toast.makeText(this, "Action settings", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
