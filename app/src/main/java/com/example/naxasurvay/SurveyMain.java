@@ -100,6 +100,7 @@ import butterknife.OnClick;
 
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.id;
+import static android.R.attr.visible;
 
 public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
@@ -911,27 +912,30 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                     }
                                 });
                                 // this
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Something is no fill in the form", Toast.LENGTH_SHORT).show();
-
                             }
-
                         } else {
-                            Toast.makeText(getApplicationContext(), "You need to take a house image", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Something is no fill in the form", Toast.LENGTH_SHORT).show();
 
                         }
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "You need to take a house image", Toast.LENGTH_SHORT).show();
 
                     }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "You need to take at least one gps cooordinate", Toast.LENGTH_SHORT).show();
+
                 }
             }
+
 
         });
 
         // add click listener to Button "POST"
-        Send.setOnClickListener(new View.OnClickListener() {
+        Send.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
 
@@ -1133,15 +1137,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         int targetH = mImageView.getHeight();
 
 
-
-
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imagePath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
-
 
 
         // Determine how much to scale down the image
@@ -1160,7 +1161,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
         encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
     }
@@ -1363,6 +1364,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             Bundle bundle = intent.getExtras();
             String jsonToParse = (String) bundle.get("JSON1");
             imageName = (String) bundle.get("photo");
+            Log.d("Retrive Image", "Retrive Image :" + imageName);
             String gpsLocationtoParse = (String) bundle.get("gps");
             formid = (String) bundle.get("DBid");
             String sent_Status = (String) bundle.get("sent_Status");
@@ -1406,16 +1408,16 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 String path = file1.toString();
                 Toast.makeText(getApplicationContext(), path, Toast.LENGTH_SHORT).show();
 
-                loadImageFromStorage(path);
+//                loadImageFromStorage(path);
 
-                addImage();
+
             }
             try {
                 //new adjustment
                 Log.e("HouseholdSurvey", "" + jsonToParse);
-                Log.d(TAG, "HouseholdSurvey: " + jsonToParse);
 //                parseArrayGPS(gpsLocationtoParse);
                 parseJson(jsonToParse);
+                addImage(encodedImage);
             } catch (JSONException e) {
                 Log.d(TAG, "HouseholdSurv: " + e.toString());
                 e.printStackTrace();
@@ -1646,7 +1648,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         listCf.add(d);
 
         encodedImage = jsonObj.getString("photo");
-
+        Log.d("check Image", "encoded Image : " + encodedImage);
 
 //        Log.e("Children Under Two", "Parsed data " + child2_vdc_name + child2_ward_no + weight);
 //
@@ -1836,31 +1838,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1)
-            if (resultCode == Activity.RESULT_OK) {
-                Uri selectedImage = data.getData();
-
-                String filePath = getPath(selectedImage);
-                String file_extn = filePath.substring(filePath.lastIndexOf(".") + 1);
-
-//                image_name_tv.setText(filePath);
-                imagePath = filePath;
-                addImage();
-//                Toast.makeText(getApplicationContext(),""+encodedImage,Toast.LENGTH_SHORT).show();
-//                if (file_extn.equals("img") || file_extn.equals("jpg") || file_extn.equals("jpeg") || file_extn.equals("gif") || file_extn.equals("png")) {
-//                    //FINE
-//
-//                }
-//                else{
-//                    //NOT IN REQUIRED FORMAT
-//                }
-            }
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
             galleryAddPic();
             setPic(previewImageSite, mCurrentPhotoPath);
-
 
 
         }
@@ -1957,30 +1939,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         return uri.getPath();
     }
 
-    public void addImage() {
-        File file1 = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), imageName);
-        String path = file1.toString();
+    public void addImage(String encodedimage) {
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-
-        options.inSampleSize = 1;
-        options.inPurgeable = true;
-        Bitmap bm = BitmapFactory.decodeFile(path, options);
-//        Bitmap bm = BitmapFactory.decodeFile( imagePath ,options);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-
-        // bitmap object
-
-        byte[] byteImage_photo = baos.toByteArray();
-
-        //generate base64 string of image
-        encodedImage = Base64.encodeToString(byteImage_photo, Base64.DEFAULT);
-        Log.e("IMAGE STRING", "-" + encodedImage);
+        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        previewImageSite.setVisibility(View.VISIBLE);
+       previewImageSite.setImageBitmap(decodedByte);
 
     }
 
