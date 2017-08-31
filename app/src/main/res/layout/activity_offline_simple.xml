@@ -17,8 +17,16 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/outdoors-v10" />
-
+        mapbox:mapbox_cameraZoom="10"
+        mapbox:mapbox_cameraTargetLat="27.67"
+        mapbox:mapbox_cameraTargetLng="85.40"
+        mapbox:mapbox_cameraBearing="34.33"
+        mapbox:mapbox_cameraTilt="50.25"
+        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/outdoors-v10"
+        mapbox:mapbox_cameraZoomMax="19"
+        mapbox:mapbox_cameraZoomMin="6"
+        mapbox:mapbox_uiRotateGestures="true"
+         />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

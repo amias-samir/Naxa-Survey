@@ -138,9 +138,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     private ArrayAdapter<String> adapter;
     Context context = this;
 
-//    ArrayList<String> kathmandu = new ArrayList<String>();
-//    ArrayList<String> bhaktapur = new ArrayList<String>();
-//    ArrayList<String> lalitpur = new ArrayList<String>();
 
     @BindView(R.id.id_number_surveyor)
     EditText surveyorId;
@@ -739,13 +736,10 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                         if (SurveyIdNumValue != null && !SurveyIdNumValue.isEmpty() && NameOfSurveyorValue != null && !NameOfSurveyorValue.isEmpty() && HouseHoldIdValue != null && !HouseHoldIdValue.isEmpty() && WardValue != null && !WardValue.isEmpty() && AddressValue != null && !AddressValue.isEmpty()) {
 
 
-                            HouseHoldIdValue = HouseHoldId.getText().toString();
-//                              MunicipalityValue = Municipality.getText().toString();
-                            WardValue = Ward.getText().toString();
-                            AddressValue = Address.getText().toString();
 
-//                                HouseholdTypologyValue = checkedBtn1.getText().toString();
 
+
+//                            HouseholdTypologyValue = H.getText().toString();
 
                             AgeValue = Age.getText().toString();
 //                                String SexValue = Sex.getText().toString();
@@ -814,6 +808,13 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             LandPriceType = land_price_spinner.getSelectedItem().toString();
                             PropertyPriceType = property_price_spinner.getSelectedItem().toString();
 
+//                            yearOfPurchaseValue = yearOfPurchase.getText().toString();
+
+                            yearOfPurchaseValue = yearOfPurchase.getText().toString();
+                            valueOfPurchaseValue = valueOfPurchase.getText().toString();
+                            PoolingPriceType = Pooling_price_spinner.getSelectedItem().toString();
+
+
                             uniqueCode();
 
                             convertDataToJson();
@@ -843,7 +844,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                     mProgressDlg.setCancelable(false);
                                     mProgressDlg.show();
                                     convertDataToJson();
-                                    sendDatToserver();
+//                                    sendDatToserver();
 //                                          finish();
                                 }
                             });
@@ -1043,6 +1044,14 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                         PropertyAreaType = property_area_spinner.getSelectedItem().toString();
                         LandPriceType = land_price_spinner.getSelectedItem().toString();
                         PropertyPriceType = property_price_spinner.getSelectedItem().toString();
+
+
+                        //                            yearOfPurchaseValue = yearOfPurchase.getText().toString();
+
+                        yearOfPurchaseValue = yearOfPurchase.getText().toString();
+                        valueOfPurchaseValue = valueOfPurchase.getText().toString();
+                        PoolingPriceType = Pooling_price_spinner.getSelectedItem().toString();
+
 
                         uniqueCode();
 
@@ -1544,11 +1553,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             header.put("average_income_of_relatives", AverageMonthlyIncomeOfRelativesValue);
             header.put("average_income_of_others", AverageMonthlyIncomeOfOthersValue);
 
-//            header.put("farm_income_of_husband", HusbandFarmIncomeValue);
-//            header.put("farm_income_of_wife", WifeFarmIncomeValue);
-//            header.put("farm_income_of_children", ChildrenFarmIncomeValue);
-//            header.put("farm_income_of_relatives", RelativesFarmIncomeValue);
-//            header.put("farm_income_of_others", OthersFarmIncomeValue);
+            header.put("farm_income_of_husband", HusbandFarmIncomeValue);
+            header.put("farm_income_of_wife", WifeFarmIncomeValue);
+            header.put("farm_income_of_children", ChildrenFarmIncomeValue);
+            header.put("farm_income_of_relatives", RelativesFarmIncomeValue);
+            header.put("farm_income_of_others", OthersFarmIncomeValue);
 
             header.put("husband_price_type", HusbandIncometype);
             header.put("wife_price_type", WifeIncomeType);
@@ -1567,6 +1576,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             header.put("property_total_price", TotalPropertyPriceValue);
             header.put("property_total_price_type", PropertyPriceType);
+
+            header.put("pooling_type", PoolingValue);
+            header.put("pooling_year_of_purchase", yearOfPurchaseValue);
+            header.put("pooling_value_of_purchase", valueOfPurchaseValue);
+            header.put("pooling_total_price_type", PoolingPriceType);
 
             header.put("latitude", finalLat);
             header.put("longitude", finalLong);
@@ -1646,11 +1660,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         AverageMonthlyIncomeOfRelativesValue = jsonObj.getString("average_income_of_relatives");
         AverageMonthlyIncomeOfOthersValue = jsonObj.getString("average_income_of_others");
 
-//        HusbandFarmIncomeValue = jsonObj.getString("farm_income_of_husband");
-//        WifeFarmIncomeValue = jsonObj.getString("farm_income_of_wife");
-//        ChildrenFarmIncomeValue = jsonObj.getString("farm_income_of_children");
-//        RelativesFarmIncomeValue = jsonObj.getString("farm_income_of_relatives");
-//        OthersFarmIncomeValue = jsonObj.getString("farm_income_of_others");
+        HusbandFarmIncomeValue = jsonObj.getString("farm_income_of_husband");
+        WifeFarmIncomeValue = jsonObj.getString("farm_income_of_wife");
+        ChildrenFarmIncomeValue = jsonObj.getString("farm_income_of_children");
+        RelativesFarmIncomeValue = jsonObj.getString("farm_income_of_relatives");
+        OthersFarmIncomeValue = jsonObj.getString("farm_income_of_others");
 
         HusbandIncometype = jsonObj.getString("husband_price_type");
         WifeIncomeType = jsonObj.getString("wife_price_type");
@@ -1669,6 +1683,15 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         TotalPropertyPriceValue = jsonObj.getString("property_total_price");
         PropertyPriceType = jsonObj.getString("property_total_price_type");
+
+        PoolingValue = jsonObj.getString("pooling_type");
+        splitString1(PoolingValue);
+
+        yearOfPurchaseValue= jsonObj.getString("pooling_year_of_purchase");
+        valueOfPurchaseValue = jsonObj.getString("pooling_value_of_purchase");
+        PoolingPriceType = jsonObj.getString("pooling_total_price_type");
+
+
 
         finalLat = Double.parseDouble(jsonObj.getString("latitude"));
         finalLong = Double.parseDouble(jsonObj.getString("longitude"));
@@ -2133,7 +2156,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         Log.e("Household_Survey", "HouseholdTypologyValue :" + HouseholdTypologyValue);
     }
 
-    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1, pcheck2;
+    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1 ="", pcheck2 ="";
     String HouseholdTypologyValue1 = "", HouseholdTypologyValue2 = "", HouseholdTypologyValue3 = "", HouseholdTypologyValue4 = "", HouseholdTypologyValue5 = "";
 
     private class RestApii extends AsyncTask<String, Void, String> {

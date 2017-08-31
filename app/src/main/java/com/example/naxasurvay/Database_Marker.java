@@ -204,7 +204,7 @@ public class Database_Marker extends SQLiteOpenHelper {
 
     public void replaceSend(String houseHoldIdValue) {
         SQLiteDatabase db = this.getWritableDatabase();
-
+        Log.d("replaceSave", " check api update : " + houseHoldIdValue);
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS,2);
 
