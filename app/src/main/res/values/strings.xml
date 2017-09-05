@@ -22,7 +22,7 @@
         <item>Thousand</item>
         <item>Lakh</item>
         <item>Crore</item>
-    </string-array>
+    </string-array>\
 
     <string-array name="municipality_name">
         <item>Kathmandu</item>
@@ -34,12 +34,6 @@
         <item>Gothatar</item>
         <item>Ichangu Narayan</item>
         <item>Madhyapur Thimi</item>
-
-
     </string-array>
-
-
-
-
 
 </resources>

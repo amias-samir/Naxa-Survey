@@ -42,6 +42,16 @@
             android:paddingRight="25dp"
             android:visibility="gone" />
 
+        <Button
+            android:id="@+id/survey_marker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="top|left"
+            android:layout_marginBottom="32dp"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
+            android:text="Add Marker"
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/startRouteButton"
@@ -52,6 +62,17 @@
             android:layout_marginBottom="32dp"
             style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
             android:text="Start route"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/refreshMarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="32dp"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
+            android:text="Refresh Marker"
             android:visibility="invisible" />
 
         <Button

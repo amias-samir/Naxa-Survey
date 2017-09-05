@@ -33,6 +33,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -98,6 +100,7 @@ import javax.net.ssl.HttpsURLConnection;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 
 import static android.R.attr.cacheColorHint;
 import static android.R.attr.id;
@@ -390,6 +393,23 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     GoogleApiClient client;
     LocationRequest mLocationRequest;
     PendingResult<LocationSettingsResult> result;
+
+
+
+//    ------------------------------------ spinner onitem selected listner --------------------------------------------------
+
+    @OnItemSelected(R.id.pooling_price_spinner)
+    public void priceSpinneListner(){
+       String values =  Pooling_price_spinner.getSelectedItem().toString();
+
+
+//        valueOfPurchase.setText(currencyChanger(values, valueOfPurchase.getText().toString()));
+
+    }
+
+//    ------------------------------------ end of spinner onitem selected listner --------------------------------------------------
+
+
 
     @OnClick({R.id.button_inc_husband, R.id.button_inc_wife, R.id.button_inc_childrens, R.id.button_inc_relatives, R.id.button_inc_others})
     public void checkboxListner(View view) {
@@ -735,10 +755,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                         if (SurveyIdNumValue != null && !SurveyIdNumValue.isEmpty() && NameOfSurveyorValue != null && !NameOfSurveyorValue.isEmpty() && HouseHoldIdValue != null && !HouseHoldIdValue.isEmpty() && WardValue != null && !WardValue.isEmpty() && AddressValue != null && !AddressValue.isEmpty()) {
 
-
-
-
-
 //                            HouseholdTypologyValue = H.getText().toString();
 
                             AgeValue = Age.getText().toString();
@@ -907,6 +923,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                                     Toast.makeText(SurveyMain.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
                                     showDialog.dismiss();
+
+                                    Database_Marker marker =new Database_Marker(context);
+                                    marker.replaceSave(HouseHoldIdValue);
 
                                     final Dialog showDialog = new Dialog(context);
                                     showDialog.setContentView(R.layout.savedform_sent_popup);
@@ -1084,6 +1103,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                     mProgressDlg.show();
                                     convertDataToJson();
                                     sendDatToserver();
+
+                                    Database_Marker marker = new Database_Marker(getApplicationContext());
+                                    marker.replaceSend(HouseHoldIdValue);
 //                                finish();
                                 }
                             });
@@ -1113,6 +1135,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
     static final int REQUEST_IMAGE_CAPTURE = 28371;
+    String mCurrentPhotoPath;
+    static final int DATE_DIALOG_ID = 999;
 
     private void dispatchTakePictureIntent() {
 
@@ -1141,8 +1165,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             }
         }
     }
-
-    String mCurrentPhotoPath;
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -1203,9 +1225,17 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
+    public void addImage(String encodedimage) {
+
+        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        previewImageSite.setVisibility(View.VISIBLE);
+        previewImageSite.setImageBitmap(decodedByte);
+
+    }
+
 
     // display current date
-
     public void setCurrentDateOnView() {
 
 //        tvDisplayDate = (TextView) findViewById(R.id.tvDate);
@@ -1226,8 +1256,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //        SurveyDate.init(year, month, day, null);
 
     }
-
-    static final int DATE_DIALOG_ID = 999;
 
     public void addListenerOnButton() {
 
@@ -1281,14 +1309,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     String uniCode;
 
-    private void uniqueCode() {
-        String D = DistrictValue.substring(0, 1);
-        String M = MunicipalityValue.substring(0, 3);
 
-        uniCode = D + M + WardValue + HouseHoldIdValue;
-
-        Log.e("main_activity", "unique code: " + uniCode);
-    }
 
 
     private void askForPermission(String permission, Integer requestCode) {
@@ -1357,6 +1378,62 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+            galleryAddPic();
+            setPic(previewImageSite, mCurrentPhotoPath);
+
+
+        }
+
+        if (requestCode == GEOPOINT_RESULT_CODE) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    String location = data.getStringExtra(LOCATION_RESULT);
+
+                    String string = location;
+                    String[] parts = string.split(" ");
+                    String split_lat = parts[0]; // 004
+                    String split_lon = parts[1]; // 034556
+
+
+                    if (!split_lat.equals("") && !split_lon.equals("")) {
+                        GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED = true;
+
+                        finalLat = Double.parseDouble(split_lat);
+                        finalLong = Double.parseDouble(split_lon);
+
+                        LatLng d = new LatLng(finalLat, finalLong);
+//
+                        listCf.add(d);
+                        isGpsTaken = true;
+
+                        try {
+                            JSONObject locationdata = new JSONObject();
+                            locationdata.put("latitude", finalLat);
+                            locationdata.put("longitude", finalLong);
+
+                            jsonArrayGPS.put(locationdata);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+//                                btnPreviewMap.setEnabled(true);
+                        startGps.setText("Location Recorded");
+                    }
+
+
+//                    Toast.makeText(this.context, location, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+
+    }
+
+    @Override
     public void onBackPressed() {
 
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -1388,6 +1465,238 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             }
         });
     }
+
+    private void uniqueCode() {
+        String D = DistrictValue.substring(0, 1);
+        String M = MunicipalityValue.substring(0, 3);
+
+        uniCode = D + M + WardValue + HouseHoldIdValue;
+
+        Log.e("main_activity", "unique code: " + uniCode);
+    }
+
+    private int Sub(int num) {
+        if (num > 0) {
+            Subnumber = 0;
+            Subnumber = num - 1;
+        }
+        return Subnumber;
+    }
+
+    public int Add(int num) {
+        Addnumber = 0;
+        Addnumber = num + 1;
+        Log.d("", "Addnumber: " + Addnumber);
+        return Addnumber;
+    }
+
+    public void splitString(String htvString) {
+        int commas = 0;
+        ArrayList<String> topology = new ArrayList<>();
+        for (int i = 0; i < htvString.length(); i++) {
+            if (htvString.charAt(i) == ',') commas++;
+        }
+
+        Log.d(TAG, "commas: " + commas);
+        for (int i = 0; i < commas; i++) {
+            String[] parts = htvString.split(", ");
+            topology.add(parts[i]);
+
+        }
+        Log.e("Household_Survey", "HouseholdTypologyValue1 :" + topology);
+//        single family detached, Multi family house, apartment block, mixed use block, number of floors,
+
+//
+//        Log.e("Household_Survey", "HouseholdTypologyValue2 :" + check1);
+//        Log.e("Household_Survey", "HouseholdTypologyValue3 :" + check2);
+//        Log.e("Household_Survey", "HouseholdTypologyValue4 :" + check3);
+//        Log.e("Household_Survey", "HouseholdTypologyValue5 :" + check4);
+//        Log.e("Household_Survey", "HouseholdTypologyValue6 :" + check5);
+
+        for (int j = 0; j < commas; j++) {
+            String topologyValue = topology.get(j);
+            Log.e(TAG, "splitString:  topologyValue " + topologyValue);
+            if (topologyValue.equals("single family detached")) {
+                check1 = topologyValue;
+            } else if (topologyValue.equals("Multi family house")) {
+                check2 = topologyValue;
+
+            } else if (topologyValue.equals("apartment block")) {
+                check3 = topologyValue;
+
+            } else if (topologyValue.equals("mixed use block")) {
+                check4 = topologyValue;
+
+            } else if (topologyValue.equals("number of floors")) {
+                check5 = topologyValue;
+
+            }
+        }
+
+    }
+
+    public void splitString1(String htvString) {
+        int commas = 0;
+        ArrayList<String> pooling = new ArrayList<>();
+        for (int i = 0; i < htvString.length(); i++) {
+            if (htvString.charAt(i) == ',') commas++;
+        }
+        for (int i = 0; i < commas; i++) {
+            String[] parts = htvString.split(", ");
+            pooling.add(parts[i]);
+
+        }
+        for (int j = 0; j < commas; j++) {
+            String poolingValue = pooling.get(j);
+            Log.e(TAG, "splitString:  topologyValue " + poolingValue);
+            if (poolingValue.equals("House")) {
+                pcheck1 = poolingValue;
+            }
+            if (poolingValue.equals("Land")) {
+                pcheck2 = poolingValue;
+            }
+        }
+    }
+
+    private void loadImageFromStorage(String path) {
+        try {
+            previewImageSite.setVisibility(View.VISIBLE);
+            File f = new File(path);
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+            previewImageSite.setImageBitmap(b);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "invalid path", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void saveToExternalSorage(Bitmap thumbnail) {
+        // TODO Auto-generated method stub
+        //String merocinema="Mero Cinema";
+//        String movname=getIntent().getExtras().getString("Title");
+        Calendar calendar = Calendar.getInstance();
+        long timeInMillis = calendar.getTimeInMillis();
+
+        imageName = "Household Survey" + timeInMillis;
+
+        File file1 = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), imageName);
+//        if (!file1.mkdirs()) {
+//            Toast.makeText(getApplicationContext(), "Not Created", Toast.LENGTH_SHORT).show();
+//        }
+
+        if (file1.exists()) file1.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file1);
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+            Toast.makeText(getApplicationContext(), "Saved " + imageName, Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    public String getPath(Uri uri) {
+        // just some safety built in
+        if (uri == null) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
+
+
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+        switch (buttonView.getId()) {
+            case R.id.single_family_detached:
+                if (SingleFamilyDetached.isChecked() == true) {
+                    HouseholdTypologyValue1 = "single family detached" + ", ";
+                } else {
+                    HouseholdTypologyValue1 = "";
+                }
+
+
+                break;
+            case R.id.multy_family_house:
+                if (MultyFamilyhouse.isChecked() == true) {
+                    HouseholdTypologyValue2 = "Multi family house" + ", ";
+                } else {
+                    HouseholdTypologyValue2 = "";
+                }
+
+
+                break;
+            case R.id.apartment_block:
+                if (ApartmentBlock.isChecked() == true) {
+                    HouseholdTypologyValue3 = "apartment block" + ", ";
+                } else {
+                    HouseholdTypologyValue3 = "";
+                }
+
+
+                break;
+            case R.id.mixed_use_block:
+                if (MixedUseBlock.isChecked() == true) {
+                    HouseholdTypologyValue4 = "mixed use block" + ", ";
+                } else {
+                    HouseholdTypologyValue4 = "";
+                }
+
+                break;
+
+            case R.id.number_of_floors:
+                if (NumberOfFloors.isChecked() == true) {
+                    HouseholdTypologyValue5 = "number of floors" + ", ";
+                } else {
+                    HouseholdTypologyValue5 = "";
+                }
+
+                break;
+            case R.id.land_pooling_house:
+                if (poolingHouse.isChecked() == true) {
+                    Pooling1 = "House" + ", ";
+                } else {
+                    Pooling1 = "";
+                }
+
+                break;
+
+            case R.id.land_pooling_land:
+                if (poolingland.isChecked() == true) {
+                    Pooling2 = "Land" + ", ";
+                } else {
+                    Pooling2 = "";
+                }
+
+                break;
+
+
+//            HouseholdTypologyValue = topology;
+        }
+        PoolingValue = Pooling1 + Pooling2;
+        HouseholdTypologyValue = HouseholdTypologyValue1 + HouseholdTypologyValue2 + HouseholdTypologyValue3 + HouseholdTypologyValue4 + HouseholdTypologyValue5;
+        Log.e("Household_Survey", "HouseholdTypologyValue :" + HouseholdTypologyValue);
+    }
+
+    String check1 = "", check2 = "", check3 = "", check4 = "", check5 = "";
+    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1 ="", pcheck2 ="";
+    String HouseholdTypologyValue1 = "", HouseholdTypologyValue2 = "", HouseholdTypologyValue3 = "", HouseholdTypologyValue4 = "", HouseholdTypologyValue5 = "";
 
     public void initilizeUI() {
         Intent intent = getIntent();
@@ -1464,33 +1773,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             gps.canGetLocation();
             startGps.setEnabled(true);
 
-        }
-    }
-
-    private int Sub(int num) {
-        if (num > 0) {
-            Subnumber = 0;
-            Subnumber = num - 1;
-        }
-        return Subnumber;
-    }
-
-    public int Add(int num) {
-        Addnumber = 0;
-        Addnumber = num + 1;
-        Log.d("", "Addnumber: " + Addnumber);
-        return Addnumber;
-    }
-
-    private void loadImageFromStorage(String path) {
-        try {
-            previewImageSite.setVisibility(View.VISIBLE);
-            File f = new File(path);
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            previewImageSite.setImageBitmap(b);
-        } catch (FileNotFoundException e) {
-            Toast.makeText(getApplicationContext(), "invalid path", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
         }
     }
 
@@ -1897,268 +2179,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
-            galleryAddPic();
-            setPic(previewImageSite, mCurrentPhotoPath);
-
-
-        }
-
-        if (requestCode == GEOPOINT_RESULT_CODE) {
-            switch (resultCode) {
-                case RESULT_OK:
-                    String location = data.getStringExtra(LOCATION_RESULT);
-
-                    String string = location;
-                    String[] parts = string.split(" ");
-                    String split_lat = parts[0]; // 004
-                    String split_lon = parts[1]; // 034556
-
-
-                    if (!split_lat.equals("") && !split_lon.equals("")) {
-                        GPS_TRACKER_FOR_POINT.GPS_POINT_INITILIZED = true;
-
-                        finalLat = Double.parseDouble(split_lat);
-                        finalLong = Double.parseDouble(split_lon);
-
-                        LatLng d = new LatLng(finalLat, finalLong);
-//
-                        listCf.add(d);
-                        isGpsTaken = true;
-
-                        try {
-                            JSONObject locationdata = new JSONObject();
-                            locationdata.put("latitude", finalLat);
-                            locationdata.put("longitude", finalLong);
-
-                            jsonArrayGPS.put(locationdata);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-//                                btnPreviewMap.setEnabled(true);
-                        startGps.setText("Location Recorded");
-                    }
-
-
-//                    Toast.makeText(this.context, location, Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-
-    }
-
-
-    private void saveToExternalSorage(Bitmap thumbnail) {
-        // TODO Auto-generated method stub
-        //String merocinema="Mero Cinema";
-//        String movname=getIntent().getExtras().getString("Title");
-        Calendar calendar = Calendar.getInstance();
-        long timeInMillis = calendar.getTimeInMillis();
-
-        imageName = "Household Survey" + timeInMillis;
-
-        File file1 = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), imageName);
-//        if (!file1.mkdirs()) {
-//            Toast.makeText(getApplicationContext(), "Not Created", Toast.LENGTH_SHORT).show();
-//        }
-
-        if (file1.exists()) file1.delete();
-        try {
-            FileOutputStream out = new FileOutputStream(file1);
-            thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-            Toast.makeText(getApplicationContext(), "Saved " + imageName, Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-    }
-
-    public String getPath(Uri uri) {
-        // just some safety built in
-        if (uri == null) {
-            // TODO perform some logging or show user feedback
-            return null;
-        }
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        // this is our fallback here
-        return uri.getPath();
-    }
-
-    public void addImage(String encodedimage) {
-
-        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        previewImageSite.setVisibility(View.VISIBLE);
-        previewImageSite.setImageBitmap(decodedByte);
-
-    }
-
-
-    String check1 = "", check2 = "", check3 = "", check4 = "", check5 = "";
-
-    public void splitString(String htvString) {
-        int commas = 0;
-        ArrayList<String> topology = new ArrayList<>();
-        for (int i = 0; i < htvString.length(); i++) {
-            if (htvString.charAt(i) == ',') commas++;
-        }
-
-        Log.d(TAG, "commas: " + commas);
-        for (int i = 0; i < commas; i++) {
-            String[] parts = htvString.split(", ");
-            topology.add(parts[i]);
-
-        }
-        Log.e("Household_Survey", "HouseholdTypologyValue1 :" + topology);
-//        single family detached, Multi family house, apartment block, mixed use block, number of floors,
-
-//
-//        Log.e("Household_Survey", "HouseholdTypologyValue2 :" + check1);
-//        Log.e("Household_Survey", "HouseholdTypologyValue3 :" + check2);
-//        Log.e("Household_Survey", "HouseholdTypologyValue4 :" + check3);
-//        Log.e("Household_Survey", "HouseholdTypologyValue5 :" + check4);
-//        Log.e("Household_Survey", "HouseholdTypologyValue6 :" + check5);
-
-        for (int j = 0; j < commas; j++) {
-            String topologyValue = topology.get(j);
-            Log.e(TAG, "splitString:  topologyValue " + topologyValue);
-            if (topologyValue.equals("single family detached")) {
-                check1 = topologyValue;
-            } else if (topologyValue.equals("Multi family house")) {
-                check2 = topologyValue;
-
-            } else if (topologyValue.equals("apartment block")) {
-                check3 = topologyValue;
-
-            } else if (topologyValue.equals("mixed use block")) {
-                check4 = topologyValue;
-
-            } else if (topologyValue.equals("number of floors")) {
-                check5 = topologyValue;
-
-            }
-        }
-
-    }
-
-    public void splitString1(String htvString) {
-        int commas = 0;
-        ArrayList<String> pooling = new ArrayList<>();
-        for (int i = 0; i < htvString.length(); i++) {
-            if (htvString.charAt(i) == ',') commas++;
-        }
-        for (int i = 0; i < commas; i++) {
-            String[] parts = htvString.split(", ");
-            pooling.add(parts[i]);
-
-        }
-        for (int j = 0; j < commas; j++) {
-            String poolingValue = pooling.get(j);
-            Log.e(TAG, "splitString:  topologyValue " + poolingValue);
-            if (poolingValue.equals("House")) {
-                pcheck1 = poolingValue;
-            }
-            if (poolingValue.equals("Land")) {
-                pcheck2 = poolingValue;
-            }
-        }
-    }
-
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-        switch (buttonView.getId()) {
-            case R.id.single_family_detached:
-                if (SingleFamilyDetached.isChecked() == true) {
-                    HouseholdTypologyValue1 = "single family detached" + ", ";
-                } else {
-                    HouseholdTypologyValue1 = "";
-                }
-
-
-                break;
-            case R.id.multy_family_house:
-                if (MultyFamilyhouse.isChecked() == true) {
-                    HouseholdTypologyValue2 = "Multi family house" + ", ";
-                } else {
-                    HouseholdTypologyValue2 = "";
-                }
-
-
-                break;
-            case R.id.apartment_block:
-                if (ApartmentBlock.isChecked() == true) {
-                    HouseholdTypologyValue3 = "apartment block" + ", ";
-                } else {
-                    HouseholdTypologyValue3 = "";
-                }
-
-
-                break;
-            case R.id.mixed_use_block:
-                if (MixedUseBlock.isChecked() == true) {
-                    HouseholdTypologyValue4 = "mixed use block" + ", ";
-                } else {
-                    HouseholdTypologyValue4 = "";
-                }
-
-                break;
-
-            case R.id.number_of_floors:
-                if (NumberOfFloors.isChecked() == true) {
-                    HouseholdTypologyValue5 = "number of floors" + ", ";
-                } else {
-                    HouseholdTypologyValue5 = "";
-                }
-
-                break;
-            case R.id.land_pooling_house:
-                if (poolingHouse.isChecked() == true) {
-                    Pooling1 = "House" + ", ";
-                } else {
-                    Pooling1 = "";
-                }
-
-                break;
-
-            case R.id.land_pooling_land:
-                if (poolingland.isChecked() == true) {
-                    Pooling2 = "Land" + ", ";
-                } else {
-                    Pooling2 = "";
-                }
-
-                break;
-
-
-//            HouseholdTypologyValue = topology;
-        }
-        PoolingValue = Pooling1 + Pooling2;
-        HouseholdTypologyValue = HouseholdTypologyValue1 + HouseholdTypologyValue2 + HouseholdTypologyValue3 + HouseholdTypologyValue4 + HouseholdTypologyValue5;
-        Log.e("Household_Survey", "HouseholdTypologyValue :" + HouseholdTypologyValue);
-    }
-
-    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1 ="", pcheck2 ="";
-    String HouseholdTypologyValue1 = "", HouseholdTypologyValue2 = "", HouseholdTypologyValue3 = "", HouseholdTypologyValue4 = "", HouseholdTypologyValue5 = "";
-
     private class RestApii extends AsyncTask<String, Void, String> {
 
 
@@ -2516,4 +2536,29 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         }
     };
     //==========================multiselection spinner selection code ends here========================//
+
+
+    public String currencyChanger (String currency, String currencyValues){
+
+        String changedCurrency = "";
+
+        if(!currencyValues.equals(null) && !currencyValues.isEmpty() && !currencyValues.equals("")) {
+
+            if (currency.equals("Thousand")) {
+
+                changedCurrency = currencyValues + ",000";
+            }
+
+            if (currency.equals("Lakh")) {
+
+                changedCurrency = currencyValues + ",00,000";
+            }
+            if (currency.equals("Crore")) {
+
+                changedCurrency = currencyValues + ",00,00,000";
+            }
+
+        }
+        return changedCurrency;
+    }
 }

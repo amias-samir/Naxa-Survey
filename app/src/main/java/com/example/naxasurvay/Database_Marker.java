@@ -174,6 +174,34 @@ public class Database_Marker extends SQLiteOpenHelper {
         return array;
     }
 
+    public ArrayList<Mapinfo> getSurveyData() {
+        ArrayList<Mapinfo> array = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String getdata = "SELECT * FROM " + TABLE_MARKER + " WHERE " + STATUS + " = '4'";
+        Cursor cursor = db.rawQuery(getdata, null);
+
+
+        Log.d("abc", "cu" + cursor.getCount());
+
+        if (cursor.moveToNext()) {
+            do {
+                Mapinfo info = new Mapinfo();
+
+                info.id = cursor.getString(cursor.getColumnIndex(ID_TABLE));
+                info.houseCode = cursor.getString(cursor.getColumnIndex(HOUSE_CODE));
+                info.latitude = cursor.getDouble(cursor.getColumnIndex(LATITUDE));
+                info.longitude = cursor.getDouble(cursor.getColumnIndex(LONGITUDE));
+                info.status = cursor.getString(cursor.getColumnIndex(STATUS));
+                info.placeName = cursor.getString(cursor.getColumnIndex(PLACE_NAME));
+
+                array.add(info);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return array;
+    }
+
     public int getProfilesCount() {
         String countQuery = "SELECT  * FROM " + TABLE_MARKER;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -210,9 +238,16 @@ public class Database_Marker extends SQLiteOpenHelper {
 
         int i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
 
-//        String replacesend = " UPDATE " + TABLE_MARKER + " SET " + STATUS + " = '2' WHERE " + HOUSE_CODE + " = '" + houseHoldIdValue + "'";
-//
-//        db.rawQuery(replacesend, null);
+    }
+
+    public void forSurvey(String houseHoldIdValue) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("replaceSave", "for Survey : " + houseHoldIdValue);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(STATUS,4);
+
+        int i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
+
     }
 
 //    public void open() throws SQLException {

@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,7 +26,6 @@ import com.example.naxasurvay.Database_Marker;
 import com.example.naxasurvay.Mapinfo;
 import com.example.naxasurvay.R;
 import com.example.naxasurvay.SurveyMain;
-import com.example.naxasurvay.UrlClass;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -98,6 +96,10 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     Button startRouteButton;
     @BindView(R.id.go_to_form)
     Button GoToForm;
+    @BindView(R.id.refreshMarker)
+    Button RefreshMarker;
+    @BindView(R.id.survey_marker)
+    Button Survey_marker;
 
     String code, Housecode, Title;
     private boolean isEndNotified;
@@ -123,6 +125,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
     private double routeLat;
     private double routeLon;
+    private double sentlat,lon;
 
 
     @Override
@@ -148,15 +151,28 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         mapView.getMapAsync(this);
 
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-//            mProgressDlg = new ProgressDialog(getApplicationContext());
-//            mProgressDlg.setMessage("Please wait...");
-//            mProgressDlg.setIndeterminate(false);
-//            mProgressDlg.setCancelable(false);
-//            mProgressDlg.show();
-            CompletedStatusUpdate completedStatusUpdate = new CompletedStatusUpdate();
-            completedStatusUpdate.execute();
+        try {
+            sentlat = getIntent().getDoubleExtra("lat", 0);
+            lon = getIntent().getDoubleExtra("lon", 0);
+
+
+
+
+
+        } catch (NullPointerException e) {
+            Log.d("Nishon"," Receiving  "+e.toString());
         }
+
+
+//        if (networkInfo != null && networkInfo.isConnected()) {
+////            mProgressDlg = new ProgressDialog(getApplicationContext());
+////            mProgressDlg.setMessage("Please wait...");
+////            mProgressDlg.setIndeterminate(false);
+////            mProgressDlg.setCancelable(false);
+////            mProgressDlg.show();
+//            CompletedStatusUpdate completedStatusUpdate = new CompletedStatusUpdate();
+//            completedStatusUpdate.execute();
+//        }
 
         //        curent position marker
         getMyLocationFAB = (FloatingActionButton) findViewById(R.id.myLocationButton);
@@ -212,6 +228,12 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         setupOfflineMapManager(mapboxMap);
         prepareToDownloadOfflineRegion();
 
+
+        if (sentlat != 0){
+            animateCamera(mapboxMap,sentlat, lon);
+        }else {
+            animateMapToCurLocation(mapboxMap);
+        }
         mapboxMap.setOnMarkerClickListener(this);
         mapboxMap.setOnMapClickListener(this);
 
@@ -219,7 +241,12 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         // Load and Draw the GeoJSON. The marker animation is also handled here.
         new DrawGeoJson().execute();
 
-        parseArray();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                parseArray();
+            }
+        }).run();
 
     }
 
@@ -228,13 +255,26 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         mapboxMap.setMyLocationEnabled(true);
     }
 
+
+    private void animateCamera(MapboxMap mapboxMap, Double latitude, Double longitude) {
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(latitude, longitude))
+                .zoom(17)
+                .build();
+        this.mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
+
+    }
+
     private void animateMapToCurLocation(MapboxMap mapboxMap) {
 
 
-        if (mapboxMap.getMyLocation() == null) {
-            showToast("Current location failed to load, restart app to try again");
-            return;
-        }
+
+
+            if (mapboxMap.getMyLocation() == null) {
+                showToast("Current location failed to load, restart app to try again");
+                return;
+            }
 
 
         Double latitude = mapboxMap.getMyLocation().getLatitude();
@@ -283,8 +323,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                     if (offlineRegions.length == 0) {
                         showToast("Downloading Offline Map");
                         downloadOfflineRegion();
-                    } else {
-                        showToast("Loading Offline Map ");
                     }
                 }
 
@@ -541,10 +579,13 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
     private void prepareToRoute(Marker marker) {
 
+        RefreshMarker.setVisibility(View.GONE);
         routeLat = marker.getPosition().getLatitude();
         routeLon = marker.getPosition().getLongitude();
         startRouteButton.setVisibility(View.VISIBLE);
+        Survey_marker.setVisibility(View.VISIBLE);
         GoToForm.setVisibility(View.VISIBLE);
+
         Housecode = marker.getTitle();
 
         Log.d("check code", "codeCheck :" + Housecode);
@@ -564,9 +605,40 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         startActivity(intent1);
     }
 
+    @OnClick(R.id.survey_marker)
+    public void TodaySurveyForm() {
+        Database_Marker marker = new Database_Marker(getApplicationContext());
+        marker.forSurvey(Housecode);
+
+        Intent intent = new Intent(SimpleOfflineMapActivity.this, SimpleOfflineMapActivity.class);
+        intent.putExtra("lat", routeLat);
+        intent.putExtra("lon", routeLon);
+
+        Log.d("Nishon"," Sending "+routeLat +" "+routeLon);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
+    }
+
+    @OnClick(R.id.refreshMarker)
+    public void RefreshMarker() {
+//        Intent intent1 = new Intent(SimpleOfflineMapActivity.this, SurveyMain.class);
+//        intent1.putExtra("HouseCode", Housecode);
+//        startActivity(intent1);
+        Toast.makeText(this, "Refresh map data", Toast.LENGTH_SHORT).show();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+//
+            CompletedStatusUpdate completedStatusUpdate = new CompletedStatusUpdate();
+            completedStatusUpdate.execute();
+        }
+    }
+
     @Override
     public void onMapClick(@NonNull LatLng point) {
+        RefreshMarker.setVisibility(View.VISIBLE);
         startRouteButton.setVisibility(View.GONE);
+        Survey_marker.setVisibility(View.GONE);
         GoToForm.setVisibility(View.GONE);
     }
 
@@ -700,6 +772,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
     private void updateMap(double latitude, double longitude, String Code, String Location) {
         // Build marker
+
         mapboxMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .title(Code))
@@ -719,7 +792,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         Log.d("getUnsavedata", "pointSize : " + points.size());
         Log.d("getUnsavedata", "getUnsavedata : " + points.toString());
         if (points.size() > 0) {
-
+            Log.d("getUnsavedata", "getSavedata : " + points.toString());
             for (int i = 0; i < points.size(); i++) {
                 Mapinfo info = points.get(i);
                 String housecode = info.houseCode;
@@ -734,8 +807,9 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
         List<Mapinfo> points1 = marker.getsavedata();
         Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+        Log.d("getUnsavedata", "getSavedata : " + points1.toString());
         if (points1.size() > 0) {
-
+            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
             for (int i = 0; i < points1.size(); i++) {
                 Mapinfo info = points1.get(i);
                 String housecode = info.houseCode;
@@ -750,7 +824,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
         List<Mapinfo> points2 = marker.getsenddata();
         if (points2.size() > 0) {
-
+            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
             for (int i = 0; i < points2.size(); i++) {
                 Mapinfo info = points2.get(i);
                 String housecode = info.houseCode;
@@ -760,6 +834,38 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 Double Longitude = info.longitude;
 
                 updateSendMap(Latitude, Longitude, housecode, placename);
+            }
+        }
+        List<Mapinfo> points3 = marker.getSurveyData();
+        if (points3.size() > 0) {
+            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+            for (int i = 0; i < points3.size(); i++) {
+                Mapinfo info = points3.get(i);
+                String housecode = info.houseCode;
+                String status = info.status;
+                String placename = info.placeName;
+                Double Latitude = info.latitude;
+                Double Longitude = info.longitude;
+
+                updateSurveyMap(Latitude, Longitude, housecode, placename);
+            }
+        }
+    }
+
+    public void todaylist() {
+        Database_Marker marker = new Database_Marker(getApplicationContext());
+        List<Mapinfo> points3 = marker.getSurveyData();
+        if (points3.size() > 0) {
+
+            for (int i = 0; i < points3.size(); i++) {
+                Mapinfo info = points3.get(i);
+                String housecode = info.houseCode;
+                String status = info.status;
+                String placename = info.placeName;
+                Double Latitude = info.latitude;
+                Double Longitude = info.longitude;
+
+                updateSurveyMap(Latitude, Longitude, housecode, placename);
             }
         }
     }
@@ -788,7 +894,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     private void updateSendMap(double latitude, double longitude, String Code, String Location) {
 
         IconFactory iconFactory = IconFactory.getInstance(SimpleOfflineMapActivity.this);
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_start);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_send);
         Icon icon = iconFactory.fromBitmap(largeIcon);
 
         // Build marker
@@ -797,13 +903,20 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 .title(Code)
                 .setSnippet(Location)
                 .setIcon(icon));
+    }
 
-//        // Animate camera to geocoder result location
-//        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                .target(new LatLng(latitude, longitude))
-//                .zoom(15)
-//                .build();
-//f        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 5000, null);
+    private void updateSurveyMap(double latitude, double longitude, String Code, String Location) {
+
+        IconFactory iconFactory = IconFactory.getInstance(SimpleOfflineMapActivity.this);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.marker_current);
+        Icon icon = iconFactory.fromBitmap(largeIcon);
+
+        // Build marker
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(Code)
+                .setSnippet(Location)
+                .setIcon(icon));
     }
 
     private class CompletedStatusUpdate extends AsyncTask<String, Void, String> {
@@ -853,13 +966,13 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
                 for (int i = 0; i < data.length(); i++) {
 
-                    Log.e("","HOUSEHOLD ID LIST "+i);
+                    Log.e("", "HOUSEHOLD ID LIST " + i);
 
                     JSONObject c = data.getJSONObject(i);
 
 
                     String house_code = c.getString("house_id");
-                    Log.e("","HOUSEHOLD CODE"+ house_code);
+                    Log.e("", "HOUSEHOLD CODE" + house_code);
 
                     databaseMarker.replaceSend(house_code);
                 }

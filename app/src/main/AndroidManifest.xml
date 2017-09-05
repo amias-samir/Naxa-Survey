@@ -50,6 +50,12 @@
 
         <activity
             android:screenOrientation="portrait"
+            android:name=".RegisterActivity">
+
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
 
             android:name=".SurveyMain"
             android:windowSoftInputMode="stateHidden">

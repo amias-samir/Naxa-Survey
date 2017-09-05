@@ -75,7 +75,6 @@
                                     android:layout_toRightOf="@+id/survey_id_num"
                                     android:hint="id"
                                     android:inputType="text"
-                                    android:text="123"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -91,7 +90,6 @@
                                     android:layout_marginTop="45dp"
                                     android:hint="Name of Surveyor"
                                     android:inputType="text"
-                                    android:text="Nishon Tandukar"
                                     android:textColor="#000" />
 
                             </android.support.design.widget.TextInputLayout>
@@ -147,7 +145,6 @@
                                     android:layout_toRightOf="@+id/house_id_code"
                                     android:hint="id"
                                     android:inputType="text"
-                                    android:text="1234"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
@@ -231,7 +228,6 @@
                                     android:layout_marginTop="45dp"
                                     android:hint="Ward no"
                                     android:inputType="text"
-                                    android:text="21"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
@@ -248,7 +244,6 @@
                                     android:layout_marginTop="45dp"
                                     android:hint="Address"
                                     android:inputType="text"
-                                    android:text="Putali Saddak"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
@@ -1313,7 +1308,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Husband"
-                                        android:inputType="text"
+                                        android:inputType="number"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
 
@@ -1345,7 +1340,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Wife"
-                                        android:inputType="text"
+                                        android:inputType="number"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
 
@@ -1377,7 +1372,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Children"
-                                        android:inputType="text"
+                                        android:inputType="number"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
 
@@ -1409,7 +1404,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Relatives"
-                                        android:inputType="text"
+                                        android:inputType="number"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
 
@@ -1441,7 +1436,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Others"
-                                        android:inputType="text"
+                                        android:inputType="number"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
 
@@ -1517,7 +1512,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Area"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
@@ -1575,7 +1570,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Area"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
@@ -1657,7 +1652,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Total price"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
@@ -1716,7 +1711,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Total price"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
@@ -1789,7 +1784,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Year Of Purchase"
-                                    android:inputType="text"
+                                    android:inputType="number"
                                     android:textColor="#000" />
 
                             </android.support.design.widget.TextInputLayout>
@@ -1815,7 +1810,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Value of Purchase"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
