@@ -1041,6 +1041,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                         AverageMonthlyIncomeOfChildrenValue = AverageMonthlyIncomeOfChildren.getText().toString();
                         AverageMonthlyIncomeOfRelativesValue = AverageMonthlyIncomeOfRelatives.getText().toString();
                         AverageMonthlyIncomeOfOthersValue = AverageMonthlyIncomeOfOthers.getText().toString();
+
                         HusbandFarmIncomeValue = HusbandFarmIncome.getText().toString();
                         WifeFarmIncomeValue = WifeFarmIncome.getText().toString();
                         ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
@@ -2414,7 +2415,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             int max = selected.length;
 
-            for (int i = 0; i < selected.length - 1; i++) {
+            for (int i = 0; i < selected.length; i++) {
                 if (selected[i]) {
                     HusbandIncomeDetail.setVisibility(View.VISIBLE);
                     HusbandIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
