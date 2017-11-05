@@ -239,7 +239,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
 
         // Load and Draw the GeoJSON. The marker animation is also handled here.
-        new DrawGeoJson1().execute();
+        new DrawGeoJson().execute();
 
         new Thread(new Runnable() {
             @Override

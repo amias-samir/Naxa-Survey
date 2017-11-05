@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -120,6 +121,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     double finalLong;
     boolean isGpsTracking = false;
     boolean isGpsTaken = false;
+    boolean send = false;
 
 
     private int year, month, day;
@@ -400,7 +402,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     @OnItemSelected(R.id.pooling_price_spinner)
     public void priceSpinneListner(){
-       String values =  Pooling_price_spinner.getSelectedItem().toString();
+        String values =  Pooling_price_spinner.getSelectedItem().toString();
 
 
 //        valueOfPurchase.setText(currencyChanger(values, valueOfPurchase.getText().toString()));
@@ -739,7 +741,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                 if (isGpsTaken) {
 
-                    image = encodedImage;
+//                    image = encodedImage;
+                    image = mCurrentPhotoPath;
 
                     if (image != null && !image.isEmpty()) {
 
@@ -810,7 +813,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             TotalPropertyPriceValue = TotalPropertyPrice.getText().toString();
 
                             jsonLatLangArray = jsonArrayGPS.toString();
-                            image = encodedImage;
+//                            image = encodedImage;
+                            image = mCurrentPhotoPath;
 
                             DistrictValue = District.getSelectedItem().toString();
                             MunicipalityValue = Municipality.getSelectedItem().toString();
@@ -912,7 +916,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                     String formName = FormNameToInput.getText().toString();
 
                                     String[] data = new String[]{"1", formName, dateDataCollected, jsonToSend, jsonLatLangArray,
-                                            "" + imageName, "Not Sent", "0"};
+                                            "" + mCurrentPhotoPath, "Not Sent", "0"};
 
 
                                     Database_SaveForm dataBaseSaveform = new Database_SaveForm(context);
@@ -986,7 +990,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         {
             @Override
             public void onClick(View v) {
-
+                send = true;
                 if (isGpsTracking) {
                     Toast.makeText(getApplicationContext(), "Please end GPS Tracking.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -1041,7 +1045,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                         AverageMonthlyIncomeOfChildrenValue = AverageMonthlyIncomeOfChildren.getText().toString();
                         AverageMonthlyIncomeOfRelativesValue = AverageMonthlyIncomeOfRelatives.getText().toString();
                         AverageMonthlyIncomeOfOthersValue = AverageMonthlyIncomeOfOthers.getText().toString();
-
                         HusbandFarmIncomeValue = HusbandFarmIncome.getText().toString();
                         WifeFarmIncomeValue = WifeFarmIncome.getText().toString();
                         ChildrenFarmIncomeValue = ChildrenFarmIncome.getText().toString();
@@ -1146,6 +1149,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         previewImageSite.setVisibility(View.VISIBLE);
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
@@ -1161,6 +1166,17 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.naxasurvay.fileprovider",
                         photoFile);
+
+                List<ResolveInfo> resolvedIntentActivities = context.getPackageManager().
+                        queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
+                for (ResolveInfo resolvedIntentInfo : resolvedIntentActivities) {
+                    String packageName = resolvedIntentInfo.activityInfo.packageName;
+
+                    context.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+
+
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -1193,6 +1209,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     private void setPic(ImageView mImageView, String imagePath) {
         // Get the dimensions of the View
+        mImageView.setVisibility(View.VISIBLE);
         int targetW = mImageView.getWidth();
         int targetH = mImageView.getHeight();
 
@@ -1206,7 +1223,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        int scaleFactor = Math.min(photoW / 200, photoH / 200);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
@@ -1226,14 +1243,47 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
-    public void addImage(String encodedimage) {
+    public void addImage(String Image) {
 
-        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        previewImageSite.setVisibility(View.VISIBLE);
-        previewImageSite.setImageBitmap(decodedByte);
+//        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+//        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//        previewImageSite.setVisibility(View.VISIBLE);
+//        previewImageSite.setImageBitmap(decodedByte);
 
+
+        if (!Image.equals(null) && !Image.equals("")) {
+//
+            previewImageSite.setVisibility(View.VISIBLE);
+
+            galleryAddPic();
+//                setPic(ivPhotographSiteimageViewPreview1, imagePath1);
+            // Get the dimensions of the bitmap
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(Image, bmOptions);
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+
+
+            // Determine how much to scale down the image
+            int scaleFactor = Math.min(photoW / 480, photoH / 640);
+
+            // Decode the image file into a Bitmap sized to fill the View
+            bmOptions.inJustDecodeBounds = false;
+
+            //bmOptions.inSampleSize = scaleFactor;
+            bmOptions.inSampleSize = scaleFactor;
+
+            bmOptions.inPurgeable = true;
+            Bitmap bitmap = BitmapFactory.decodeFile(Image, bmOptions);
+            previewImageSite.setImageBitmap(bitmap);
+
+//            Constant.takenimg1 = true;
+
+        }
     }
+
+
 
 
     // display current date
@@ -1710,8 +1760,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //            previewMap.setEnabled(true);
             Bundle bundle = intent.getExtras();
             String jsonToParse = (String) bundle.get("JSON1");
-            imageName = (String) bundle.get("photo");
-            Log.d("Retrive Image", "Retrive Image :" + imageName);
+            mCurrentPhotoPath = (String) bundle.get("photo");
+            Log.d("Retrive Image", "Retrive Image :" + mCurrentPhotoPath);
             String gpsLocationtoParse = (String) bundle.get("gps");
             formid = (String) bundle.get("DBid");
             String sent_Status = (String) bundle.get("sent_Status");
@@ -1764,7 +1814,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 Log.e("HouseholdSurvey", "" + jsonToParse);
 //                parseArrayGPS(gpsLocationtoParse);
                 parseJson(jsonToParse);
-                addImage(encodedImage);
+                previewImageSite.setVisibility(View.VISIBLE);
+                setPic(previewImageSite, mCurrentPhotoPath);
+//                addImage(imageName);
+
+//                setPic(previewImageSite, mCurrentPhotoPath);
             } catch (JSONException e) {
                 Log.d(TAG, "HouseholdSurv: " + e.toString());
                 e.printStackTrace();
@@ -1867,7 +1921,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             header.put("latitude", finalLat);
             header.put("longitude", finalLong);
-            header.put("photo", encodedImage);
+            if (send){
+                header.put("photo", encodedImage);
+            }else{
+                header.put("photo", mCurrentPhotoPath);
+            }
+
 
 
             jsonToSend = header.toString();
@@ -1974,8 +2033,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         valueOfPurchaseValue = jsonObj.getString("pooling_value_of_purchase");
         PoolingPriceType = jsonObj.getString("pooling_total_price_type");
 
-
-
         finalLat = Double.parseDouble(jsonObj.getString("latitude"));
         finalLong = Double.parseDouble(jsonObj.getString("longitude"));
         LatLng d = new LatLng(finalLat, finalLong);
@@ -1984,8 +2041,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         encodedImage = jsonObj.getString("photo");
         Log.d("check Image", "encoded Image : " + encodedImage);
 
-//        Log.e("Children Under Two", "Parsed data " + child2_vdc_name + child2_ward_no + weight);
-//
         surveyorId.setText(SurveyIdNumValue);
         NameOfSurveyor.setText(NameOfSurveyorValue);
         DateOfSurvey.setText(DateOfSurveyValue);
@@ -2415,7 +2470,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             int max = selected.length;
 
-            for (int i = 0; i < selected.length; i++) {
+            for (int i = 0; i < selected.length - 1; i++) {
                 if (selected[i]) {
                     HusbandIncomeDetail.setVisibility(View.VISIBLE);
                     HusbandIncomeDetail.setText(builder.append(adapter.getItem(i)).append(","));
