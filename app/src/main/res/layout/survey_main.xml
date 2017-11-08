@@ -227,6 +227,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Ward no"
+                                    android:text="aaa"
                                     android:inputType="text"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
@@ -243,6 +244,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Address"
+                                    android:text="aaa"
                                     android:inputType="text"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
@@ -413,6 +415,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Age"
+                                        android:text="aaa"
                                         android:inputType="text"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
@@ -472,6 +475,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Email"
+                                        android:text="aaa"
                                         android:inputType="text"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>

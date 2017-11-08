@@ -1141,6 +1141,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Log.d(TAG ," photo intent :" +photoURI );
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
@@ -2199,17 +2200,19 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //
 //
 //        }
+        Log.d(TAG ,"OnACtivity Result :" + data + " : " + requestCode + " : " + resultCode);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
             try {
-                if(data == null){
-                    Toast.makeText(SurveyMain.this, "unable to create image thumbnail \n please try again", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if(data == null){
+//                    Toast.makeText(SurveyMain.this, "unable to create image thumbnail \n please try again", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 galleryAddPic();
                 setPic(previewImageSite, mCurrentPhotoPath);
             } catch (Exception e){
+                Log.d(TAG, "OnACtivity Result : " + e.toString());
                 e.printStackTrace();
             }
 
