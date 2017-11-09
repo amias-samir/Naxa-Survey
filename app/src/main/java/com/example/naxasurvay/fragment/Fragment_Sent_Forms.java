@@ -106,6 +106,7 @@ public class Fragment_Sent_Forms extends Fragment {
                     String gps = resultCur.get(position).gps;
                     String DBid = resultCur.get(position).dbId;
                     String sent_Status = resultCur.get(position).status;
+                    Log.d("sent form fragment", "data in save form" + jSon);
                     loadForm(id, jSon, photo, gps, DBid, sent_Status);
 
                 } else if (items[item] == "Delete") {
@@ -200,14 +201,21 @@ public class Fragment_Sent_Forms extends Fragment {
     }
 
     public void loadForm(String formId, String jsonData , String photo , String gps, String DBid , String status){
-        if (formId.equals(1)) {
-            Intent intent1 = new Intent(getActivity(), SurveyMain.class);
-            intent1.putExtra("JSON1", jsonData);
-            intent1.putExtra("photo", photo);
-            intent1.putExtra("gps", gps);
-            intent1.putExtra("DBid", DBid);
-            intent1.putExtra("sent_Status", status);
-            startActivity(intent1);
+        switch (formId){
+
+            case "1" :
+                Intent intent1 = new Intent(getActivity(), SurveyMain.class);
+                intent1.putExtra("JSON1", jsonData);
+                intent1.putExtra("photo", photo);
+                intent1.putExtra("gps", gps);
+                intent1.putExtra("DBid", DBid);
+                intent1.putExtra("sent_Status", status);
+//                intent1.putExtra("form_name", form_name);
+                Log.d("fragment", "initilizeUIF: "+status);
+                Log.d("fragment", "initilizeUIF: "+jsonData);
+                Log.d("fragment", "initilizeUIF: "+photo);
+                startActivity(intent1);
+                break;
         }
     }
 
@@ -225,37 +233,10 @@ public class Fragment_Sent_Forms extends Fragment {
         resultCur.clear();
         Database_SentForm dataBaseSentform = new Database_SentForm(getActivity());
         dataBaseSentform.open();
-//        boolean isTableEmpty = dataBaseNepalPublicHealthSent.is_TABLE_MAIN_Empty();
-//        if(isTableEmpty){
-//            Default_DIalog.showDefaultDialog(getActivity() , R.string.app_name , "No data Sent ");
-//        }else{
-//            int count = dataBaseNepalPublicHealthSent.returnTotalNoOf_TABLE_MAIN_NUM() + 1;
-//            for(int i=count ; i>=1 ; i--) {
-////                String[] data = dataBaseNepalPublicHealthNotSent.return_Data_TABLE_MAIN(i);
-//                String[] data = dataBaseNepalPublicHealthSent.return_Data_ID(i);
-//                SavedFormParameters savedData = new SavedFormParameters();
-//                Log.e("DATA" , "08 "+data[8] +" one: "+ data[1]+" two: "+data[2]);
-////                savedData.dbId = data[0];
-//                savedData.formId = data[0];
-//                savedData.formName = data[1];
-//                savedData.date = data[2];
-//                savedData.jSON = data[3];
-//                savedData.gps = data[4] ;
-//                savedData.photo = data[5];
-//                savedData.status = data[6];
-//                savedData.deletedStatus = data[7];
-//                savedData.dbId = data[8];
-//
-//                if(savedData.dbId!= null) {
-//
-//                    resultCur.add(savedData);
-//                }
-//
-//
-//            }
-//        }
-        resultCur.addAll(dataBaseSentform.getAllSentForms());
 
+        resultCur.addAll(dataBaseSentform.getAllSentForms());
+        Log.e("sent form fragment", "data in save form" + dataBaseSentform.getAllSentForms());
+        Log.e("sent form fragment", "data in save form" + resultCur.toString());
         fillTable();
     }
 

@@ -10,7 +10,7 @@
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-    // xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -57,6 +57,7 @@
                                 android:layout_height="wrap_content">
 
                                 <TextView
+
                                     android:id="@+id/survey_id_num"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -73,7 +74,6 @@
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/survey_id_num"
                                     android:hint="id"
-                                    android:imeOptions="actionNext"
                                     android:inputType="text"
                                     android:textColor="#000" />
                             </RelativeLayout>
@@ -89,7 +89,6 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Name of Surveyor"
-                                    android:imeOptions="actionNext"
                                     android:inputType="text"
                                     android:textColor="#000" />
 
@@ -105,10 +104,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Date of Survey"
-                                    android:imeOptions="actionNext"
-                                    android:inputType="datetime"
+                                    android:inputType="text"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
+
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
@@ -145,26 +144,77 @@
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/house_id_code"
                                     android:hint="id"
-                                    android:imeOptions="actionNext"
                                     android:inputType="text"
                                     android:textColor="#000" />
                             </RelativeLayout>
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/Municipality"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="48dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="@dimen/layout_margin"
+                                android:padding="5dp">
 
-                                <AutoCompleteTextView
-                                    android:id="@+id/Survay_municipality"
-                                    android:layout_width="fill_parent"
+                                <TextView
+                                    android:id="@+id/District"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="45dp"
-                                    android:hint="Municipality"
-                                    android:imeOptions="actionNext"
-                                    android:inputType="text"
-                                    android:textColor="#000" />
-                            </android.support.design.widget.TextInputLayout>
+                                    android:layout_alignBottom="@+id/Survay_district"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="District"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="@color/monsoon" />
+
+                                <Spinner
+                                    android:id="@+id/Survay_district"
+                                    android:layout_width="220dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/District"
+                                    android:layout_toRightOf="@+id/District"
+                                    android:entries="@array/district_name" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_margin="@dimen/layout_margin"
+                                android:padding="5dp">
+
+                                <TextView
+                                    android:id="@+id/Municipality"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignBottom="@+id/Survay_municipality"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_alignParentTop="true"
+                                    android:gravity="center_vertical"
+                                    android:paddingLeft="5dp"
+                                    android:text="Municipality"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textColor="@color/monsoon" />
+
+                                <Spinner
+                                    android:id="@+id/Survay_municipality"
+                                    android:layout_width="220dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/Municipality"
+                                    android:layout_toRightOf="@+id/Municipality"
+                                    android:entries="@array/municipality_name" />
+
+                            </RelativeLayout>
 
                             <android.support.design.widget.TextInputLayout
                                 android:id="@+id/Ward"
@@ -175,15 +225,15 @@
                                     android:id="@+id/Survay_ward"
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
-
                                     android:layout_marginTop="45dp"
                                     android:hint="Ward no"
-                                    android:imeOptions="actionNext"
+                                    android:text="aaa"
                                     android:inputType="text"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
                             <android.support.design.widget.TextInputLayout
+
                                 android:id="@+id/Address"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
@@ -191,13 +241,14 @@
                                 <AutoCompleteTextView
                                     android:id="@+id/Survay_address"
                                     android:layout_width="fill_parent"
-
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Address"
+                                    android:text="aaa"
                                     android:inputType="text"
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
+
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -208,57 +259,51 @@
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
-                            <RadioGroup
-                                android:id="@+id/HouseHold_type"
-
+                            <CheckBox
+                                android:id="@+id/single_family_detached"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="25dp"
-                                android:orientation="vertical">
+                                android:layout_alignParentLeft="true"
+                                android:layout_alignParentTop="true"
+                                android:text="Single Family Detached" />
 
-                                <RadioButton
-                                    android:id="@+id/single_f_d"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checked="true"
-                                    android:text="Single Family Detached"
-                                    android:textStyle="bold" />
+                            <CheckBox
+                                android:id="@+id/multy_family_house"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toRightOf="@+id/checkBox1"
+                                android:text="Multy-Family House" />
 
-                                <RadioButton
-                                    android:id="@+id/multy_f_h"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Multy-Family House"
-                                    android:textStyle="bold" />
+                            <CheckBox
+                                android:id="@+id/apartment_block"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toRightOf="@+id/checkBox2"
+                                android:text="Apartment Block" />
 
-                                <RadioButton
-                                    android:id="@+id/apartment_block"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Apartment Block"
-                                    android:textStyle="bold" />
+                            <CheckBox
+                                android:id="@+id/mixed_use_block"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toRightOf="@+id/checkBox1"
+                                android:text="Mixed-Use Block" />
 
-                                <RadioButton
-                                    android:id="@+id/mix_use_block"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checked="true"
-                                    android:text="Mixed-Use Block"
-                                    android:textStyle="bold" />
+                            <CheckBox
+                                android:id="@+id/number_of_floors"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_toRightOf="@+id/checkBox2"
+                                android:text="Number Of Floors" />
 
-                                <RadioButton
-                                    android:id="@+id/num_of_floor"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checked="true"
-                                    android:text="Number Of Floors"
-                                    android:textStyle="bold" />
-
-                            </RadioGroup>
 
                         </LinearLayout>
 
                     </android.support.v7.widget.CardView>
+
                     <!-- Gps and Photo -->
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
@@ -370,6 +415,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Age"
+                                        android:text="aaa"
                                         android:inputType="text"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
@@ -398,7 +444,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:checked="true"
-                                        android:imeOptions="actionNext"
                                         android:text="Male"
                                         android:textStyle="bold" />
 
@@ -430,6 +475,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="45dp"
                                         android:hint="Email"
+                                        android:text="aaa"
                                         android:inputType="text"
                                         android:textColor="#000" />
                                 </android.support.design.widget.TextInputLayout>
@@ -486,7 +532,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_husband"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -527,7 +573,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_wife"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -567,7 +613,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_childrens"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -607,7 +653,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_relatives"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -647,7 +693,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/button_inc_others"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -726,7 +772,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_husband"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -767,7 +813,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_wife"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -807,7 +853,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_children"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -847,7 +893,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_relatives"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -887,7 +933,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_toLeftOf="@+id/Working_button_inc_others"
-                                    android:text="1"
+                                    android:text="0"
                                     android:textColor="#000" />
 
                                 <Button
@@ -919,7 +965,6 @@
 
                     </android.support.v7.widget.CardView>
 
-
                     <!-- MultiSpinner for Source of income -->
                     <android.support.v7.widget.CardView
                         android:id="@+id/Source_of_detailIncome_of_Husband"
@@ -942,6 +987,7 @@
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
+                            <!-- husband -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -980,16 +1026,25 @@
                                     android:visibility="gone" />
 
                                 <EditText
-                                    android:id="@+id/selected_others_income_details_husband"
+                                    android:id="@+id/selected_farm_income_details_husband"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/selected_income_details_husband"
+                                    android:hint="Farm : period of income"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_husband"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_farm_income_details_husband"
                                     android:hint="Specify other income source"
                                     android:visibility="gone" />
 
 
                             </RelativeLayout>
 
+                            <!-- wife -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -1028,16 +1083,25 @@
                                     android:visibility="gone" />
 
                                 <EditText
-                                    android:id="@+id/selected_others_income_details_wife"
+                                    android:id="@+id/selected_farm_income_details_wife"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/selected_income_details_wife"
+                                    android:hint="Farm : period of income"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_wife"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_farm_income_details_wife"
                                     android:hint="Specify other income source"
                                     android:visibility="gone" />
 
 
                             </RelativeLayout>
 
+                            <!-- children -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -1076,16 +1140,25 @@
                                     android:visibility="gone" />
 
                                 <EditText
-                                    android:id="@+id/selected_others_income_details_children"
+                                    android:id="@+id/selected_farm_income_details_children"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/selected_income_details_children"
+                                    android:hint="Farm : period of income"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_children"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_farm_income_details_children"
                                     android:hint="Specify other income source"
                                     android:visibility="gone" />
 
 
                             </RelativeLayout>
 
+                            <!-- relatives -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -1124,16 +1197,25 @@
                                     android:visibility="gone" />
 
                                 <EditText
-                                    android:id="@+id/selected_others_income_details_relatives"
+                                    android:id="@+id/selected_farm_income_details_relatives"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/selected_income_details_relatives"
+                                    android:hint="Farm : period of income"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_relatives"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_farm_income_details_relatives"
                                     android:hint="Specify other income source"
                                     android:visibility="gone" />
 
 
                             </RelativeLayout>
 
+                            <!-- others -->
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -1172,10 +1254,18 @@
                                     android:visibility="gone" />
 
                                 <EditText
-                                    android:id="@+id/selected_others_income_details_others"
+                                    android:id="@+id/selected_farm_income_details_others"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/selected_income_details_others"
+                                    android:hint="Farm : period of income"
+                                    android:visibility="gone" />
+
+                                <EditText
+                                    android:id="@+id/selected_others_income_details_others"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/selected_farm_income_details_others"
                                     android:hint="Specify other income source"
                                     android:visibility="gone" />
 
@@ -1206,85 +1296,168 @@
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/average_monthlyIncome_of_husband"
+                            <!-- husband -->
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <AutoCompleteTextView
-                                    android:id="@+id/Survay_average_monthlyIncome_of_husband"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="45dp"
-                                    android:hint="Husband"
-                                    android:inputType="text"
-                                    android:textColor="#000" />
-                            </android.support.design.widget.TextInputLayout>
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/average_monthlyIncome_of_husband"
+                                    android:layout_width="150dp"
+                                    android:layout_height="wrap_content">
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/average_monthlyIncome_of_wife"
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Survay_average_monthlyIncome_of_husband"
+                                        android:layout_width="150dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Husband"
+                                        android:inputType="number"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <Spinner
+                                    android:id="@+id/husband_price_type"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/average_monthlyIncome_of_husband"
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_husband"
+                                    android:entries="@array/item_price" />
+
+                            </RelativeLayout>
+
+                            <!-- wife -->
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <AutoCompleteTextView
-                                    android:id="@+id/Survay_average_monthlyIncome_of_wife"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="45dp"
-                                    android:hint="Wife"
-                                    android:inputType="text"
-                                    android:textColor="#000" />
-                            </android.support.design.widget.TextInputLayout>
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/average_monthlyIncome_of_wife"
+                                    android:layout_width="150dp"
+                                    android:layout_height="wrap_content">
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/average_monthlyIncome_of_children"
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Survay_average_monthlyIncome_of_wife"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Wife"
+                                        android:inputType="number"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <Spinner
+                                    android:id="@+id/wife_price_type"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/average_monthlyIncome_of_wife"
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_wife"
+                                    android:entries="@array/item_price" />
+
+                            </RelativeLayout>
+
+                            <!-- children -->
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <AutoCompleteTextView
-                                    android:id="@+id/Survay_average_monthlyIncome_of_children"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="45dp"
-                                    android:hint="Children"
-                                    android:inputType="text"
-                                    android:textColor="#000" />
-                            </android.support.design.widget.TextInputLayout>
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/average_monthlyIncome_of_children"
+                                    android:layout_width="150dp"
+                                    android:layout_height="wrap_content">
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/average_monthlyIncome_of_relatives"
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Survay_average_monthlyIncome_of_children"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Children"
+                                        android:inputType="number"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <Spinner
+                                    android:id="@+id/children_price_type"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/average_monthlyIncome_of_children"
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_children"
+                                    android:entries="@array/item_price" />
+
+                            </RelativeLayout>
+
+                            <!-- relatives -->
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <AutoCompleteTextView
-                                    android:id="@+id/Survay_average_monthlyIncome_of_relatives"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="45dp"
-                                    android:hint="Relatives"
-                                    android:inputType="text"
-                                    android:textColor="#000" />
-                            </android.support.design.widget.TextInputLayout>
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/average_monthlyIncome_of_relatives"
+                                    android:layout_width="150dp"
+                                    android:layout_height="wrap_content">
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/average_monthlyIncome_of_others"
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Survay_average_monthlyIncome_of_relatives"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Relatives"
+                                        android:inputType="number"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <Spinner
+                                    android:id="@+id/relatives_price_type"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/average_monthlyIncome_of_relatives"
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_relatives"
+                                    android:entries="@array/item_price" />
+
+                            </RelativeLayout>
+
+                            <!-- others -->
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <AutoCompleteTextView
-                                    android:id="@+id/Survay_average_monthlyIncome_of_others"
-                                    android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="45dp"
-                                    android:hint="Others"
-                                    android:inputType="text"
-                                    android:textColor="#000" />
-                            </android.support.design.widget.TextInputLayout>
+                                <android.support.design.widget.TextInputLayout
+                                    android:id="@+id/average_monthlyIncome_of_others"
+                                    android:layout_width="150dp"
+                                    android:layout_height="wrap_content">
 
+                                    <AutoCompleteTextView
+                                        android:id="@+id/Survay_average_monthlyIncome_of_others"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="45dp"
+                                        android:hint="Others"
+                                        android:inputType="number"
+                                        android:textColor="#000" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <Spinner
+                                    android:id="@+id/others_price_type"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_toEndOf="@+id/average_monthlyIncome_of_others"
+                                    android:layout_toRightOf="@+id/average_monthlyIncome_of_others"
+                                    android:entries="@array/item_price" />
+
+                            </RelativeLayout>
 
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
-
 
                     <!--Area of Land and Property 1-->
                     <android.support.v7.widget.CardView
@@ -1311,7 +1484,7 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="2">
+                                android:layout_weight="5">
 
 
                                 <LinearLayout
@@ -1330,7 +1503,7 @@
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1">
+                                    android:layout_weight="2">
 
                                     <android.support.design.widget.TextInputLayout
                                         android:layout_width="match_parent"
@@ -1342,12 +1515,26 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
-                                            android:hint="Anna"
-                                            android:inputType="text"
+                                            android:hint="Area"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
 
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/land_area_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:entries="@array/item_land" />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -1355,7 +1542,7 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="2">
+                                android:layout_weight="5">
 
 
                                 <LinearLayout
@@ -1374,7 +1561,7 @@
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1">
+                                    android:layout_weight="2">
 
                                     <android.support.design.widget.TextInputLayout
                                         android:layout_width="match_parent"
@@ -1386,14 +1573,27 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
-                                            android:hint="Anna"
-                                            android:inputType="text"
+                                            android:hint="Area"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
 
                                 </LinearLayout>
 
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/property_area_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:entries="@array/item_land" />
+                                </LinearLayout>
                             </LinearLayout>
 
                         </LinearLayout>
@@ -1426,8 +1626,7 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:weightSum="2">
-
+                                android:weightSum="5">
 
                                 <LinearLayout
                                     android:layout_width="0dp"
@@ -1442,11 +1641,10 @@
                                         android:text="Land" />
                                 </LinearLayout>
 
-
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1">
+                                    android:layout_weight="2">
 
                                     <android.support.design.widget.TextInputLayout
                                         android:layout_width="match_parent"
@@ -1458,20 +1656,36 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Total price"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
                                 </LinearLayout>
 
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/land_price_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentTop="true"
+                                        android:layout_toEndOf="@+id/vdcName"
+                                        android:layout_toRightOf="@+id/vdcName"
+                                        android:entries="@array/item_price" />
+                                </LinearLayout>
 
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:weightSum="2">
-
+                                android:weightSum="5">
 
                                 <LinearLayout
                                     android:layout_width="0dp"
@@ -1486,11 +1700,10 @@
                                         android:text="Property" />
                                 </LinearLayout>
 
-
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1">
+                                    android:layout_weight="2">
 
                                     <android.support.design.widget.TextInputLayout
                                         android:layout_width="match_parent"
@@ -1502,18 +1715,131 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="45dp"
                                             android:hint="Total price"
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:textColor="#000" />
 
                                     </android.support.design.widget.TextInputLayout>
                                 </LinearLayout>
 
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/property_price_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentTop="true"
+                                        android:layout_toEndOf="@+id/vdcName"
+                                        android:layout_toRightOf="@+id/vdcName"
+                                        android:entries="@array/item_price" />
+                                </LinearLayout>
 
                             </LinearLayout>
                         </LinearLayout>
 
                     </android.support.v7.widget.CardView>
 
+                    <!-- Land pooling -->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardBackgroundColor="#e7e2e2"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="If Land Pooling"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <CheckBox
+                                android:id="@+id/land_pooling_house"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="House" />
+
+                            <CheckBox
+                                android:id="@+id/land_pooling_land"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Land" />
+
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/pooling_yearof_purchase"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="45dp"
+                                    android:hint="Year Of Purchase"
+                                    android:inputType="number"
+                                    android:textColor="#000" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="4">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="2">
+
+                                    <android.support.design.widget.TextInputLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <AutoCompleteTextView
+                                            android:id="@+id/pooling_valueof_purchase"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="45dp"
+                                            android:hint="Value of Purchase"
+                                            android:inputType="number"
+                                            android:textColor="#000" />
+
+                                    </android.support.design.widget.TextInputLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_weight="2">
+
+                                    <Spinner
+                                        android:id="@+id/pooling_price_spinner"
+                                        android:layout_width="100dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentTop="true"
+                                        android:entries="@array/item_price" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
 
                     <!--save / send-->
                     <android.support.v7.widget.CardView
@@ -1554,7 +1880,6 @@
 
                         </RelativeLayout>
                     </android.support.v7.widget.CardView>
-
 
                 </LinearLayout>
 

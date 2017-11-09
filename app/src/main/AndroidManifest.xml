@@ -19,7 +19,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Dark">
-        <activity android:name=".SurveyMain"></activity>
+
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.naxasurvay.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths">
+
+            </meta-data>
+        </provider>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -28,15 +40,54 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SavedFormActivity"></activity>
-        <activity android:name=".gps.MapHouseholdActivity"></activity>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".RegisterActivity">
+
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".SurveyMain"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
+
+            android:name=".SavedFormActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
+
+            android:name=".gps.SimpleOfflineMapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
+
+            android:name=".easy_gps.GeoPointActivity"></activity>
+
     </application>
 
 </manifest>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".gps.SimpleOfflineMapActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/background_toolbar_translucent"/>
+
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:mapbox_cameraZoom="10"
+        mapbox:mapbox_cameraTargetLat="27.67"
+        mapbox:mapbox_cameraTargetLng="85.40"
+        mapbox:mapbox_cameraBearing="34.33"
+        mapbox:mapbox_cameraTilt="50.25"
+        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/outdoors-v10"
+        mapbox:mapbox_cameraZoomMax="19"
+        mapbox:mapbox_cameraZoomMin="6"
+        mapbox:mapbox_uiRotateGestures="true"
+         />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/survey_marker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="top|left"
+            android:layout_marginBottom="32dp"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
+            android:text="Add Marker"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/startRouteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="32dp"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
+            android:text="Start route"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/refreshMarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="32dp"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
+            android:text="Refresh Marker"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/go_to_form"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="150dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="32dp"
+            style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
+            android:text="Form"
+            android:visibility="invisible" />
+
+        <!-- Implementation of find my location button -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/myLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@android:drawable/ic_menu_mylocation"
+            mapbox:borderWidth="0dp"
+            mapbox:elevation="6dp"
+            mapbox:pressedTranslationZ="12dp"
+            mapbox:fabSize="normal"
+            android:backgroundTint="@color/primary_dark"/>
+
+    </FrameLayout>
+
+
+
+
+
+</RelativeLayout>

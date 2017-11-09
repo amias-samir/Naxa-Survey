@@ -88,7 +88,7 @@ public class MapPolyLineActivity extends FragmentActivity {
             startPoint = map.addMarker(new MarkerOptions().position(HAMBURG)
                     .title("My Saved Location")
                     .snippet("GPS Saved Location")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_send)));
 
 //            hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
 //                    .title("My Location"));
@@ -130,7 +130,7 @@ public class MapPolyLineActivity extends FragmentActivity {
                     .snippet("GPS Start Location")
 //                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
 //                    .alpha(0.7f));
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_send)));
 
 //            3 sec previous
 //            RegisterAlarmBroadcast();

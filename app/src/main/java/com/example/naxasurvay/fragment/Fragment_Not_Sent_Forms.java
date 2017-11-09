@@ -213,6 +213,7 @@ public class Fragment_Not_Sent_Forms extends Fragment {
            intent1.putExtra("form_name", form_name);
                 Log.d("fragment", "initilizeUIF: "+status);
                 Log.d("fragment", "initilizeUIF: "+jsonData);
+                Log.d("fragment", "initilizeUIF: "+photo);
            startActivity(intent1);
                 break;
        }
