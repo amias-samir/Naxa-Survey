@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NAXASurvay.iml" filepath="$PROJECT_DIR$/NAXASurvay.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Naxa Survey.iml" filepath="$PROJECT_DIR$/Naxa Survey.iml" />
+      <module fileurl="file://C:\Users\Majestic\Documents\AndroidStudioProjects\Naxa Projects\naxasurvay\Naxa Survey.iml" filepath="C:\Users\Majestic\Documents\AndroidStudioProjects\Naxa Projects\naxasurvay\Naxa Survey.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/naxasurvay.iml" filepath="$PROJECT_DIR$/naxasurvay.iml" />
     </modules>
   </component>
 </project>

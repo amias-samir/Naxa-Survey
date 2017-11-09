@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.naxasurvay"
         minSdkVersion 15
@@ -34,6 +34,7 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.thomashaertel:multispinner:0.1.1'
     compile 'com.google.android.gms:play-services:7.0.0'
+
     compile 'com.jakewharton:butterknife:8.7.0'
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.2@aar'){
         transitive=true
