@@ -1,9 +1,28 @@
 package com.example.naxasurvay;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
+import junit.framework.AssertionFailedError;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +39,9 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -43,32 +65,31 @@ public class SurvayMainFormFillUpTest {
             husband = 0, wife = 0, children = 0, relatives = 0, others = 0,
             land = 0, property = 0;
 
+    private int numberOfTests = 1;
+
     @Rule
-    public ActivityTestRule<SurveyMain> surveyMainActivityTestRule
-            = new ActivityTestRule<SurveyMain>(SurveyMain.class);
+    public ActivityTestRule<SurveyMain> surveyMainActivityTestRule = new ActivityTestRule<SurveyMain>(SurveyMain.class);
 
     @Before
     public void setUp() throws Exception {
         surveyMainObject = surveyMainActivityTestRule.getActivity();
-
+        surveyMainObject.isGpsTaken = true;
+        surveyMainObject.image = "Dummy Image";
         random = new Random();
 
     }
 
     @Test
     public void surveyValueCheck() throws Exception {
-        for (int i = 0; i < 1; i++) {
-            sleepFor(1);
-            enterValue();
-        }
-
+        enterValue();
+        sleepFor(2);
     }
 
 
     private void enterValue() {
-        /*clickAndEnterOnThis(R.id.id_number_surveyor, getSurvayerId());
+        clickAndEnterOnThis(R.id.id_number_surveyor, getSurvayerId());
         clickAndEnterOnThis(R.id.name_of_survayor, getSurvayerName());
-        onView(withId(R.id.date_of_survey)).perform(scrollTo(), clearText(), typeText(getDate(2017,2000)));
+        onView(withId(R.id.date_of_survey)).perform(scrollTo(), clearText(), typeText(getDate(2017, 2000)));
 
         onView(withId(R.id.id_code)).perform(scrollTo(), clearText(), typeText(getHouseholdId()));
 
@@ -84,6 +105,9 @@ public class SurvayMainFormFillUpTest {
 
         selectHouseHoldTopology();
 
+        //Taking House Photo
+        getPhotograph();
+
         onView(withId(R.id.Respondent_age)).perform(scrollTo(), click(), clearText(), typeText(getRespondentAge()));
 
         selectGender();
@@ -92,48 +116,104 @@ public class SurvayMainFormFillUpTest {
 
         selectFamilyMembers();
 
-        selectWorkingFamilyMember();*/
+        selectWorkingFamilyMember();
 
+        selectSourceIncome();
 
-        //selectSourceIncome();
-
-       /* selectAverageMonthlyIncome();
+        selectAverageMonthlyIncome();
 
         selectAreaOfLandOrProperty();
 
-        selectPriceOfLandOrProperty();*/
+        selectPriceOfLandOrProperty();
 
         selectLandPooling();
 
+        clickOnThis(R.id.Naxa_survay_save);
+
+        try {
+            clickAndEnterOnThis(R.id.input_tableName, "Table " + idSurveryer);
+            clickAndEnterOnThis(R.id.input_date, getDate(2017, 2017));
+        } catch (Exception e) {
+            Log.e("qqq", "Form name and date didn't work");
+        }
+
+
+        onView(withText("Save Data")).perform(click());
+
+        sleepFor(1);
+
+        onView(withText("Yes")).perform(click());
 
     }
 
-    private void selectLandPooling() {
-        if(getRandomValue(1,0)==1){
-            clickOnThis(R.id.land_pooling_house);
+    private void getGPS() {
+        clickOnThis(R.id.house_GpsStart);
+        sleepFor(5);
+
+        try {
+            ViewInteraction interaction = onView(withText("Accept Location")).check(matches(isDisplayed()));
+            interaction.perform(scrollTo(), click());
+        } catch (Exception e) {
+            Log.e("qqq", "Not Displayed");
         }
-        if(getRandomValue(1,0)==1){
+
+    }
+
+    private void getPhotograph() {
+
+        //clickOnThis(R.id.house_photo_site);
+        /*sleepFor(3);
+        try {
+            onView(withId(R.id.house_photo_site)).check(matches(isDisplayed()));
+        }catch(Exception e){
+            sleepFor(2);
+        }*/
+
+        onView(withId(R.id.house_photo_site)).perform(scrollTo());
+        sleepFor(6);
+
+        /*ViewInteraction appCompatImageButton = onView(
+                allOf(withId(R.id.house_photo_site),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        1),
+                                1),
+                        isDisplayed()));
+        appCompatImageButton.perform(click());*/
+    }
+
+    private void selectLandPooling() {
+        if (getRandomValue(1, 0) == 1) {
+
+            clickOnThis(R.id.land_pooling_house);
+
+        }
+        if (getRandomValue(1, 0) == 1) {
             clickOnThis(R.id.land_pooling_land);
         }
+        closeSoftKeyboard();
 
-       /* onView(withId(R.id.land_pooling_land)).check(matches(isChecked()));
-        if(onView(withId(R.id.land_pooling_land)).check(matches(isChecked()))==true){
-
-        }*/
-        clickAndEnterOnThis(R.id.pooling_yearof_purchase,getDate(2017,1980));
-        clickAndEnterOnThis(R.id.pooling_valueof_purchase,getRandomValue(100,15)*100000+"");
+        try {
+            onView(withId(R.id.land_pooling_house)).check(matches(isChecked()));
+            onView(withId(R.id.land_pooling_land)).check(matches(isChecked()));
+            clickAndEnterOnThis(R.id.pooling_yearof_purchase, getDate(2017, 1980));
+            clickAndEnterOnThis(R.id.pooling_valueof_purchase, getAmount() * 10 + "");
+        } catch (AssertionFailedError e) {
+            e.printStackTrace();
+        }
 
     }
 
     private void selectPriceOfLandOrProperty() {
         if (land != 0) {
-            clickAndEnterOnThis(R.id.total_land_price, (land * getRandomValue(900000, 100000)) + "");
+            clickAndEnterOnThis(R.id.total_land_price, (land * getRandomValue(90, 10) * 1000) + "");
         } else {
             clickAndEnterOnThis(R.id.total_land_price, "");
         }
 
         if (property != 0) {
-            clickAndEnterOnThis(R.id.total_property_price, (land * getRandomValue(900000, 100000)) + "");
+            clickAndEnterOnThis(R.id.total_property_price, (land * getRandomValue(90, 10) * 1000) + "");
         } else {
             clickAndEnterOnThis(R.id.total_property_price, "");
         }
@@ -188,23 +268,39 @@ public class SurvayMainFormFillUpTest {
 
     private void selectSourceIncome() {
         onView(withId(R.id.spinnerMulti_Husband)).perform(scrollTo(), click());
-        onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(2, 0)).perform(click());
+
+        onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(5, 0)).perform(click());
+
+
+        onView(withText("OK")).perform(click());
 
 
         if (husband != 0) {
             onView(withId(R.id.spinnerMulti_Husband)).perform(scrollTo(), click());
+            onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(5, 0)).perform(click());
+            onView(withText("OK")).perform(click());
         }
         if (wife != 0) {
+            onView(withId(R.id.spinnerMulti_Wife)).perform(scrollTo(), click());
+            onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(5, 0)).perform(click());
+            onView(withText("OK")).perform(click());
 
         }
         if (children != 0) {
+            onView(withId(R.id.spinnerMulti_children)).perform(scrollTo(), click());
+            onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(5, 0)).perform(click());
+            onView(withText("OK")).perform(click());
 
         }
         if (relatives != 0) {
-
+            onView(withId(R.id.spinnerMulti_Relative)).perform(scrollTo(), click());
+            onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(5, 0)).perform(click());
+            onView(withText("OK")).perform(click());
         }
         if (others != 0) {
-
+            onView(withId(R.id.spinnerMulti_Others)).perform(scrollTo(), click());
+            onData(allOf(is(instanceOf(String.class)))).atPosition(getRandomValue(5, 0)).perform(click());
+            onView(withText("OK")).perform(click());
         }
     }
 
@@ -309,7 +405,7 @@ public class SurvayMainFormFillUpTest {
         return (++idHousehold) + "";
     }
 
-    private String getDate(int maxYear,int minYear) {
+    private String getDate(int maxYear, int minYear) {
         String date = getRandomValue(30, 1)
                 + "-" + getRandomValue(12, 1)
                 + "-" + getRandomValue(maxYear, minYear);
@@ -329,6 +425,24 @@ public class SurvayMainFormFillUpTest {
 
     //Extra Required Methods
     //Methods used inside methods
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
+    }
 
     private String getTotalMember() {
         return husband + wife + children + relatives + others + "";
