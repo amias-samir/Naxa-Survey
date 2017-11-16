@@ -200,7 +200,7 @@ public class Fragment_Sent_Forms extends Fragment {
     }
 
     public void loadForm(String formId, String jsonData , String photo , String gps, String DBid , String status){
-        if (formId.equals(1)) {
+        if (formId.equals("1")) {
             Intent intent1 = new Intent(getActivity(), SurveyMain.class);
             intent1.putExtra("JSON1", jsonData);
             intent1.putExtra("photo", photo);

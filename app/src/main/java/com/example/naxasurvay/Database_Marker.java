@@ -236,7 +236,9 @@ public class Database_Marker extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS,2);
 
-        int i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
+        long i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
+
+        Log.d("DATABASE_MARKER", "replaceSend: SAMIR"+i);
 
     }
 

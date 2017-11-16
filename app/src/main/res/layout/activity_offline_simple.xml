@@ -73,7 +73,7 @@
             android:layout_marginBottom="32dp"
             style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored"
             android:text="Refresh Marker"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/go_to_form"
@@ -101,6 +101,67 @@
             mapbox:fabSize="normal"
             android:backgroundTint="@color/primary_dark"/>
 
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/updatingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+
+        <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">
+            android:layout_centerHorizontal="true"
+ android:layout_centerVertical="true"-->
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="30dp"
+            android:background="@color/white">
+            <TextView
+                android:id="@+id/textViewUpdatingLBL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Updating Marker Status..."
+                android:layout_centerHorizontal="true"
+                android:textSize="20dp"
+                android:textColor="@color/primary_darker">
+            </TextView>
+
+            <TextView
+                android:layout_below="@id/textViewUpdatingLBL"
+                android:layout_marginTop="15dp"
+                android:id="@+id/textViewUpdating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_centerHorizontal="true"
+                android:textSize="10dp"
+                android:textColor="@color/accent">
+            </TextView>
+
+            <ProgressBar
+                android:layout_below="@id/textViewUpdating"
+                android:id="@+id/progressBar1"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:padding="5dip"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+
+                >
+            </ProgressBar>
+        </RelativeLayout>
+
+        <!--</RelativeLayout>-->
     </FrameLayout>
 
 

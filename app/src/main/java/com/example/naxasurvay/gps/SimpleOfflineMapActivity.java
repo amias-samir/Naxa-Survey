@@ -18,7 +18,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -128,11 +130,23 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     private double sentlat,lon;
 
 
+//    int totalProgressValue, progressValue;
+//    private ProgressBar progress;
+//    private TextView updatingText;
+//    FrameLayout updatingFrameLayout;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline_simple);
+
         ButterKnife.bind(this);
+
+//        progress = (ProgressBar) findViewById(R.id.progressBar1);
+//        updatingText = (TextView) findViewById(R.id.textViewUpdating);
+//        updatingFrameLayout = (FrameLayout) findViewById(R.id.updatingLayout);
+
 
         Mapbox.getInstance(this, getString(R.string.access_token));
         navigation = new MapboxNavigation(this, getString(R.string.access_token));
@@ -631,6 +645,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //
             CompletedStatusUpdate completedStatusUpdate = new CompletedStatusUpdate();
             completedStatusUpdate.execute();
+        }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -662,7 +678,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 }
 
                 inputStream.close();
-                Log.e(TAG, "doInBackground: feature0 : " + sb);
+//                Log.e(TAG, "doInBackground: feature0 : " + sb);
                 // Parse JSON
                 JSONObject json = new JSONObject(sb.toString());
 
@@ -670,8 +686,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 Log.e(TAG, "doInBackground: feature1 " + features);
 
                 JSONObject feature = features.getJSONObject(0);
-                Log.e(TAG, "doInBackground: feature2 : " + sb);
-                Log.e(TAG, "doInBackground: feature3 : " + features.length());
+//                Log.e(TAG, "doInBackground: feature2 : " + sb);
+//                Log.e(TAG, "doInBackground: feature3 : " + features.length());
                 int counter = 0;
 
 //                JSONObject properties = feature.getJSONObject("properties");
@@ -708,8 +724,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                             code = properties.getString("code");
 
 
-                            Log.d("SUSAN", "insertIntoMarker 2 : " + code + "\n" +
-                                    coords.getDouble(1) + "\n" + coords.getDouble(0) + "\n" + location);
+//                            Log.d("SUSAN", "insertIntoMarker 2 : " + code + "\n" +
+//                                    coords.getDouble(1) + "\n" + coords.getDouble(0) + "\n" + location);
 
 
 //                            if (points.size() > 0) {
@@ -947,7 +963,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         Log.d("getUnsavedata", "pointSize : " + points.size());
         Log.d("getUnsavedata", "getUnsavedata : " + points.toString());
         if (points.size() > 0) {
-            Log.d("getUnsavedata", "getSavedata : " + points.toString());
+//            Log.d("getUnsavedata", "getSavedata : " + points.toString());
             for (int i = 0; i < points.size(); i++) {
                 Mapinfo info = points.get(i);
                 String housecode = info.houseCode;
@@ -964,7 +980,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         Log.d("getUnsavedata", "getSavedata : " + points1.toString());
         Log.d("getUnsavedata", "getSavedata : " + points1.toString());
         if (points1.size() > 0) {
-            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+//            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
             for (int i = 0; i < points1.size(); i++) {
                 Mapinfo info = points1.get(i);
                 String housecode = info.houseCode;
@@ -979,7 +995,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
         List<Mapinfo> points2 = marker.getsenddata();
         if (points2.size() > 0) {
-            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+            Log.d("getUnsavedata", "getsenddata : size " + points2.size());
             for (int i = 0; i < points2.size(); i++) {
                 Mapinfo info = points2.get(i);
                 String housecode = info.houseCode;
@@ -993,7 +1009,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
         List<Mapinfo> points3 = marker.getSurveyData();
         if (points3.size() > 0) {
-            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+//            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
             for (int i = 0; i < points3.size(); i++) {
                 Mapinfo info = points3.get(i);
                 String housecode = info.houseCode;
@@ -1103,14 +1119,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
             if (networkInfo != null && networkInfo.isConnected()) {
                 text = POST("http://naxa.com.np/householdsurvey/ApiController/surveyedhouses");
 
-            } else {
-                Toast.makeText(SimpleOfflineMapActivity.this, "Unable to sync map data", Toast.LENGTH_SHORT).show();
 
-                try {
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
 
 
             try {
@@ -1119,7 +1128,17 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 Database_Marker databaseMarker = new Database_Marker(getApplicationContext());
                 Log.e("DATA", "" + data.toString());
 
+                Log.e(TAG, "doInBackground: "+data.length() );
+
+//                set progressbar marker update
+//                updatingFrameLayout.setVisibility(View.VISIBLE);
+//                totalProgressValue = data.length();
+//                progress.setMax(totalProgressValue);
+
+
                 for (int i = 0; i < data.length(); i++) {
+
+//                    progressValue = i+1;
 
                     Log.e("", "HOUSEHOLD ID LIST " + i);
 
@@ -1130,9 +1149,31 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                     Log.e("", "HOUSEHOLD CODE" + house_code);
 
                     databaseMarker.replaceSend(house_code);
+
+//                    progress.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            updatingText.setText(progressValue +" of "+ totalProgressValue);
+//                            progress.setProgress(progressValue);
+//                        }
+//                    });
+
+
+//                    if(i == data.length()-1){
+//
+//                        parseArray();
+//                        Toast.makeText(SimpleOfflineMapActivity.this, "Marker status updated successfully", Toast.LENGTH_SHORT).show();
+//
+//
+//                    }
                 }
             } catch (Exception e) {
                 return e.getLocalizedMessage();
+            }
+
+            } else {
+                Toast.makeText(SimpleOfflineMapActivity.this, "Unable to sync map data", Toast.LENGTH_SHORT).show();
+
             }
 
             return text.toString();
@@ -1146,6 +1187,19 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                if (mProgressDlg.isShowing() && !mProgressDlg.equals(null)) {
 //                    mProgressDlg.dismiss();
 //                }
+                //                hide progress frame
+//                try {
+//                    if (totalProgressValue == progressValue) {
+//                        updatingFrameLayout.setVisibility(View.GONE);
+//                    }
+//                }catch (Exception e ){
+//                }
+
+                Toast.makeText(SimpleOfflineMapActivity.this, "Marker status updated successfully", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(SimpleOfflineMapActivity.this, SimpleOfflineMapActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0,0);
             }
 
         }

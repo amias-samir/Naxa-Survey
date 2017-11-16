@@ -1196,6 +1196,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+        Log.e(TAG, "createImageFile:  "+mCurrentPhotoPath );
         return image;
     }
 
@@ -1434,8 +1435,17 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-            galleryAddPic();
-            setPic(previewImageSite, mCurrentPhotoPath);
+            try {
+//                if(data == null){
+//                    Toast.makeText(SurveyMain.this, "unable to create image thumbnail \n please try again", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+                galleryAddPic();
+                setPic(previewImageSite, mCurrentPhotoPath);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
 
 
         }
