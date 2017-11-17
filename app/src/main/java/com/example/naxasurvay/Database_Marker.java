@@ -224,21 +224,29 @@ public class Database_Marker extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS,1);
 
-        int i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
+        long i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue.trim()});
         //db.rawQuery(replacesend, null);
         Log.d("replaceSave", " replacesend : " + i);
     }
 
 
+
+    ArrayList<String> errorUpdateList = new ArrayList<>();
     public void replaceSend(String houseHoldIdValue) {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.d("replaceSave", " check api update : " + houseHoldIdValue);
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS,2);
 
-        long i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue});
+        long i = db.update(TABLE_MARKER,contentValues,HOUSE_CODE+"=?",new String[]{houseHoldIdValue.trim()});
 
-        Log.d("DATABASE_MARKER", "replaceSend: SAMIR"+i);
+        if( i == 0){
+
+            errorUpdateList.add(HOUSE_CODE);
+//            Log.d("DATABASE_MARKER_SAMIR", "replaceSend: error SAMIR " + i + " : " + HOUSE_CODE);
+            Log.d("DATABASE_MARKER_errorupdatelist", " " +errorUpdateList.get(errorUpdateList.size()-1));
+            Log.d("DATABASE_MARKER_errorupdatelist", " " +errorUpdateList.size());
+        }
 
     }
 

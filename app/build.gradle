@@ -45,6 +45,7 @@ dependencies {
     debugCompile 'com.amitshekhar.android:debug-db:1.0.0'
     compile 'com.google.android.gms:play-services:7.0.0'
     compile 'com.jakewharton:butterknife:8.7.0'
+
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     compile 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.4.0'
     testCompile 'junit:junit:4.12'

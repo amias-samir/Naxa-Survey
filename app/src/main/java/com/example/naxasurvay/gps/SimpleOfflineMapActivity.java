@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,9 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -31,6 +30,7 @@ import com.example.naxasurvay.SurveyMain;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -53,7 +53,6 @@ import com.mapbox.services.android.navigation.v5.offroute.OffRouteListener;
 import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
-
 import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.services.api.utils.turf.TurfConstants;
@@ -72,6 +71,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +81,7 @@ import javax.net.ssl.HttpsURLConnection;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -104,12 +105,14 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     Button Survey_marker;
 
     String code, Housecode, Title;
+
     private boolean isEndNotified;
 
     private OfflineManager offlineManager;
 
     NetworkInfo networkInfo;
     ConnectivityManager connectivityManager;
+
 
     public static final String JSON_CHARSET = "UTF-8";
     public static final String JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME";
@@ -136,6 +139,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //    FrameLayout updatingFrameLayout;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +150,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //        progress = (ProgressBar) findViewById(R.id.progressBar1);
 //        updatingText = (TextView) findViewById(R.id.textViewUpdating);
 //        updatingFrameLayout = (FrameLayout) findViewById(R.id.updatingLayout);
+
 
 
         Mapbox.getInstance(this, getString(R.string.access_token));
@@ -231,6 +236,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         });
 
 
+
     }
 
 
@@ -248,6 +254,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }else {
             animateMapToCurLocation(mapboxMap);
         }
+
         mapboxMap.setOnMarkerClickListener(this);
         mapboxMap.setOnMapClickListener(this);
 
@@ -261,6 +268,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 parseArray();
             }
         }).run();
+
 
     }
 
@@ -289,6 +297,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 showToast("Current location failed to load, restart app to try again");
                 return;
             }
+
 
 
         Double latitude = mapboxMap.getMyLocation().getLatitude();
@@ -337,6 +346,9 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                     if (offlineRegions.length == 0) {
                         showToast("Downloading Offline Map");
                         downloadOfflineRegion();
+
+                    } else {
+                        showToast("Loading Offline Map ");
                     }
                 }
 
@@ -605,6 +617,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         Log.d("check code", "codeCheck :" + Housecode);
     }
 
+
     @OnClick(R.id.startRouteButton)
     public void routeTwoPointsInGMaps() {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
@@ -659,7 +672,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     }
 
 
-    private class DrawGeoJson extends AsyncTask<Void, Void, List<LatLng>> {
+     private class DrawGeoJson extends AsyncTask<Void, Void, List<LatLng>> {
         @Override
         protected List<LatLng> doInBackground(Void... voids) {
 
@@ -672,6 +685,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
                 StringBuilder sb = new StringBuilder();
                 Log.e(TAG, "doInBackground:Taman : " + sb);
+
                 int cp;
                 while ((cp = rd.read()) != -1) {
                     sb.append((char) cp);
@@ -795,162 +809,186 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
     }
 
-    private class DrawGeoJson1 extends AsyncTask<Void, Void, List<LatLng>> {
-        @Override
-        protected List<LatLng> doInBackground(Void... voids) {
-
-            ArrayList<LatLng> points = new ArrayList<>();
-
-            try {
-                // Load GeoJSON file
-                InputStream inputStream = getAssets().open("geojson1.geojson");
-                Log.e(TAG, "doInBackground pradip: " + inputStream.toString());
-                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
-                StringBuilder sb = new StringBuilder();
-                int cp;
-                while ((cp = rd.read()) != -1) {
-                    sb.append((char) cp);
-                }
-
-                inputStream.close();
-                Log.e(TAG, "doInBackground: feature00 : " + sb);
-                // Parse JSON
-                JSONObject json = new JSONObject(sb.toString());
-                Log.e(TAG, "doInBackground: feature11 : " + json);
-                JSONArray features = json.getJSONArray("features");
-
-                JSONObject feature = features.getJSONObject(0);
-                Log.e(TAG, "doInBackground: feature11 : " + sb);
-                Log.e(TAG, "doInBackground: feature22 : " + features.length());
-                int counter = 0;
-
-//                JSONObject properties = feature.getJSONObject("properties");
-                for (int i = 0; i < features.length(); i++) {
-                    JSONObject jobj = features.getJSONObject(i);
-
-                    JSONObject geometry = jobj.getJSONObject("geometry");
-
-                    JSONObject properties = jobj.getJSONObject("properties");
-
-                    Log.e(TAG, "doInBackground: geometry11" + geometry.toString());
-                    Log.e(TAG, "doInBackground: geometry22" + properties.toString());
-                    if (geometry != null) {
-                        Log.e(TAG, "doInBackground: geometry33" + properties.toString());
-
-//                        String status = properties.getString("Status");
-
-                        String type = geometry.getString("type");
-
-//                        Log.e(TAG, "doInBackground: geometry111" + status);
-                        Log.e(TAG, "doInBackground: geometry222" + type);
-
-//                        Log.e(TAG, "Type : " + type);
-
-                        // Our GeoJSON only has one feature: a line string
-                        if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("Point")) {
-//                            Log.e(TAG, "status : " + status);
-                            // Get the Coordinates
-                            JSONArray coords = geometry.getJSONArray("coordinates");
-                            Log.e(TAG, "doInBackground: geometry333" + coords.toString());
-//                            for (int lc = 0; lc < coords.length(); lc++) {
-//                                JSONArray coord = coords.getJSONArray(lc);
-                            LatLng latLng = new LatLng(coords.getDouble(1), coords.getDouble(0));
-                            points.add(latLng);
-                            Log.e(TAG, "doInBackground: geometry444" + latLng.toString());
-                            String location = properties.getString("address");
-//                            Log.e(TAG, "doInBackground: geometry444" + location);
-                            Log.e(TAG, "doInBackground: geometry555" + location);
-
-                            code = properties.getString("id");
-                            Log.e(TAG, "doInBackground: geometry666" + code);
-
-                           String Hcode = properties.getString("house_id");
-                            Log.e(TAG, "doInBackground: geometry777" + Hcode);
-
-                            String abc = (code + " or " +Hcode);
-                            Log.e(TAG, "doInBackground: geometry888" + abc);
-                            Log.d("SUSAN", "insertIntoMarker 2 : " + code + "\n" +
-                                    coords.getDouble(1) + "\n" + coords.getDouble(0) + "\n" + location);
-
-
-//                            if (points.size() > 0) {
-////                                 Draw polyline on map
-////                                 map.addPolyline(new PolylineOptions()
-////                                .addAll(points)
-////                                .color(Color.parseColor("#d0423b"))
-////                                .width(2));
+//    private class DrawGeoJson1 extends AsyncTask<Void, Void, List<LatLng>> {
+//        @Override
+//        protected List<LatLng> doInBackground(Void... voids) {
 //
-//                                for (int j = 0; j< points.size(); j++) {
+//            ArrayList<LatLng> points = new ArrayList<>();
 //
-//                                    Log.d("Pradip", "insertIntoMarker 1 : " + Code.get(j));
-//                                    Log.d("Pradip", "insertIntoMarker 1 : " + points.get(j).getLatitude());
-//                                    Log.d("Pradip", "insertIntoMarker 1 : " + points.get(j).getLongitude());
-//                                    Log.d("Pradip", "insertIntoMarker 1 : " + Location.get(j));
+//            try {
+//                // Load GeoJSON file
+//                InputStream inputStream = getAssets().open("geojson1.geojson");
+//                Log.e(TAG, "doInBackground pradip: " + inputStream.toString());
+//                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
+//                StringBuilder sb = new StringBuilder();
+//                int cp;
+//                while ((cp = rd.read()) != -1) {
+//                    sb.append((char) cp);
+//                }
 //
-////                                 updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i))
-                            Database_Marker marker = new Database_Marker(getApplicationContext());
-                            boolean doesDataExist = marker.doesDataExistOrNot(abc);
-
-                            if (doesDataExist == false) {
-                                marker.insertIntoMarker(abc, coords.getDouble(1), coords.getDouble(0), "0", location);
-                                counter++;
-                            }
+//                inputStream.close();
+//                Log.e(TAG, "doInBackground: feature00 : " + sb);
+//                // Parse JSON
+//                JSONObject json = new JSONObject(sb.toString());
+//                Log.e(TAG, "doInBackground: feature11 : " + json);
+//                JSONArray features = json.getJSONArray("features");
+//
+//                JSONObject feature = features.getJSONObject(0);
+//                Log.e(TAG, "doInBackground: feature11 : " + sb);
+//                Log.e(TAG, "doInBackground: feature22 : " + features.length());
+//                int counter = 0;
+//
+////                JSONObject properties = feature.getJSONObject("properties");
+//                for (int i = 0; i < features.length(); i++) {
+//                    JSONObject jobj = features.getJSONObject(i);
+//
+//                    JSONObject geometry = jobj.getJSONObject("geometry");
+//
+//                    JSONObject properties = jobj.getJSONObject("properties");
+//
+//                    Log.e(TAG, "doInBackground: geometry11" + geometry.toString());
+//                    Log.e(TAG, "doInBackground: geometry22" + properties.toString());
+//                    if (geometry != null) {
+//                        Log.e(TAG, "doInBackground: geometry33" + properties.toString());
+//
+////                        String status = properties.getString("Status");
+//
+//                        String type = geometry.getString("type");
+//
+////                        Log.e(TAG, "doInBackground: geometry111" + status);
+//                        Log.e(TAG, "doInBackground: geometry222" + type);
+//
+////                        Log.e(TAG, "Type : " + type);
+//
+//                        // Our GeoJSON only has one feature: a line string
+//                        if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("Point")) {
+////                            Log.e(TAG, "status : " + status);
+//                            // Get the Coordinates
+//                            JSONArray coords = geometry.getJSONArray("coordinates");
+//                            Log.e(TAG, "doInBackground: geometry333" + coords.toString());
+//
+////                // Parse JSON
+////                JSONObject json = new JSONObject(sb.toString());
+////                JSONArray features = json.getJSONArray("features");
+////
+////                JSONObject feature = features.getJSONObject(0);
+////                Log.e(TAG, "doInBackground: feature : " + feature.length());
+////                Log.e(TAG, "doInBackground: features : " + features.length());
+//////                JSONObject properties = feature.getJSONObject("properties");
+////                for (int i = 0; i < features.length(); i++) {
+////                    JSONObject jobj = features.getJSONObject(i);
+////                    JSONObject geometry = jobj.getJSONObject("geometry");
+////                    JSONObject properties = jobj.getJSONObject("properties");
+////                    Log.e(TAG, "doInBackground: geometry" + geometry.toString());
+////                    if (geometry != null) {
+////                        String type = geometry.getString("type");
+////
+////                        // Our GeoJSON only has one feature: a line string
+////                        if (!TextUtils.isEmpty(type) && type.equalsIgnoreCase("Point")) {
+////
+////                            // Get the Coordinates
+////                            JSONArray coords = geometry.getJSONArray("coordinates");
+////>>>>>>> 7326c2463ce3d9fc8c94af5be621ae2ba8352d18
+////                            for (int lc = 0; lc < coords.length(); lc++) {
+////                                JSONArray coord = coords.getJSONArray(lc);
+//                            LatLng latLng = new LatLng(coords.getDouble(1), coords.getDouble(0));
+//                            points.add(latLng);
+//                            Log.e(TAG, "doInBackground: geometry444" + latLng.toString());
+//                            String location = properties.getString("address");
+////                            Log.e(TAG, "doInBackground: geometry444" + location);
+//                            Log.e(TAG, "doInBackground: geometry555" + location);
+//
+//                            code = properties.getString("id");
+//                            Log.e(TAG, "doInBackground: geometry666" + code);
+//
+//                           String Hcode = properties.getString("house_id");
+//                            Log.e(TAG, "doInBackground: geometry777" + Hcode);
+//
+//                            String abc = (code + " or " +Hcode);
+//                            Log.e(TAG, "doInBackground: geometry888" + abc);
+//                            Log.d("SUSAN", "insertIntoMarker 2 : " + code + "\n" +
+//                                    coords.getDouble(1) + "\n" + coords.getDouble(0) + "\n" + location);
+//
+//
+////                            if (points.size() > 0) {
+//////                                 Draw polyline on map
+//////                                 map.addPolyline(new PolylineOptions()
+//////                                .addAll(points)
+//////                                .color(Color.parseColor("#d0423b"))
+//////                                .width(2));
+////
+////                                for (int j = 0; j< points.size(); j++) {
+////
+////                                    Log.d("Pradip", "insertIntoMarker 1 : " + Code.get(j));
+////                                    Log.d("Pradip", "insertIntoMarker 1 : " + points.get(j).getLatitude());
+////                                    Log.d("Pradip", "insertIntoMarker 1 : " + points.get(j).getLongitude());
+////                                    Log.d("Pradip", "insertIntoMarker 1 : " + Location.get(j));
+////
+//////                                 updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i))
+//                            Database_Marker marker = new Database_Marker(getApplicationContext());
+//                            boolean doesDataExist = marker.doesDataExistOrNot(abc);
+//
+//                            if (doesDataExist == false) {
+//                                marker.insertIntoMarker(abc, coords.getDouble(1), coords.getDouble(0), "0", location);
+//                                counter++;
 //                            }
-
-                            Location.add(location);
-                            Code.add(code);
-
-//                            }
-                        }
-                    }
-                }
-
-
-            } catch (Exception exception) {
-                Log.e(TAG, "Exception Loading GeoJSON: " + exception.toString());
-            }
-
-            return points;
-        }
-
-        @Override
-        protected void onPostExecute(List<LatLng> points) {
-            super.onPostExecute(points);
-            Log.d(TAG, "Station: " + points.toString());
-            Log.d(TAG, "Station:  PRADIP" + points.size());
-
-            if (points.size() > 0) {
-
-                // Draw polyline on map
-//                map.addPolyline(new PolylineOptions()
-//                        .addAll(points)
-//                        .color(Color.parseColor("#d0423b"))
-//                        .width(2));
-
-                for (int i = 0; i < points.size(); i++) {
-
-
+////                            }
+//
+////                            String location = properties.getString("Location");
+//                            String code = properties.getString("Code");
+//
+//                            Location.add(location);
+//                            Code.add(code);
+//
+////                            }
+//                        }
+//                    }
+//                }
+//
+//
+//            } catch (Exception exception) {
+//                Log.e(TAG, "Exception Loading GeoJSON: " + exception.toString());
+//            }
+//
+//            return points;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<LatLng> points) {
+//            super.onPostExecute(points);
+//            Log.d(TAG, "Station: " + points.toString());
+//
+//
+//            if (points.size() > 0) {
+//
+//                // Draw polyline on map
+////                map.addPolyline(new PolylineOptions()
+////                        .addAll(points)
+////                        .color(Color.parseColor("#d0423b"))
+////                        .width(2));
+//
+//                for (int i = 0; i < points.size(); i++) {
+//
+//
+//
 //                    updateMap(points.get(i).getLatitude(), points.get(i).getLongitude(), Code.get(i), Location.get(i));
+//                }
+//            }
+//
+//
+//        }
+//    }
 
-
-                }
-            }
-
-
-        }
-    }
-
-
-    private void updateMap(double latitude, double longitude, String Code, String Location) {
-        // Build marker
-
-        mapboxMap.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude, longitude))
-                .title(Code))
-                .setSnippet(Location);
-
-
-    }
+//    private void updateMap(double latitude, double longitude, String Code, String Location) {
+//        // Build marker
+//
+//        mapboxMap.addMarker(new MarkerOptions()
+//                .position(new LatLng(latitude, longitude))
+//                .title(Code))
+//                .setSnippet(Location);
+//
+//
+//    }
 
     public void parseArray() {
 //        Array database bata tana
@@ -1135,6 +1173,15 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                totalProgressValue = data.length();
 //                progress.setMax(totalProgressValue);
 
+                Log.d(TAG, "doInBackground: SAMIR from database : "+databaseMarker.getsenddata().size());
+                Log.d(TAG, "doInBackground: SAMIR from API : "+data.length());
+
+                if(databaseMarker.getsenddata().size() == data.length()){
+                    Toast.makeText(SimpleOfflineMapActivity.this, "No new data found", Toast.LENGTH_SHORT).show();
+                   finish();
+
+                }
+
 
                 for (int i = 0; i < data.length(); i++) {
 
@@ -1166,7 +1213,11 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //
 //
 //                    }
+
                 }
+
+
+
             } catch (Exception e) {
                 return e.getLocalizedMessage();
             }
@@ -1175,6 +1226,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 Toast.makeText(SimpleOfflineMapActivity.this, "Unable to sync map data", Toast.LENGTH_SHORT).show();
 
             }
+
+
 
             return text.toString();
         }
@@ -1250,4 +1303,14 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
 
     }
+
+    private void updateMap(double latitude, double longitude, String Code, String Location) {
+        // Build marker
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(Code + "\n" + Location));
+
+
+    }
+
 }

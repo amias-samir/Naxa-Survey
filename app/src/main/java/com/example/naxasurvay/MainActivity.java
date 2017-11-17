@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+
 import com.example.naxasurvay.gps.SimpleOfflineMapActivity;
 
 import butterknife.BindView;
