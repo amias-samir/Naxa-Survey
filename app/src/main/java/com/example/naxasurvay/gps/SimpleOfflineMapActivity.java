@@ -113,6 +113,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     NetworkInfo networkInfo;
     ConnectivityManager connectivityManager;
 
+    String errorHouseCodeList = "" ;
+
 
     public static final String JSON_CHARSET = "UTF-8";
     public static final String JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME";
@@ -150,7 +152,6 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //        progress = (ProgressBar) findViewById(R.id.progressBar1);
 //        updatingText = (TextView) findViewById(R.id.textViewUpdating);
 //        updatingFrameLayout = (FrameLayout) findViewById(R.id.updatingLayout);
-
 
 
         Mapbox.getInstance(this, getString(R.string.access_token));
@@ -1160,21 +1161,25 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
 
 
-            try {
+            try
+            {
+                JSONObject errorUpdateListoj = new JSONObject();
+
+
                 JSONObject jsonObj = new JSONObject(text);
                 data = jsonObj.getJSONArray("data");
                 Database_Marker databaseMarker = new Database_Marker(getApplicationContext());
                 Log.e("DATA", "" + data.toString());
 
-                Log.e(TAG, "doInBackground: "+data.length() );
+                Log.e(TAG, "doInBackgroundDATA: "+data.length() );
 
 //                set progressbar marker update
 //                updatingFrameLayout.setVisibility(View.VISIBLE);
 //                totalProgressValue = data.length();
 //                progress.setMax(totalProgressValue);
 
-                Log.d(TAG, "doInBackground: SAMIR from database : "+databaseMarker.getsenddata().size());
-                Log.d(TAG, "doInBackground: SAMIR from API : "+data.length());
+                Log.d(TAG, "doInBackgroundSAMIR: SAMIR from database : "+databaseMarker.getsenddata().size());
+                Log.d(TAG, "doInBackgroundSAMIR: SAMIR from API : "+data.length());
 
                 if(databaseMarker.getsenddata().size() == data.length()){
                     Toast.makeText(SimpleOfflineMapActivity.this, "No new data found", Toast.LENGTH_SHORT).show();
@@ -1186,16 +1191,20 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 for (int i = 0; i < data.length(); i++) {
 
 //                    progressValue = i+1;
-
-                    Log.e("", "HOUSEHOLD ID LIST " + i);
-
                     JSONObject c = data.getJSONObject(i);
-
 
                     String house_code = c.getString("house_id");
                     Log.e("", "HOUSEHOLD CODE" + house_code);
 
-                    databaseMarker.replaceSend(house_code);
+                    long j = databaseMarker.replaceSend(house_code.toUpperCase());
+
+                    if(j == 0){
+                        errorUpdateListoj.put(""+i, house_code);
+//                        Log.e(TAG, "doInBackgroundSAMIR: "+house_code );
+//                        Log.e(TAG, "doInBackgroundSAMIR: ERROR_LIST : "+errorUpdateListoj.toString() );
+
+                    }
+                    
 
 //                    progress.post(new Runnable() {
 //                        @Override
@@ -1205,16 +1214,9 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                        }
 //                    });
 
-
-//                    if(i == data.length()-1){
-//
-//                        parseArray();
-//                        Toast.makeText(SimpleOfflineMapActivity.this, "Marker status updated successfully", Toast.LENGTH_SHORT).show();
-//
-//
-//                    }
-
                 }
+
+
 
 
 
@@ -1237,6 +1239,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
             // TODO Auto-generated method stub
 
             if (result != null) {
+                
 //                if (mProgressDlg.isShowing() && !mProgressDlg.equals(null)) {
 //                    mProgressDlg.dismiss();
 //                }
@@ -1247,6 +1250,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                    }
 //                }catch (Exception e ){
 //                }
+
 
                 Toast.makeText(SimpleOfflineMapActivity.this, "Marker status updated successfully", Toast.LENGTH_SHORT).show();
 

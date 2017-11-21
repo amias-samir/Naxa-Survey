@@ -24,6 +24,7 @@ public class Database_Marker extends SQLiteOpenHelper {
     long id;
     long result = 0;
 
+
 //    SQLiteDatabase db = null;
 
     public final static String TABLE_MARKER = "_table_name";
@@ -230,9 +231,8 @@ public class Database_Marker extends SQLiteOpenHelper {
     }
 
 
-
-    ArrayList<String> errorUpdateList = new ArrayList<>();
-    public void replaceSend(String houseHoldIdValue) {
+    public static ArrayList<String> errorUpdateList = new ArrayList<>();
+    public long replaceSend(String houseHoldIdValue) {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.d("replaceSave", " check api update : " + houseHoldIdValue);
         ContentValues contentValues = new ContentValues();
@@ -242,12 +242,12 @@ public class Database_Marker extends SQLiteOpenHelper {
 
         if( i == 0){
 
-            errorUpdateList.add(HOUSE_CODE);
+            errorUpdateList.add(houseHoldIdValue);
 //            Log.d("DATABASE_MARKER_SAMIR", "replaceSend: error SAMIR " + i + " : " + HOUSE_CODE);
-            Log.d("DATABASE_MARKER_errorupdatelist", " " +errorUpdateList.get(errorUpdateList.size()-1));
-            Log.d("DATABASE_MARKER_errorupdatelist", " " +errorUpdateList.size());
+            Log.d("DATABASE_MARKER_errorupdatelist", "replaceSave SAMIR " +errorUpdateList.get(errorUpdateList.size()-1));
+            Log.d("DATABASE_MARKER_errorupdatelist", "replaceSave SAMIR " +errorUpdateList.size());
         }
-
+return i;
     }
 
     public void forSurvey(String houseHoldIdValue) {
