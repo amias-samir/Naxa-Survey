@@ -1178,8 +1178,12 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 //                totalProgressValue = data.length();
 //                progress.setMax(totalProgressValue);
 
-                Log.d(TAG, "doInBackgroundSAMIR: SAMIR from database : "+databaseMarker.getsenddata().size());
-                Log.d(TAG, "doInBackgroundSAMIR: SAMIR from API : "+data.length());
+                Log.e(TAG, "doInBackgroundSAMIR: SAMIR from database : "+databaseMarker.getsenddata().size());
+                Log.e(TAG, "doInBackgroundSAMIR: SAMIR from API : "+data.length());
+
+//                ArrayList<String> HouseCodeList = new ArrayList<>();
+//                ArrayList<String> remainingHouseCode = new ArrayList<>();
+
 
                 if(databaseMarker.getsenddata().size() == data.length()){
                     Toast.makeText(SimpleOfflineMapActivity.this, "No new data found", Toast.LENGTH_SHORT).show();
@@ -1196,12 +1200,14 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                     String house_code = c.getString("house_id");
                     Log.e("", "HOUSEHOLD CODE" + house_code);
 
+//                    HouseCodeList.add(house_code);
+
                     long j = databaseMarker.replaceSend(house_code.toUpperCase());
 
                     if(j == 0){
                         errorUpdateListoj.put(""+i, house_code);
-//                        Log.e(TAG, "doInBackgroundSAMIR: "+house_code );
-//                        Log.e(TAG, "doInBackgroundSAMIR: ERROR_LIST : "+errorUpdateListoj.toString() );
+                        Log.e(TAG, "doInBackgroundSAMIR: "+house_code );
+                        Log.e(TAG, "doInBackgroundSAMIR: ERROR_LIST : "+errorUpdateListoj.toString() );
 
                     }
                     

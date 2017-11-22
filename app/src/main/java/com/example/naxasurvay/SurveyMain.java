@@ -686,6 +686,15 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             @Override
             public void onClick(View v) {
 
+                if( HouseHoldId.getText().toString().equals("") || HouseHoldId.getText().toString().isEmpty() || HouseHoldId.getText().toString().equals(null)){
+
+                    Toast.makeText(context, "HOUSE CODE cannot be empty", Toast.LENGTH_SHORT).show();
+
+
+
+                    return ;
+                }
+
                 dispatchTakePictureIntent();
             }
         });
@@ -1185,8 +1194,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     private File createImageFile() throws IOException {
         // Create an image file name
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+
+
+
+        String imageFileName = "" + HouseHoldId.getText().toString() + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -1224,7 +1237,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / 200, photoH / 200);
+        int scaleFactor = Math.min(photoW / 1280, photoH / 760);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
