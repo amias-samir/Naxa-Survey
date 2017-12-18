@@ -134,6 +134,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     private double routeLon;
     private double sentlat,lon;
 
+    String houseID = "";
+
 
 //    int totalProgressValue, progressValue;
 //    private ProgressBar progress;
@@ -615,7 +617,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
         Housecode = marker.getTitle();
 
-        Log.d("check code", "codeCheck :" + Housecode);
+        houseID = Housecode.substring(0,6).trim();
+        Log.d("check code", "codeCheck :" + houseID);
     }
 
 
@@ -629,7 +632,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     @OnClick(R.id.go_to_form)
     public void TakeHouseholdCode() {
         Intent intent1 = new Intent(SimpleOfflineMapActivity.this, SurveyMain.class);
-        intent1.putExtra("HouseCode", Housecode);
+        intent1.putExtra("HouseCode", houseID);
         startActivity(intent1);
     }
 

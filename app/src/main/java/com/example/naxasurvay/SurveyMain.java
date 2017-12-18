@@ -1237,7 +1237,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / 1280, photoH / 760);
+        int scaleFactor = Math.min(photoW / 1280, photoH / 720);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
