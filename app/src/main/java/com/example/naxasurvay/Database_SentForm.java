@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.naxasurvay.mapbox.MapboxApplication;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ import java.util.List;
  * Created by RED_DEVIL on 7/31/2017.
  */
 
-public class Database_SentForm extends SQLiteOpenHelper {
+public class Database_SentForm extends ODKSQLiteOpenHelper {
 
     static String name = "naxasurvey.sent";
     static int version = 1;
@@ -44,7 +46,7 @@ public class Database_SentForm extends SQLiteOpenHelper {
     Context con;
 
     public Database_SentForm(Context context) {
-        super(context, name, null, version);
+        super(MapboxApplication.extSdcard+MapboxApplication.mainFolder+MapboxApplication.dataFolder, name, null, version);
     }
 
     public void open() throws SQLException {
@@ -95,29 +97,35 @@ public class Database_SentForm extends SQLiteOpenHelper {
 
         Cursor c = getReadableDatabase().rawQuery(sql, null);
 
-        while (c.moveToNext()) {
-            SavedFormParameters savedFormParameters = new SavedFormParameters();
-            savedFormParameters.setDbId(c.getString(c.getColumnIndex(ID_TABLE)));
-            savedFormParameters.setFormId(c.getString(c.getColumnIndex(TABLE_ID)));
-            savedFormParameters.setFormName(c.getString(c.getColumnIndex(TABLE_NAME)));
-            savedFormParameters.setDate(c.getString(c.getColumnIndex(TABLE_DATE)));
-            savedFormParameters.setStatus(c.getString(c.getColumnIndex(TABLE_STATUS)));
-            savedFormParameters.setjSON(c.getString(c.getColumnIndex(TABLE_JSON)));
-            savedFormParameters.setPhoto(c.getString(c.getColumnIndex(TABLE_PHOTO)));
-            savedFormParameters.setGps(c.getString(c.getColumnIndex(TABLE_GPS)));
-            savedFormParameters.setDeletedStatus(c.getString(c.getColumnIndex(DELETE_FLAG)));
+        if(getTotalRowCount() > 0) {
+
+            Log.e("SAVED FORMS", "getAllSentForms: "+getTotalRowCount() );
 
 
+            while (c.moveToNext()) {
+                SavedFormParameters savedFormParameters = new SavedFormParameters();
+                savedFormParameters.setDbId(c.getString(c.getColumnIndex(ID_TABLE)));
+                savedFormParameters.setFormId(c.getString(c.getColumnIndex(TABLE_ID)));
+                savedFormParameters.setFormName(c.getString(c.getColumnIndex(TABLE_NAME)));
+                savedFormParameters.setDate(c.getString(c.getColumnIndex(TABLE_DATE)));
+                savedFormParameters.setStatus(c.getString(c.getColumnIndex(TABLE_STATUS)));
+                savedFormParameters.setjSON(c.getString(c.getColumnIndex(TABLE_JSON)));
+                savedFormParameters.setPhoto(c.getString(c.getColumnIndex(TABLE_PHOTO)));
+                savedFormParameters.setGps(c.getString(c.getColumnIndex(TABLE_GPS)));
+                savedFormParameters.setDeletedStatus(c.getString(c.getColumnIndex(DELETE_FLAG)));
 
-            sentFormsDetailsAll.add(savedFormParameters);
 
-            Log.e("", "getNOT_SENT_FORMS: " + sentFormsDetailsAll.size() );
+                sentFormsDetailsAll.add(savedFormParameters);
+
+                Log.e("", "getNOT_SENT_FORMS: " + sentFormsDetailsAll.size());
 
 
+            }
+            c.close();
         }
-        c.close();
 
-        return sentFormsDetailsAll;
+            return sentFormsDetailsAll;
+
     }
 
     @Override
@@ -128,5 +136,15 @@ public class Database_SentForm extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DROP_TABLE_MAIN);
+    }
+
+
+    public int getTotalRowCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_MAIN;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int cnt = cursor.getCount();
+        cursor.close();
+        return cnt;
     }
 }

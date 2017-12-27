@@ -1,7 +1,6 @@
 package com.example.naxasurvay;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -19,7 +18,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
@@ -34,10 +32,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -58,6 +53,7 @@ import android.widget.Toast;
 
 import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
+import com.example.naxasurvay.mapbox.MapboxApplication;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -86,7 +82,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -102,10 +97,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
-
-import static android.R.attr.cacheColorHint;
-import static android.R.attr.id;
-import static android.R.attr.visible;
 
 public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
@@ -1198,14 +1189,22 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
 
-
         String imageFileName = "" + HouseHoldId.getText().toString() + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = new File(MapboxApplication.extSdcard+MapboxApplication.mainFolder+MapboxApplication.photoFolder);
+        //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
+                ".jpg",
+                storageDir/* suffix */
         );
+
+//        String imageFileName = "" + HouseHoldId.getText().toString() + "_";
+//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
