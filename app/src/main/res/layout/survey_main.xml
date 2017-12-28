@@ -69,6 +69,7 @@
                                     android:textStyle="bold" />
 
                                 <EditText
+                                    android:text="nik-123"
                                     android:id="@+id/id_number_surveyor"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -84,6 +85,7 @@
 
 
                                 <AutoCompleteTextView
+                                    android:text="Nishon Tandukar"
                                     android:id="@+id/name_of_survayor"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -99,6 +101,7 @@
                                 android:layout_height="wrap_content">
 
                                 <AutoCompleteTextView
+
                                     android:id="@+id/date_of_survey"
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
@@ -222,6 +225,7 @@
                                 android:layout_height="wrap_content">
 
                                 <AutoCompleteTextView
+                                    android:text="21"
                                     android:id="@+id/Survay_ward"
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
@@ -238,6 +242,7 @@
                                 android:layout_height="wrap_content">
 
                                 <AutoCompleteTextView
+                                    android:text="Putali Sadak "
                                     android:id="@+id/Survay_address"
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
@@ -258,6 +263,7 @@
                                 android:textStyle="bold" />
 
                             <CheckBox
+                                android:checked="true"
                                 android:id="@+id/single_family_detached"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

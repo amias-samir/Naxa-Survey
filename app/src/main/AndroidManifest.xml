@@ -90,6 +90,7 @@
 
             android:name=".easy_gps.GeoPointActivity"></activity>
 
+        <service android:name=".gps.GPS_TRACKER_FOR_POINT" />
     </application>
 
 </manifest>
