@@ -84,6 +84,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -109,7 +111,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     String imagePath, encodedImage = "", imageName = "no_photo", image;
     Bitmap thumbnail;
 
-    GPS_TRACKER_FOR_POINT gps;
+
     List<Location> gpslocation = new ArrayList<>();
     double finalLat;
     double finalLong;
@@ -684,11 +686,25 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 }
 
                 if (houseHoldId.length() < 3) {
+                    //https://developer.android.com/reference/java/io/File.html#createTempFile(java.lang.String,%20java.lang.String,%20java.io.File)
                     Toast.makeText(context, "House code must be longer than 3 character", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                dispatchTakePictureIntent();
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException | SecurityException e) {
+                    Toast.makeText(context, "Failed to open camera", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, e.getMessage());
+                    e.printStackTrace();
+                }
+
+                if (photoFile != null) {
+                    dispatchTakePictureIntent(photoFile);
+                }
+
+
             }
         });
 
@@ -1144,7 +1160,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     String mCurrentPhotoPath;
     static final int DATE_DIALOG_ID = 999;
 
-    private void dispatchTakePictureIntent() {
+    private void dispatchTakePictureIntent(File photoFile) {
 
         //scaling down needs the imageview to be visible
         //so start early
@@ -1156,14 +1172,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                ex.printStackTrace();
 
-            }
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
@@ -1187,7 +1196,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
 
-    private File createImageFile() throws IOException {
+    private File createImageFile() throws IOException, SecurityException {
         // Create an image file name
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -1842,11 +1851,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 Log.d(TAG, "HouseholdSurv: " + e.toString());
                 e.printStackTrace();
             }
-        } else {
-            gps = new GPS_TRACKER_FOR_POINT(SurveyMain.this);
-            gps.canGetLocation();
-            startGps.setEnabled(true);
-
         }
     }
 
@@ -2256,6 +2260,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     private class RestApii extends AsyncTask<String, Void, String> {
 
 
+        private String error = "";
+
         @Override
         protected String doInBackground(String... params) {
 
@@ -2268,24 +2274,33 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         @Override
         protected void onPostExecute(String result) {
-            // TODO Auto-generated method stub
+
 
             if (mProgressDlg != null && mProgressDlg.isShowing()) {
                 mProgressDlg.dismiss();
             }
 
-
-            Log.d(TAG, "on post resposne" + result);
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(result);
-                dataSentStatus = jsonObject.getString("status");
-                Log.d(TAG, "onPostExecute: " + dataSentStatus);
-
-            } catch (JSONException e) {
-                Log.d(TAG, "dataSentStatus: " + e.toString());
-                e.printStackTrace();
+            if (error.length() > 0) {
+                Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", error);
+                return;
             }
+
+            try {
+                handleFormUpload(result);
+            } catch (JSONException e1) {
+                Log.e(TAG, e1.getMessage());
+                e1.printStackTrace();
+            }
+
+
+        }
+
+        private void handleFormUpload(String result) throws JSONException {
+            JSONObject jsonObject = null;
+
+
+            jsonObject = new JSONObject(result);
+            dataSentStatus = jsonObject.getString("status");
 
 
             if (dataSentStatus.equals("200")) {
@@ -2435,8 +2450,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             try {
                 url = new URL(urll);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
+                conn.setReadTimeout((int) TimeUnit.SECONDS.toMillis(30));
+                conn.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(30));
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -2468,6 +2483,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 }
 
             } catch (IOException e) {
+                error = e.getMessage();
                 e.printStackTrace();
             }
             return result.toString();
