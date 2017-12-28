@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -100,6 +101,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.naxasurvay.mapbox.MapboxApplication.PHOTO_PATH;
 
@@ -1964,10 +1968,51 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         if (jsonToSend.length() > 0) {
 
-            RestApii restApii = new RestApii();
-            restApii.execute();
+
+            Call<String> call = ApiClient.getAPIService().savePost(jsonToSend);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                    dissmissProgressDialog();
+
+                    Log.d(TAG, "Retrofit " + response.body() + " Resposne code " + response.code());
+
+                    switch (response.code()) {
+                        case HttpURLConnection.HTTP_ACCEPTED:
+                            try {
+
+                                handleFormUpload(response.body());
+
+                            } catch (JSONException jsonException) {
+                                Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
+                                jsonException.printStackTrace();
+                            }
+
+                            break;
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<String> call, Throwable t) {
+                    dissmissProgressDialog();
+                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", t.getMessage());
+
+                }
+            });
+
+
         }
     }
+
+    private void dissmissProgressDialog() {
+
+        if (mProgressDlg != null && mProgressDlg.isShowing()) {
+            mProgressDlg.dismiss();
+        }
+
+
+    }
+
 
     public void parseJson(String jsonToParse) throws JSONException {
 
@@ -2257,55 +2302,18 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
     }
 
-    private class RestApii extends AsyncTask<String, Void, String> {
+
+    private void handleFormUpload(String result) throws JSONException {
+        JSONObject jsonObject = null;
 
 
-        private String error = "";
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String text = null;
-            text = POST(UrlClass.URL_DATA_SEND);
-            Log.d(TAG, "RAW resposne" + text);
-
-            return text;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
+        jsonObject = new JSONObject(result);
+        dataSentStatus = jsonObject.getString("status");
 
 
-            if (mProgressDlg != null && mProgressDlg.isShowing()) {
-                mProgressDlg.dismiss();
-            }
-
-            if (error.length() > 0) {
-                Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", error);
-                return;
-            }
-
-            try {
-                handleFormUpload(result);
-            } catch (JSONException e1) {
-                Log.e(TAG, e1.getMessage());
-                e1.printStackTrace();
-            }
-
-
-        }
-
-        private void handleFormUpload(String result) throws JSONException {
-            JSONObject jsonObject = null;
-
-
-            jsonObject = new JSONObject(result);
-            dataSentStatus = jsonObject.getString("status");
-
-
-            if (dataSentStatus.equals("200")) {
-                Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
-                previewImageSite.setVisibility(View.GONE);
+        if (dataSentStatus.equals("200")) {
+            Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
+            previewImageSite.setVisibility(View.GONE);
 
 //                surveyorId.setText(SurveyIdNumValue);
 //                NameOfSurveyor.setText(NameOfSurveyorValue);
@@ -2345,62 +2353,62 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 ////                        .setTitleText("")
 ////                        .setContentText("Data sent successfully!")
 ////                        .show();
-                String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
-                        "" + imageName, "Sent", "0"};
+            String[] data = new String[]{"1", "Household survay", dateString, jsonToSend, jsonLatLangArray,
+                    "" + imageName, "Sent", "0"};
 ////
 //                Log.d(TAG, "string data: " + data);
 ////
 
 
-                Database_SentForm dataBaseSent = new Database_SentForm(context);
-                dataBaseSent.open();
-                long id = dataBaseSent.insertIntoTable_Main(data);
-                Log.e("dbID", "" + id);
-                dataBaseSent.close();
+            Database_SentForm dataBaseSent = new Database_SentForm(context);
+            dataBaseSent.open();
+            long id = dataBaseSent.insertIntoTable_Main(data);
+            Log.e("dbID", "" + id);
+            dataBaseSent.close();
 
-                if (CheckValues.isFromSavedFrom) {
-                    Log.e(TAG, "onPostExecute: FormID : " + formid);
-                    Database_SaveForm dataBase_NotSent = new Database_SaveForm(context);
-                    dataBase_NotSent.open();
-                    dataBase_NotSent.dropRowNotSentForms(formid);
+            if (CheckValues.isFromSavedFrom) {
+                Log.e(TAG, "onPostExecute: FormID : " + formid);
+                Database_SaveForm dataBase_NotSent = new Database_SaveForm(context);
+                dataBase_NotSent.open();
+                dataBase_NotSent.dropRowNotSentForms(formid);
 //                    Log.e("dbID", "" + id);
-                    dataBase_NotSent.close();
+                dataBase_NotSent.close();
 //
-                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-                    int width = metrics.widthPixels;
-                    int height = metrics.heightPixels;
+                DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                int width = metrics.widthPixels;
+                int height = metrics.heightPixels;
 
 //                    Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
 
-                    final Dialog showDialog = new Dialog(context);
-                    showDialog.setContentView(R.layout.thank_you_popup);
-                    final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
-                    final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
+                final Dialog showDialog = new Dialog(context);
+                showDialog.setContentView(R.layout.thank_you_popup);
+                final Button yes = (Button) showDialog.findViewById(R.id.buttonYes);
+                final Button no = (Button) showDialog.findViewById(R.id.buttonNo);
 
-                    showDialog.setTitle("Successfully Sent");
-                    showDialog.setCancelable(false);
-                    showDialog.show();
-                    showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
+                showDialog.setTitle("Successfully Sent");
+                showDialog.setCancelable(false);
+                showDialog.show();
+                showDialog.getWindow().setLayout((6 * width) / 7, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-                    yes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showDialog.dismiss();
-                            Intent intent = new Intent(SurveyMain.this, SurveyMain.class);
-                            startActivity(intent);
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog.dismiss();
+                        Intent intent = new Intent(SurveyMain.this, SurveyMain.class);
+                        startActivity(intent);
 //                                finish();
-                        }
-                    });
+                    }
+                });
 //
-                    no.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showDialog.dismiss();
-                            Intent intent = new Intent(SurveyMain.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog.dismiss();
+                        Intent intent = new Intent(SurveyMain.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
 //
 //                if (!CheckValues.isFromSavedFrom) {
 //                    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -2439,7 +2447,42 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //                    });
 //                }
 
+        }
+    }
+
+    private class RestApii extends AsyncTask<String, Void, String> {
+
+
+        private String error = "";
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String text = null;
+            text = POST(UrlClass.BASE_URL.concat(UrlClass.URL_DATA_SEND));
+            Log.d(TAG, "RAW resposne" + text);
+
+            return text;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+
+            if (error.length() > 0) {
+                Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", error);
+                return;
             }
+
+            try {
+                handleFormUpload(result);
+            } catch (JSONException e1) {
+
+                Log.e(TAG, e1.getMessage());
+                e1.printStackTrace();
+            }
+
+
         }
 
 
@@ -2470,7 +2513,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 writer.close();
                 os.close();
                 int responseCode = conn.getResponseCode();
-
+                Log.d(TAG, "Orginal resposne code" + responseCode + " Message " + conn.getResponseMessage());
 
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
                     String line;
@@ -2479,7 +2522,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                         result.append(line);
                     }
                 } else {
+
                     result = new StringBuilder();
+
                 }
 
             } catch (IOException e) {
