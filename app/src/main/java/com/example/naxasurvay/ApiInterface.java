@@ -12,7 +12,7 @@ public interface ApiInterface {
 
     @POST(URL_DATA_SEND)
     @FormUrlEncoded
-    Call<String> savePost(@Field("post") String jsonToSend);
+    Call<String> uploadForm(@Field("data") String jsonToSend);
 
 
 }

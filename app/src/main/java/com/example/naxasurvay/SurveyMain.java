@@ -55,7 +55,6 @@ import android.widget.Toast;
 
 import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
-import com.example.naxasurvay.mapbox.MapboxApplication;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -85,7 +84,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -94,6 +92,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.Deflater;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -1271,6 +1270,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
+
+
+
     }
 
     public void addImage(String Image) {
@@ -1969,7 +1971,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (jsonToSend.length() > 0) {
 
 
-            Call<String> call = ApiClient.getAPIService().savePost(jsonToSend);
+            Call<String> call = ApiClient.getAPIService().uploadForm(jsonToSend);
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {

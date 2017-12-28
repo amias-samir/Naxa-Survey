@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
 
+import com.facebook.stetho.Stetho;
 import com.mapbox.mapboxsdk.Mapbox;
 
 import java.io.File;
@@ -27,6 +28,7 @@ public class MapboxApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
         Mapbox.getInstance(getApplicationContext(), "sk.eyJ1IjoicGVhY2VuZXBhbCIsImEiOiJjajZhZDdpbGwxMW0yMnFsc3J6dDhqaTRhIn0.-6QCbw7vfpHyuIcNcXGByg");
     }
 
