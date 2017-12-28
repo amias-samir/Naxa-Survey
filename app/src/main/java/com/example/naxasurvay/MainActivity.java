@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
 
             Default_DIalog.showDefaultDialog(getApplicationContext(),"Unexpected Error Occurred","Failed to create NaxaSurvey Directories");
+            Log.e(TAG,e.getMessage());
             e.printStackTrace();
         }
 

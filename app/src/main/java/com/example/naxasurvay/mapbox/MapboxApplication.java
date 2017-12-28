@@ -16,7 +16,6 @@ import timber.log.Timber;
 
 public class MapboxApplication extends Application {
 
-//   public static String IMAGES_PATH = Environment.getExternalStorageState()+File.separator+"NaxaSurvey";
 
     public static String mainFolder = "/NaxaSurvey";
     public static String photoFolder = "/Photos";
@@ -28,13 +27,7 @@ public class MapboxApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Mapbox Access token
         Mapbox.getInstance(getApplicationContext(), "sk.eyJ1IjoicGVhY2VuZXBhbCIsImEiOiJjajZhZDdpbGwxMW0yMnFsc3J6dDhqaTRhIn0.-6QCbw7vfpHyuIcNcXGByg");
-
-//        createODKDirs();
-
-
     }
 
 
@@ -46,12 +39,18 @@ public class MapboxApplication extends Application {
         File dirData = new File(extSdcard + mainFolder + dataFolder);
 
 
-        if (dirPhoto.mkdirs() && dirData.mkdirs()) {
-            Log.i("MapboxApplication", "Directory Created");
-        } else {
-            throw new Exception("Failed to create required directories");
+        if(!dirPhoto.exists()){
+            if (!dirPhoto.mkdirs()){
+                throw new Exception("Failed to create photo folder");
+            }
         }
 
+
+        if(!dirData.exists()){
+            if (!dirData.mkdirs()){
+                throw new Exception("Failed to create database folder");
+            }
+        }
 
     }
 }

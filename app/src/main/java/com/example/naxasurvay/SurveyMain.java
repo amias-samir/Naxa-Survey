@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -670,18 +671,20 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         networkInfo = connectivityManager.getActiveNetworkInfo();
 
-
         initilizeUI();
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (HouseHoldId.getText().toString().equals("") || HouseHoldId.getText().toString().isEmpty() || HouseHoldId.getText().toString().equals(null)) {
+                String houseHoldId = HouseHoldId.getText().toString().trim();
+                if (TextUtils.isEmpty(houseHoldId)) {
+                    Toast.makeText(context, "House code cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    Toast.makeText(context, "HOUSE CODE cannot be empty", Toast.LENGTH_SHORT).show();
-
-
+                if (houseHoldId.length() < 3) {
+                    Toast.makeText(context, "House code must be longer than 3 character", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -2426,7 +2429,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
         public String POST(String urll) {
-            String result = "";
+            StringBuilder result = new StringBuilder();
             URL url;
 
             try {
@@ -2453,20 +2456,21 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 os.close();
                 int responseCode = conn.getResponseCode();
 
+
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     while ((line = br.readLine()) != null) {
-                        result += line;
+                        result.append(line);
                     }
                 } else {
-                    result = "";
+                    result = new StringBuilder();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return result;
+            return result.toString();
         }
 
     }
