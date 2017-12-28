@@ -8,6 +8,8 @@ import com.mapbox.mapboxsdk.Mapbox;
 
 import java.io.File;
 
+import timber.log.Timber;
+
 /**
  * Created by Samir on 8/13/2017.
  */
@@ -21,6 +23,8 @@ public class MapboxApplication extends Application {
     public static String dataFolder = "/Data";
     public static String extSdcard = Environment.getExternalStorageDirectory().toString();
 
+    public static String PHOTO_PATH = extSdcard + mainFolder + photoFolder;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,62 +34,24 @@ public class MapboxApplication extends Application {
 
 //        createODKDirs();
 
-        createFolder();
+
     }
 
-    public static void createODKDirs() throws RuntimeException {
 
-        String IMAGES_PATH = Environment.getExternalStorageState()+File.separator+"NaxaSurvey";
+    public static void createFolder() throws Exception {
 
-        String cardstatus = Environment.getExternalStorageState();
-        if (!cardstatus.equals(Environment.MEDIA_MOUNTED)) {
-            throw new RuntimeException("sd card not mounted");
+        Log.i("MapboxApplication", "Trying to create required folders");
+
+        File dirPhoto = new File(extSdcard + mainFolder + photoFolder);
+        File dirData = new File(extSdcard + mainFolder + dataFolder);
+
+
+        if (dirPhoto.mkdirs() && dirData.mkdirs()) {
+            Log.i("MapboxApplication", "Directory Created");
+        } else {
+            throw new Exception("Failed to create required directories");
         }
 
 
-        String[] dirs = {
-                IMAGES_PATH
-        };
-
-
-        for (String dirName : dirs) {
-            File dir = new File(dirName);
-            if (!dir.exists()) {
-                if (!dir.mkdirs()) {
-                    RuntimeException e =
-                            new RuntimeException("ODK reports :: Cannot create directory: "
-                                    + dirName);
-                    throw e;
-                }
-            } else {
-                if (!dir.isDirectory()) {
-                    RuntimeException e =
-                            new RuntimeException("ODK reports :: " + dirName
-                                    + " exists, but is not a directory");
-                    throw e;
-                }
-            }
-        }
-    }
-
-    public void createFolder (){
-
-        File dirPhoto = new File(extSdcard+ mainFolder+photoFolder);
-        File dirData = new File(extSdcard+ mainFolder+dataFolder);
-        try{
-            if(dirPhoto.mkdir() && dirData.mkdir() ) {
-                System.out.println("Directory created");
-                Log.d("APPLICATION_CLASS", "Directory created: "+extSdcard+ mainFolder);
-
-            } else {
-                System.out.println("Directory is not created");
-                Log.d("APPLICATION_CLASS", "Directory is not created");
-
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        Log.d("APPLICATION_CLASS", "createFolder: IMAGE_PATH : "+extSdcard+ mainFolder);
     }
 }

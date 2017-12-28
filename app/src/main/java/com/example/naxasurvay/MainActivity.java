@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 
 import com.example.naxasurvay.gps.SimpleOfflineMapActivity;
+import com.example.naxasurvay.mapbox.MapboxApplication;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +30,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            MapboxApplication.createFolder();
+        } catch (Exception e) {
+
+            Default_DIalog.showDefaultDialog(getApplicationContext(),"Unexpected Error Occurred","Failed to create NaxaSurvey Directories");
+            e.printStackTrace();
+        }
 
         ButterKnife.bind(this);
 

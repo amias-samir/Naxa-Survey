@@ -98,6 +98,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
 
+import static com.example.naxasurvay.mapbox.MapboxApplication.PHOTO_PATH;
+
 public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "naxa_Survay";
@@ -388,12 +390,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     PendingResult<LocationSettingsResult> result;
 
 
-
 //    ------------------------------------ spinner onitem selected listner --------------------------------------------------
 
     @OnItemSelected(R.id.pooling_price_spinner)
-    public void priceSpinneListner(){
-        String values =  Pooling_price_spinner.getSelectedItem().toString();
+    public void priceSpinneListner() {
+        String values = Pooling_price_spinner.getSelectedItem().toString();
 
 
 //        valueOfPurchase.setText(currencyChanger(values, valueOfPurchase.getText().toString()));
@@ -401,7 +402,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
 //    ------------------------------------ end of spinner onitem selected listner --------------------------------------------------
-
 
 
     @OnClick({R.id.button_inc_husband, R.id.button_inc_wife, R.id.button_inc_childrens, R.id.button_inc_relatives, R.id.button_inc_others})
@@ -677,13 +677,12 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             @Override
             public void onClick(View v) {
 
-                if( HouseHoldId.getText().toString().equals("") || HouseHoldId.getText().toString().isEmpty() || HouseHoldId.getText().toString().equals(null)){
+                if (HouseHoldId.getText().toString().equals("") || HouseHoldId.getText().toString().isEmpty() || HouseHoldId.getText().toString().equals(null)) {
 
                     Toast.makeText(context, "HOUSE CODE cannot be empty", Toast.LENGTH_SHORT).show();
 
 
-
-                    return ;
+                    return;
                 }
 
                 dispatchTakePictureIntent();
@@ -928,7 +927,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                     Toast.makeText(SurveyMain.this, "Data saved successfully", Toast.LENGTH_SHORT).show();
                                     showDialog.dismiss();
 
-                                    Database_Marker marker =new Database_Marker(context);
+                                    Database_Marker marker = new Database_Marker(context);
                                     marker.replaceSave(HouseHoldIdValue);
 
                                     final Dialog showDialog = new Dialog(context);
@@ -1159,6 +1158,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
+                ex.printStackTrace();
 
             }
             // Continue only if the File was successfully created
@@ -1183,14 +1183,15 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         }
     }
 
+
     private File createImageFile() throws IOException {
         // Create an image file name
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-
         String imageFileName = "" + HouseHoldId.getText().toString() + "_";
-        File storageDir = new File(MapboxApplication.extSdcard+MapboxApplication.mainFolder+MapboxApplication.photoFolder);
+        File storageDir = new File(PHOTO_PATH);
+        storageDir.mkdirs();
+
         //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -1208,7 +1209,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.e(TAG, "createImageFile:  "+mCurrentPhotoPath );
+        Log.e(TAG, "createImageFile:  " + mCurrentPhotoPath);
         return image;
     }
 
@@ -1297,8 +1298,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
 
-
-
     // display current date
     public void setCurrentDateOnView() {
 
@@ -1372,8 +1371,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
     String uniCode;
-
-
 
 
     private void askForPermission(String permission, Integer requestCode) {
@@ -1454,10 +1451,9 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 //                }
                 galleryAddPic();
                 setPic(previewImageSite, mCurrentPhotoPath);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
 
         }
@@ -1691,8 +1687,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
 
-
-
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
@@ -1768,7 +1762,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     }
 
     String check1 = "", check2 = "", check3 = "", check4 = "", check5 = "";
-    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1 ="", pcheck2 ="";
+    String PoolingValue = "", Pooling1 = "", Pooling2 = "", pcheck1 = "", pcheck2 = "";
     String HouseholdTypologyValue1 = "", HouseholdTypologyValue2 = "", HouseholdTypologyValue3 = "", HouseholdTypologyValue4 = "", HouseholdTypologyValue5 = "";
 
     public void initilizeUI() {
@@ -1943,12 +1937,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
             header.put("latitude", finalLat);
             header.put("longitude", finalLong);
-            if (send){
+            if (send) {
                 header.put("photo", encodedImage);
-            }else{
+            } else {
                 header.put("photo", mCurrentPhotoPath);
             }
-
 
 
             jsonToSend = header.toString();
@@ -2051,7 +2044,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         PoolingValue = jsonObj.getString("pooling_type");
         splitString1(PoolingValue);
 
-        yearOfPurchaseValue= jsonObj.getString("pooling_year_of_purchase");
+        yearOfPurchaseValue = jsonObj.getString("pooling_year_of_purchase");
         valueOfPurchaseValue = jsonObj.getString("pooling_value_of_purchase");
         PoolingPriceType = jsonObj.getString("pooling_total_price_type");
 
@@ -2616,11 +2609,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
     //==========================multiselection spinner selection code ends here========================//
 
 
-    public String currencyChanger (String currency, String currencyValues){
+    public String currencyChanger(String currency, String currencyValues) {
 
         String changedCurrency = "";
 
-        if(!currencyValues.equals(null) && !currencyValues.isEmpty() && !currencyValues.equals("")) {
+        if (!currencyValues.equals(null) && !currencyValues.isEmpty() && !currencyValues.equals("")) {
 
             if (currency.equals("Thousand")) {
 
