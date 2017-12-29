@@ -87,6 +87,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1270,14 +1271,16 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         mImageView.setImageBitmap(bitmap);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         String uncompressedEncodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
 
         try {
 
-            encodedImage = compressString(byteArray);
+            encodedImage = Base64.encodeToString(compressString(byteArray).
+                    getBytes(Charset.forName("UTF-8")), Base64.DEFAULT);
+
             Log.i("DUCK", " compressed encoded lenght " + compressString(byteArray).length());
 
         } catch (UnsupportedEncodingException e1) {
@@ -1285,8 +1288,6 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             Log.e("DUCK", e1.getMessage());
             e1.printStackTrace();
         }
-
-
 
 
     }
