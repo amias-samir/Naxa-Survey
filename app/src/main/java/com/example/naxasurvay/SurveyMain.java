@@ -57,6 +57,7 @@ import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
 import com.example.naxasurvay.mapbox.MapboxApplication;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -105,6 +106,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -1282,6 +1286,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                     getBytes(Charset.forName("UTF-8")), Base64.DEFAULT);
 
             Log.i("DUCK", " compressed encoded lenght " + compressString(byteArray).length());
+            Log.i("DUCK", " decompressed encoded lenght " + compressString(byteArray).length());
+
 
         } catch (UnsupportedEncodingException e1) {
             Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to save photo");
@@ -2032,14 +2038,20 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         if (jsonToSend.length() > 0) {
 
 
-            Call<String> call = ApiClient.getAPIService().uploadForm(jsonToSend);
-            call.enqueue(new Callback<String>() {
+            final File ImageFile = new File(mCurrentPhotoPath);
+            Uri ImageToBeUploaded = FileProvider.getUriForFile(
+                    SurveyMain.this,
+                    "com.example.naxasurvay.fileprovider", ImageFile);
+            RequestBody imageRequestBody = RequestBody.create(MediaType.parse(getContentResolver().getType(ImageToBeUploaded)), ImageFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("td", ImageFile.getName(), imageRequestBody);
+
+            RequestBody data = RequestBody.create(MediaType.parse("text/plain"), jsonToSend);
+            Call<String> call1 = ApiClient.getAPIService().uploadFormWithPhotoFile(body, data);
+
+            call1.enqueue(new Callback<String>() {
                 @Override
-                public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                public void onResponse(Call<String> call, Response<String> response) {
                     dissmissProgressDialog();
-
-                    Log.d(TAG, "Retrofit " + response.body() + " Resposne code " + response.code());
-
                     switch (response.code()) {
                         case HttpURLConnection.HTTP_ACCEPTED:
                             try {
@@ -2050,18 +2062,48 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                                 Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
                                 jsonException.printStackTrace();
                             }
-
-                            break;
                     }
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<String> call, Throwable t) {
+                public void onFailure(Call<String> call, Throwable t) {
                     dissmissProgressDialog();
-                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", t.getMessage());
+                    Toast.makeText(context, "Failed" + t.getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
             });
+
+
+//            Call<String> call = ApiClient.getAPIService().uploadForm(jsonToSend);
+//            call.enqueue(new Callback<String>() {
+//                @Override
+//                public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+//                    dissmissProgressDialog();
+//
+//                    Log.d(TAG, "Retrofit " + response.body() + " Resposne code " + response.code());
+//
+//                    switch (response.code()) {
+//                        case HttpURLConnection.HTTP_ACCEPTED:
+//                            try {
+//
+//                                handleFormUpload(response.body());
+//
+//                            } catch (JSONException jsonException) {
+//                                Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
+//                                jsonException.printStackTrace();
+//                            }
+//
+//                            break;
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NonNull Call<String> call, Throwable t) {
+//                    dissmissProgressDialog();
+//                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", t.getMessage());
+//
+//                }
+//            });
 
 
         }
