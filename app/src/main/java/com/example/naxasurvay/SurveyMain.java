@@ -68,6 +68,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.thomashaertel.widget.MultiSpinner;
 
 import org.json.JSONArray;
@@ -2065,7 +2066,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                             try {
 
-                                handleFormUpload("200");
+                                Gson gson = new Gson();
+                                String responseString = gson.toJson(response.body());
+
+                                handleFormUpload(responseString);
+
 
                             } catch (JSONException jsonException) {
                                 Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
@@ -2424,11 +2429,14 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
     private void handleFormUpload(String result) throws JSONException {
+        JSONObject jsonObject = null;
 
-  
+
+        jsonObject = new JSONObject(result);
+        dataSentStatus = jsonObject.getString("status");
 
 
-        if (result.equals("200")) {
+        if (dataSentStatus.equals("200")) {
             Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
             previewImageSite.setVisibility(View.GONE);
 
