@@ -69,7 +69,7 @@
                                     android:textStyle="bold" />
 
                                 <EditText
-                                    android:text="nik-123"
+
                                     android:id="@+id/id_number_surveyor"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -85,7 +85,6 @@
 
 
                                 <AutoCompleteTextView
-                                    android:text="Nishon Tandukar"
                                     android:id="@+id/name_of_survayor"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -225,13 +224,13 @@
                                 android:layout_height="wrap_content">
 
                                 <AutoCompleteTextView
-                                    android:text="21"
                                     android:id="@+id/Survay_ward"
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Ward no"
                                     android:inputType="text"
+
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
@@ -242,13 +241,13 @@
                                 android:layout_height="wrap_content">
 
                                 <AutoCompleteTextView
-                                    android:text="Putali Sadak "
                                     android:id="@+id/Survay_address"
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="45dp"
                                     android:hint="Address"
                                     android:inputType="text"
+
                                     android:textColor="#000" />
                             </android.support.design.widget.TextInputLayout>
 
@@ -263,7 +262,6 @@
                                 android:textStyle="bold" />
 
                             <CheckBox
-                                android:checked="true"
                                 android:id="@+id/single_family_detached"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

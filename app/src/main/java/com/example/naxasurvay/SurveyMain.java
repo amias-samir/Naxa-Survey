@@ -2037,38 +2037,53 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         if (jsonToSend.length() > 0) {
 
-
             final File ImageFile = new File(mCurrentPhotoPath);
             Uri ImageToBeUploaded = FileProvider.getUriForFile(
                     SurveyMain.this,
                     "com.example.naxasurvay.fileprovider", ImageFile);
+
+            if (!ImageFile.exists()) {
+                dissmissProgressDialog();
+                Default_DIalog.showDefaultDialog(SurveyMain.this, "Error", "Photo doesn't exist in storage");
+                return;
+            }
+
+
             RequestBody imageRequestBody = RequestBody.create(MediaType.parse(getContentResolver().getType(ImageToBeUploaded)), ImageFile);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("td", ImageFile.getName(), imageRequestBody);
-
+            MultipartBody.Part body = MultipartBody.Part.createFormData("photo", ImageFile.getName(), imageRequestBody);
             RequestBody data = RequestBody.create(MediaType.parse("text/plain"), jsonToSend);
-            Call<String> call1 = ApiClient.getAPIService().uploadFormWithPhotoFile(body, data);
+            Call<UploadResponse> call1 = ApiClient.getAPIService().uploadFormWithPhotoFile(body, data);
 
-            call1.enqueue(new Callback<String>() {
+
+            call1.enqueue(new Callback<UploadResponse>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+                public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
                     dissmissProgressDialog();
+
                     switch (response.code()) {
-                        case HttpURLConnection.HTTP_ACCEPTED:
+                        case 200:
+
                             try {
 
-                                handleFormUpload(response.body());
+                                handleFormUpload("200");
 
                             } catch (JSONException jsonException) {
                                 Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
                                 jsonException.printStackTrace();
                             }
+
+                            break;
+                        default:
+
+                            Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to upload");
+                            break;
                     }
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<UploadResponse> call, Throwable t) {
                     dissmissProgressDialog();
-                    Toast.makeText(context, "Failed" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to upload");
 
                 }
             });
@@ -2409,14 +2424,11 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
     private void handleFormUpload(String result) throws JSONException {
-        JSONObject jsonObject = null;
+
+  
 
 
-        jsonObject = new JSONObject(result);
-        dataSentStatus = jsonObject.getString("status");
-
-
-        if (dataSentStatus.equals("200")) {
+        if (result.equals("200")) {
             Toast.makeText(context, "Data sent successfully", Toast.LENGTH_SHORT).show();
             previewImageSite.setVisibility(View.GONE);
 

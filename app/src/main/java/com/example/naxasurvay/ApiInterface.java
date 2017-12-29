@@ -11,6 +11,7 @@ import retrofit2.http.Part;
 
 import static com.example.naxasurvay.UrlClass.URL_DATA_SEND;
 import static com.example.naxasurvay.UrlClass.URL_DATA_SEND_FILE_UPLOAD;
+import static com.example.naxasurvay.UrlClass.URL_DATA_SEND_FILE_UPLOAD_TEST;
 
 
 public interface ApiInterface {
@@ -21,7 +22,7 @@ public interface ApiInterface {
 
     @Multipart
     @POST(URL_DATA_SEND_FILE_UPLOAD)
-    Call<String> uploadFormWithPhotoFile(@Part MultipartBody.Part file,
-                                         @Part("dta") RequestBody isSurvey);
+    Call<UploadResponse> uploadFormWithPhotoFile(@Part MultipartBody.Part file,
+                                         @Part("data") RequestBody jsonToSend);
 
 }
