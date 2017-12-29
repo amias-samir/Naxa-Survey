@@ -55,6 +55,7 @@ import android.widget.Toast;
 
 import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
+import com.example.naxasurvay.mapbox.MapboxApplication;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -83,6 +84,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -92,7 +94,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -1268,12 +1272,68 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String uncompressedEncodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+
+        try {
+
+            encodedImage = compressString(byteArray);
+            Log.i("DUCK", " compressed encoded lenght " + compressString(byteArray).length());
+
+        } catch (UnsupportedEncodingException e1) {
+            Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to save photo");
+            Log.e("DUCK", e1.getMessage());
+            e1.printStackTrace();
+        }
 
 
 
 
     }
+
+
+    private void writeToFile(String data, String path) {
+        try {
+            File myFile = new File(path);
+            myFile.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(myFile);
+            OutputStreamWriter myOutWriter =
+                    new OutputStreamWriter(fOut);
+            myOutWriter.append(data);
+            myOutWriter.close();
+            fOut.close();
+            Toast.makeText(getBaseContext(),
+                    "Done writing SD 'mysdfile.txt'",
+                    Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(), e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private String compressString(byte[] byteArray) throws UnsupportedEncodingException {
+
+        byte[] output = new byte[100];
+        Deflater compresser = new Deflater();
+        compresser.setInput(byteArray);
+        compresser.finish();
+        int compressedDataLength = compresser.deflate(output);
+        compresser.end();
+
+        return new String(output, 0, compressedDataLength, "UTF-8");
+    }
+
+    private String decompressString(byte[] byteArray, int compressedDataLength) throws UnsupportedEncodingException, DataFormatException {
+        byte[] output = new byte[100];
+        Inflater decompresser = new Inflater();
+        decompresser.setInput(output, 0, compressedDataLength);
+        byte[] result = new byte[100];
+        int resultLength = decompresser.inflate(result);
+        decompresser.end();
+        return new String(output, 0, compressedDataLength, "UTF-8");
+    }
+
 
     public void addImage(String Image) {
 
