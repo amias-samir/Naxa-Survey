@@ -1046,7 +1046,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
                 Double Latitude = info.latitude;
                 Double Longitude = info.longitude;
 
-                updateSendMap(Latitude, Longitude, housecode, placename);
+//                updateSendMap(Latitude, Longitude, housecode, placename);
             }
         }
         List<Mapinfo> points3 = marker.getSurveyData();

@@ -1252,7 +1252,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / 1280, photoH / 720);
+        int scaleFactor = Math.min(photoW / 640, photoH / 480);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
@@ -1266,7 +1266,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         mImageView.setImageBitmap(bitmap);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 

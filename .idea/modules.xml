@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Naxa Survey.iml" filepath="$PROJECT_DIR$/Naxa Survey.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/latestNaxaSurvey.iml" filepath="$PROJECT_DIR$/latestNaxaSurvey.iml" />
+      <module fileurl="file://C:\Users\user\AndroidStudioProjects\Naxa Survey\latestNaxaSurvey.iml" filepath="C:\Users\user\AndroidStudioProjects\Naxa Survey\latestNaxaSurvey.iml" />
     </modules>
   </component>
 </project>
