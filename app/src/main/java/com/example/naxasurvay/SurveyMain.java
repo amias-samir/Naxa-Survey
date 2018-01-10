@@ -55,7 +55,9 @@ import android.widget.Toast;
 
 import com.example.naxasurvay.easy_gps.GeoPointActivity;
 import com.example.naxasurvay.gps.GPS_TRACKER_FOR_POINT;
+import com.example.naxasurvay.mapbox.MapboxApplication;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -66,6 +68,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 import com.thomashaertel.widget.MultiSpinner;
 
 import org.json.JSONArray;
@@ -83,8 +86,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +97,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -100,6 +107,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -1266,14 +1276,72 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
         mImageView.setImageBitmap(bitmap);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String uncompressedEncodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
 
+        try {
+
+            encodedImage = Base64.encodeToString(compressString(byteArray).
+                    getBytes(Charset.forName("UTF-8")), Base64.DEFAULT);
+
+            Log.i("DUCK", " compressed encoded lenght " + compressString(byteArray).length());
+            Log.i("DUCK", " decompressed encoded lenght " + compressString(byteArray).length());
+
+
+        } catch (UnsupportedEncodingException e1) {
+            Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to save photo");
+            Log.e("DUCK", e1.getMessage());
+            e1.printStackTrace();
+        }
 
 
     }
+
+
+    private void writeToFile(String data, String path) {
+        try {
+            File myFile = new File(path);
+            myFile.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(myFile);
+            OutputStreamWriter myOutWriter =
+                    new OutputStreamWriter(fOut);
+            myOutWriter.append(data);
+            myOutWriter.close();
+            fOut.close();
+            Toast.makeText(getBaseContext(),
+                    "Done writing SD 'mysdfile.txt'",
+                    Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(), e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private String compressString(byte[] byteArray) throws UnsupportedEncodingException {
+
+        byte[] output = new byte[100];
+        Deflater compresser = new Deflater();
+        compresser.setInput(byteArray);
+        compresser.finish();
+        int compressedDataLength = compresser.deflate(output);
+        compresser.end();
+
+        return new String(output, 0, compressedDataLength, "UTF-8");
+    }
+
+    private String decompressString(byte[] byteArray, int compressedDataLength) throws UnsupportedEncodingException, DataFormatException {
+        byte[] output = new byte[100];
+        Inflater decompresser = new Inflater();
+        decompresser.setInput(output, 0, compressedDataLength);
+        byte[] result = new byte[100];
+        int resultLength = decompresser.inflate(result);
+        decompresser.end();
+        return new String(output, 0, compressedDataLength, "UTF-8");
+    }
+
 
     public void addImage(String Image) {
 
@@ -1970,20 +2038,39 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
         if (jsonToSend.length() > 0) {
 
+            final File ImageFile = new File(mCurrentPhotoPath);
+            Uri ImageToBeUploaded = FileProvider.getUriForFile(
+                    SurveyMain.this,
+                    "com.example.naxasurvay.fileprovider", ImageFile);
 
-            Call<String> call = ApiClient.getAPIService().uploadForm(jsonToSend);
-            call.enqueue(new Callback<String>() {
+            if (!ImageFile.exists()) {
+                dissmissProgressDialog();
+                Default_DIalog.showDefaultDialog(SurveyMain.this, "Error", "Photo doesn't exist in storage");
+                return;
+            }
+
+
+            RequestBody imageRequestBody = RequestBody.create(MediaType.parse(getContentResolver().getType(ImageToBeUploaded)), ImageFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("photo", ImageFile.getName(), imageRequestBody);
+            RequestBody data = RequestBody.create(MediaType.parse("text/plain"), jsonToSend);
+            Call<UploadResponse> call1 = ApiClient.getAPIService().uploadFormWithPhotoFile(body, data);
+
+
+            call1.enqueue(new Callback<UploadResponse>() {
                 @Override
-                public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                public void onResponse(Call<UploadResponse> call, Response<UploadResponse> response) {
                     dissmissProgressDialog();
 
-                    Log.d(TAG, "Retrofit " + response.body() + " Resposne code " + response.code());
-
                     switch (response.code()) {
-                        case HttpURLConnection.HTTP_ACCEPTED:
+                        case 200:
+
                             try {
 
-                                handleFormUpload(response.body());
+                                Gson gson = new Gson();
+                                String responseString = gson.toJson(response.body());
+
+                                handleFormUpload(responseString);
+
 
                             } catch (JSONException jsonException) {
                                 Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
@@ -1991,16 +2078,52 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
                             }
 
                             break;
+                        default:
+
+                            Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to upload");
+                            break;
                     }
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<String> call, Throwable t) {
+                public void onFailure(Call<UploadResponse> call, Throwable t) {
                     dissmissProgressDialog();
-                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", t.getMessage());
+                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Unexpected Error Occured", "Failed to upload");
 
                 }
             });
+
+
+//            Call<String> call = ApiClient.getAPIService().uploadForm(jsonToSend);
+//            call.enqueue(new Callback<String>() {
+//                @Override
+//                public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+//                    dissmissProgressDialog();
+//
+//                    Log.d(TAG, "Retrofit " + response.body() + " Resposne code " + response.code());
+//
+//                    switch (response.code()) {
+//                        case HttpURLConnection.HTTP_ACCEPTED:
+//                            try {
+//
+//                                handleFormUpload(response.body());
+//
+//                            } catch (JSONException jsonException) {
+//                                Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", "Temporary Server Error");
+//                                jsonException.printStackTrace();
+//                            }
+//
+//                            break;
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NonNull Call<String> call, Throwable t) {
+//                    dissmissProgressDialog();
+//                    Default_DIalog.showDefaultDialog(SurveyMain.this, "Failed to upload", t.getMessage());
+//
+//                }
+//            });
 
 
         }
