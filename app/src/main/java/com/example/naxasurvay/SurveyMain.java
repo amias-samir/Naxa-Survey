@@ -2053,6 +2053,7 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
             RequestBody imageRequestBody = RequestBody.create(MediaType.parse(getContentResolver().getType(ImageToBeUploaded)), ImageFile);
             MultipartBody.Part body = MultipartBody.Part.createFormData("photo", ImageFile.getName(), imageRequestBody);
             RequestBody data = RequestBody.create(MediaType.parse("text/plain"), jsonToSend);
+
             Call<UploadResponse> call1 = ApiClient.getAPIService().uploadFormWithPhotoFile(body, data);
 
 
@@ -2068,6 +2069,8 @@ public class SurveyMain extends AppCompatActivity implements CompoundButton.OnCh
 
                                 Gson gson = new Gson();
                                 String responseString = gson.toJson(response.body());
+
+                                Log.d(TAG, "onResponse: " +responseString);
 
                                 handleFormUpload(responseString);
 

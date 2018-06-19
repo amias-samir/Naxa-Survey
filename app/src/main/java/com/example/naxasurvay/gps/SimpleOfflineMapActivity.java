@@ -617,8 +617,27 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
 
         Housecode = marker.getTitle();
 
-        houseID = Housecode.substring(0,6).trim();
-        Log.d("check code", "codeCheck :" + houseID);
+
+//        houseID = Housecode.substring(0,6).trim();
+        houseID = Housecode;
+        Log.d("check_code", "codeCheck :" + Housecode);
+        Log.d("check_code", "codeCheck :" + houseID);
+
+//        if(Housecode != null) {
+//
+//            String[] linesFile = Housecode.split("\n");
+//            String line0 = linesFile[0];
+//            String line1 = linesFile[1];
+//            String line2 = linesFile[2];
+//            String line3 = linesFile[3];
+//            houseID = line0.trim() ;
+//            Log.d("check_code", "codeCheck :" + houseID);
+//
+//        }else {
+//            Toast.makeText(this, "Housecode can not be empty", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
     }
 
 
@@ -1002,8 +1021,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         Log.d("getUnsavedata", "getProfilesCount : " + row);
 
         List<Mapinfo> points = marker.getUnsavedata();
-        Log.d("getUnsavedata", "pointSize : " + points.size());
-        Log.d("getUnsavedata", "getUnsavedata : " + points.toString());
+        Log.d("getUnsavedata", "getUnsavedata : " + points.size());
+//        Log.d("getUnsavedata", "getUnsavedata : " + points.toString());
         if (points.size() > 0) {
 //            Log.d("getUnsavedata", "getSavedata : " + points.toString());
             for (int i = 0; i < points.size(); i++) {
@@ -1019,8 +1038,8 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
 
         List<Mapinfo> points1 = marker.getsavedata();
-        Log.d("getUnsavedata", "getSavedata : " + points1.toString());
-        Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+        Log.d("getUnsavedata", "getSavedata : " + points1.size());
+//        Log.d("getUnsavedata", "getSavedata : " + points1.toString());
         if (points1.size() > 0) {
 //            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
             for (int i = 0; i < points1.size(); i++) {
@@ -1051,7 +1070,7 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
         }
         List<Mapinfo> points3 = marker.getSurveyData();
         if (points3.size() > 0) {
-//            Log.d("getUnsavedata", "getSavedata : " + points1.toString());
+            Log.d("getUnsavedata", "getSurveydata : " + points3.toString());
             for (int i = 0; i < points3.size(); i++) {
                 Mapinfo info = points3.get(i);
                 String housecode = info.houseCode;
@@ -1318,10 +1337,17 @@ public class SimpleOfflineMapActivity extends AppCompatActivity implements OnMap
     }
 
     private void updateMap(double latitude, double longitude, String Code, String Location) {
+
+//        IconFactory iconFactory = IconFactory.getInstance(SimpleOfflineMapActivity.this);
+//        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_marker_default);
+//        Icon icon = iconFactory.fromBitmap(largeIcon);
         // Build marker
         mapboxMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .title(Code + "\n" + Location));
+                .title(Code)
+                .setSnippet(Location));
+        Log.d(TAG, "check_code"+ Code);
+
 
 
     }
